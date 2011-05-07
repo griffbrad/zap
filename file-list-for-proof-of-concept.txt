@@ -1,3 +1,5 @@
+The core - What we want functional for the proof of concept
+-----------------------------------------------------------
 Zap/Object.php
 -- Zap/HtmlTag.php
 -- Zap/Message.php
@@ -11,14 +13,23 @@ Zap/Object.php
 -------- Zap/InputControl.php
 ---------- Zap/Entry.php
 
+
+Static blobs - Lots of static helper functions, would like to replace with Zend
+-------------------------------------------------------------------------------
 Zap/String.php
 Zap.php
 Zap/Number.php
 
+
+Interfaces - Should take little, if any, effort to port
+-------------------------------------------------------
 Zap/State.php
 Zap/Titleable.php
 Zap/UIParent.php
 
+
+Targets for deletion - Want to refactor these to obsolescence
+-------------------------------------------------------------
 Zap/StyleSheetHtmlHeadEntry.php
 Zap/HtmlHeadEntry.php
 Zap/HtmlHeadEntrySetDisplayer.php
@@ -26,6 +37,9 @@ Zap/HtmlHeadEntrySet.php
 Zap/JavaScriptHtmlHeadEntry.php
 Zap/CommentHtmlHeadEntry.php
 
+
+Unnecessary depedencies - We can drop these right away
+------------------------------------------------------
 Zap/ErrorDisplayer.php
 Zap/ErrorLogger.php
 Zap/Error.php
