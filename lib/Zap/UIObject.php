@@ -21,14 +21,12 @@ require_once 'Zap/StyleSheetHtmlHeadEntry.php';
  */
 abstract class Zap_UIObject extends Zap_Object
 {
-	// {{{ public properties
-
 	/**
 	 * The object which contains this object
 	 *
 	 * @var SwatUIObject
 	 */
-	public $parent = null;
+	protected $_parent = null;
 
 	/**
 	 * Visible
@@ -39,7 +37,7 @@ abstract class Zap_UIObject extends Zap_Object
 	 *
 	 * @see SwatUIObject::isVisible()
 	 */
-	public $visible = true;
+	protected $_visible = true;
 
 	/**
 	 * A user-specified array of CSS classes that are applied to this
@@ -50,10 +48,7 @@ abstract class Zap_UIObject extends Zap_Object
 	 *
 	 * @var array
 	 */
-	public $classes = array();
-
-	// }}}
-	// {{{ protected properties
+	protected $_classes = array();
 
 	/**
 	 * A set of HTML head entries needed by this user-interface element
@@ -65,17 +60,35 @@ abstract class Zap_UIObject extends Zap_Object
 	 */
 	protected $html_head_entry_set;
 
-	// }}}
-	// {{{ public function __construct()
-
 	public function __construct()
 	{
 		$this->html_head_entry_set = new Zap_HtmlHeadEntrySet();
 	}
 
-	// }}}
-	// {{{ public function addStyleSheet()
+	public function setVisible($visible)
+	{
+		$this->_visible = $visible;
 
+		return $this;
+	}
+
+	public function getVisible()
+	{
+		return $this->_visible;
+	}
+
+	public function setParent(Zap_UIObject $parent)
+	{
+		$this->_parent = $parent;
+
+		return $this;
+	}
+
+	public function getParent()
+	{
+		return $this->_parent;
+	}
+	
 	/**
 	 * Adds a stylesheet to the list of stylesheets needed by this
 	 * user-iterface element
@@ -95,9 +108,6 @@ abstract class Zap_UIObject extends Zap_Object
 		$this->html_head_entry_set->addEntry(
 			new Zap_StyleSheetHtmlHeadEntry($stylesheet, $package_id));
 	}
-
-	// }}}
-	// {{{ public function addJavaScript()
 
 	/**
 	 * Adds a JavaScript include to the list of JavaScript includes needed
@@ -299,9 +309,9 @@ abstract class Zap_UIObject extends Zap_Object
 	 *
 	 * @see SwatUIObject::getCSSClassString()
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
-		return $this->classes;
+		return $this->_classes;
 	}
 
 	// }}}
@@ -331,15 +341,16 @@ abstract class Zap_UIObject extends Zap_Object
 	 *
 	 * @see SwatUIObject::getCSSClassNames()
 	 */
-	protected final function getCSSClassString()
+	protected final function _getCSSClassString()
 	{
-		$class_string = null;
+		$classString = null;
+		$classNames  = $this->_getCSSClassNames();
+		
+		if (0 < count($classNames)) {
+			$classString = implode(' ', $classNames);
+		}
 
-		$class_names = $this->getCSSClassNames();
-		if (count($class_names) > 0)
-			$class_string = implode(' ', $class_names);
-
-		return $class_string;
+		return $classString;
 	}
 
 	// }}}

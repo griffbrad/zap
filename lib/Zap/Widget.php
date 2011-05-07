@@ -38,14 +38,12 @@ require_once 'Zap/Message.php';
  */
 abstract class Zap_Widget extends Zap_UIObject
 {
-	// {{{ public properties
-
 	/**
 	 * A non-visible unique id for this widget, or null
 	 *
 	 * @var string
 	 */
-	public $id = null;
+	protected $_id = null;
 
 	/**
 	 * Sensitive
@@ -57,7 +55,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @var boolean
 	 */
-	public $sensitive = true;
+	protected $_sensitive = true;
 
 	/**
 	 * Stylesheet
@@ -71,10 +69,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @var string
 	 */
-	public $stylesheet = null;
-
-	// }}}
-	// {{{ private properties
+	protected $_stylesheet = null;
 
 	/**
 	 * Composite widgets of this widget
@@ -95,15 +90,12 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	private $composite_widgets_created = false;
 
-	// }}}
-	// {{{ protected properties
-
 	/**
 	 * Messages affixed to this widget
 	 *
 	 * @var array
 	 */
-	protected $messages = array();
+	protected $_messages = array();
 
 	/**
 	 * Specifies that this widget requires an id
@@ -115,7 +107,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @see Zap_Widget::init()
 	 */
-	protected $requires_id = false;
+	protected $_requiresId = false;
 
 	/**
 	 * Whether or not this widget has been initialized
@@ -124,7 +116,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @see Zap_Widget::init()
 	 */
-	protected $initialized = false;
+	protected $_initialized = false;
 
 	/**
 	 * Whether or not this widget has been processed
@@ -133,7 +125,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @see Zap_Widget::process()
 	 */
-	protected $processed = false;
+	protected $_processed = false;
 
 	/**
 	 * Whether or not this widget has been displayed
@@ -142,10 +134,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @see Zap_Widget::display()
 	 */
-	protected $displayed = false;
-
-	// }}}
-	// {{{ public function __construct()
+	protected $_displayed = false;
 
 	/**
 	 * Creates a new widget
@@ -157,12 +146,24 @@ abstract class Zap_Widget extends Zap_UIObject
 		parent::__construct();
 
 		$this->id = $id;
-		$this->addStylesheet('packages/swat/styles/swat.css',
-			Zap::PACKAGE_ID);
+
+		$this->addStylesheet(
+			'packages/swat/styles/swat.css',
+			Zap::PACKAGE_ID
+		);
 	}
 
-	// }}}
-	// {{{ public function init()
+	public function setId($id)
+	{
+		$this->_id = $id;
+
+		return $this;
+	}
+
+	public function getId()
+	{
+		return $this->_id;
+	}
 
 	/**
 	 * Initializes this widget
@@ -182,16 +183,19 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function init()
 	{
-		if ($this->requires_id && $this->id === null)
-			$this->id = $this->getUniqueId();
+		if ($this->_requiresId && null === $this->_id) {
+			$this->_id = $this->_getUniqueId();
+		}
 
-		if ($this->stylesheet !== null)
-			$this->addStyleSheet($this->stylesheet);
+		if (null !== $this->_stylesheet) {
+			$this->addStyleSheet($this->_stylesheet);
+		}
 
-		foreach ($this->getCompositeWidgets() as $widget)
+		foreach ($this->getCompositeWidgets() as $widget) {
 			$widget->init();
+		}
 
-		$this->initialized = true;
+		$this->_initialized = true;
 	}
 
 	// }}}
@@ -233,10 +237,11 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function display()
 	{
-		if (!$this->isInitialized())
+		if (! $this->isInitialized()) {
 			$this->init();
+		}
 
-		$this->displayed = true;
+		$this->_displayed = true;
 	}
 
 	// }}}
@@ -342,9 +347,6 @@ abstract class Zap_Widget extends Zap_UIObject
 		return $has_message;
 	}
 
-	// }}}
-	// {{{ public function isSensitive()
-
 	/**
 	 * Determines the sensitivity of this widget.
 	 *
@@ -353,18 +355,16 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @return boolean whether this widget is sensitive.
 	 *
-	 * @see Zap_Widget::$sensitive
+	 * @see Zap_Widget::$_sensitive
 	 */
 	public function isSensitive()
 	{
-		if ($this->parent !== null && $this->parent instanceof Zap_Widget)
-			return ($this->parent->isSensitive() && $this->sensitive);
-		else
-			return $this->sensitive;
+		if (null !== $this->_parent && $this->_parent instanceof Zap_Widget) {
+			return ($this->_parent->isSensitive() && $this->_sensitive);
+		} else {
+			return $this->_sensitive;
+		}
 	}
-
-	// }}}
-	// {{{ public function isInitialized()
 
 	/**
 	 * Whether or not this widget is initialized
@@ -373,11 +373,8 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function isInitialized()
 	{
-		return $this->initialized;
+		return $this->_initialized;
 	}
-
-	// }}}
-	// {{{ public function isProcessed()
 
 	/**
 	 * Whether or not this widget is processed
@@ -386,7 +383,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function isProcessed()
 	{
-		return $this->processed;
+		return $this->_processed;
 	}
 
 	// }}}

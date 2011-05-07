@@ -1,11 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
-require_once 'Zap/DisplayableContainer.php';
-require_once 'Zap/Titleable.php';
-require_once 'Zap/HtmlTag.php';
-
 /**
  * A container with a decorative frame and optional title
  *
@@ -15,197 +9,285 @@ require_once 'Zap/HtmlTag.php';
  */
 class Zap_Frame extends Zap_DisplayableContainer implements Zap_Titleable
 {
-	// {{{ public properties
+    /**
+     * A visible title for this frame, or null
+     *
+     * @var string
+     */
+    protected $_title = null;
 
-	/**
-	 * A visible title for this frame, or null
-	 *
-	 * @var string
-	 */
-	public $title = null;
+    /**
+     * An optional visible subtitle for this frame, or null
+     *
+     * @var string
+     */
+    protected $_subtitle = null;
 
-	/**
-	 * An optional visible subtitle for this frame, or null
-	 *
-	 * @var string
-	 */
-	public $subtitle = null;
+    /**
+     * An optional string to separate subtitle from the title
+     *
+     * @var string
+     */
+    protected $_titleSeparator = ': ';
 
-	/**
-	 * An optional string to separate subtitle from the title
-	 *
-	 * @var string
-	 */
-	public $title_separator = ': ';
+    /**
+     * Optional content type for the title
+     *
+     * Default text/plain, use text/xml for XHTML fragments.
+     *
+     * @var string
+     */
+    protected $_titleContentType = 'text/plain';
 
-	/**
-	 * Optional content type for the title
-	 *
-	 * Default text/plain, use text/xml for XHTML fragments.
-	 *
-	 * @var string
-	 */
-	public $title_content_type = 'text/plain';
+    /**
+     * Optional header level for the title
+     *
+     * Setting this will override the automatic heading level calculation
+     * based on nesting of frames.
+     *
+     * @var integer
+     */
+    protected $_headerLevel;
 
-	/**
-	 * Optional header level for the title
-	 *
-	 * Setting this will override the automatic heading level calculation
-	 * based on nesting of frames.
-	 *
-	 * @var integer
-	 */
-	public $header_level;
+    /**
+     * Set the title for the frame
+     *
+     * @param string $title Title to be displayed for the frame
+     *
+     * @return $this
+     */
+    public function setTitle($title)
+    {
+        $this->_title = $title;
 
-	// }}}
-	// {{{ public function getTitle()
+        return $this;
+    }
 
-	/**
-	 * Gets the title of this frame
-	 *
-	 * Implements the {@link Zap_Titleable::getTitle()} interface.
-	 *
-	 * @return string the title of this frame.
-	 */
-	public function getTitle()
-	{
-		if ($this->subtitle === null)
-			return $this->title;
+    /**
+     * Gets the title of this frame
+     *
+     * Implements the {@link Zap_Titleable::getTitle()} interface.
+     *
+     * @return string the title of this frame.
+     */
+    public function getTitle()
+    {
+        return $this->_title;
+    }
 
-		if ($this->title === null)
-			return $this->subtitle;
+    /**
+     * Set the sub-title for the frame.  The sub-title is displayed after
+     * the title and the title separator.
+     *
+     * @param string $subtitle Sub-title to be displayed for the frame
+     *
+     * @return $this
+     */
+    public function setSubtitle($subtitle)
+    {
+        $this->_subtitle = $subtitle;
 
-		return $this->title.': '.$this->subtitle;
-	}
+        return $this;
+    }
 
-	// }}}
-	// {{{ public function getTitleContentType()
+    /**
+     * Retrieve the frame's subtitle
+     *
+     * @return string
+     */
+    public function getSubtitle()
+    {
+        return $this->_subtitle;
+    }
 
-	/**
-	 * Gets the title content-type of this frame
-	 *
-	 * Implements the {@link Zap_Titleable::getTitleContentType()} interface.
-	 *
-	 * @return string the title content-type of this frame.
-	 */
-	public function getTitleContentType()
-	{
-		return $this->title_content_type;
-	}
+    /**
+     * Set the separator used to divide the title and the subtitle
+     *
+     * @param string $titleSeparator String used to divide title
+     *
+     * @return $this
+     */
+    public function setTitleSeparator($titleSeparator)
+    {
+        $this->_titleSeparator = $titleSeparator;
 
-	// }}}
-	// {{{ public function display()
+        return $this;
+    }
 
-	/**
-	 * Displays this frame
-	 */
-	public function display()
-	{
-		if (!$this->visible)
-			return;
+    /**
+     * Retreive the title separator
+     *
+     * @return string
+     */
+    public function getTitleSeparator()
+    {
+        return $this->_titleSeparator;
+    }
 
-		Zap_Widget::display();
+    /**
+     * Set the content type to use when displaying the title.  text/plain
+     * to escape before display, text/xml to allow HTML.
+     *
+     * @param string $titleContentType The content type to use for the title
+     *
+     * @return $this
+     */
+    public function setTitleContentType($titleContentType)
+    {
+        $this->_titleContentType = $titleContentType;
 
-		$outer_div = new Zap_HtmlTag('div');
-		$outer_div->id = $this->id;
-		$outer_div->class = $this->getCSSClassString();
+        return $this;
+    }
 
-		$outer_div->open();
-		$this->displayTitle();
-		$this->displayContent();
-		$outer_div->close();
-	}
+    /**
+     * Gets the title content-type of this frame
+     *
+     * Implements the {@link Zap_Titleable::getTitleContentType()} interface.
+     *
+     * @return string the title content-type of this frame.
+     */
+    public function getTitleContentType()
+    {
+        return $this->_titleContentType;
+    }
 
-	// }}}
-	// {{{ protected function displayTitle()
+    /**
+     * The header level to use when displaying the title of the frame. Should
+     * be between 1 and 6 to conform to HTML standards.
+     *
+     * @param integer $headerLevel Level for <hX> tag in title
+     *
+     * @return $this
+     */
+    public function setHeaderLevel($headerLevel)
+    {
+        $this->_headerLevel = $headerLevel;
 
-	/**
-	 * Displays this frame's title
-	 */
-	protected function displayTitle()
-	{
-		if ($this->title !== null) {
+        return $this;
+    }
 
-			$header_tag = new Zap_HtmlTag('h'.$this->getHeaderLevel());
-			$header_tag->class = 'swat-frame-title';
-			$header_tag->setContent($this->title, $this->title_content_type);
+    /**
+     * Get the header level for the frame title
+     *
+     * @return integer
+     */
+    public function getHeaderLevel()
+    {
+        return $this->_headerLevel;
+    }
 
-			if ($this->subtitle === null) {
-				$header_tag->display();
-			} else {
-				$span_tag = new Zap_HtmlTag('span');
-				$span_tag->class = 'swat-frame-subtitle';
-				$span_tag->setContent($this->subtitle,
-					$this->title_content_type);
+    /**
+     * Displays this frame
+     *
+     * @return null
+     */
+    public function display()
+    {
+        if (! $this->_visible) {
+            return;
+        }
 
-				$header_tag->open();
-				$header_tag->displayContent();
-				echo $this->title_separator;
-				$span_tag->display();
-				$header_tag->close();
-			}
-		}
-	}
+        Zap_Widget::display();
 
-	// }}}
-	// {{{ protected function displayContent()
+        $outerDiv = new Zap_HtmlTag('div');
+        $outerDiv->id    = $this->_id;
+        $outerDiv->class = $this->_getCSSClassString();
 
-	/**
-	 * Displays this frame's content
-	 */
-	protected function displayContent()
-	{
-		$inner_div = new Zap_HtmlTag('div');
-		$inner_div->class = 'swat-frame-contents';
-		$inner_div->open();
-		$this->displayChildren();
-		$inner_div->close();
-	}
+        $outerDiv->open();
+        $this->_displayTitle();
+        $this->_displayContent();
+        $outerDiv->close();
+    }
 
-	// }}}
-	// {{{ protected function getCSSClassNames()
+    /**
+     * Displays this frame's title
+     *
+     * @return null
+     */
+    protected function _displayTitle()
+    {
+        if (null !== $this->_title) {
+            $headerTag = new Zap_HtmlTag('h'.$this->_getHeaderLevel());
+            $headerTag->class = 'swat-frame-title';
+            $headerTag->setContent($this->_title, $this->_titleContentType);
 
-	/**
-	 * Gets the array of CSS classes that are applied to this frame
-	 *
-	 * @return array the array of CSS classes that are applied to this frame.
-	 */
-	protected function getCSSClassNames()
-	{
-		$classes = array('swat-frame');
-		$classes = array_merge($classes, parent::getCSSClassNames());
-		return $classes;
-	}
+            if (null === $this->_subtitle) {
+                $headerTag->display();
+            } else {
+                $spanTag = new Zap_HtmlTag('span');
+                $spanTag->class = 'swat-frame-subtitle';
+                $spanTag->setContent(
+                    $this->_subtitle,
+                    $this->_titleContentType
+                );
 
-	// }}}
-	// {{{ protected function getHeaderLevel()
+                $headerTag->open();
+                $headerTag->displayContent();
+                echo $this->_titleSeparator;
+                $spanTag->display();
+                $headerTag->close();
+            }
+        }
+    }
 
-	protected function getHeaderLevel()
-	{
-		// default header level is h2
-		$level = 2;
+    /**
+     * Displays this frame's content
+     *
+     * @return null
+     */
+    protected function _displayContent()
+    {
+        $innerDiv = new Zap_HtmlTag('div');
+        $innerDiv->class = 'swat-frame-contents';
+        $innerDiv->open();
+        $this->displayChildren();
+        $innerDiv->close();
+    }
 
-		if ($this->header_level === null) {
-			$ancestor = $this->parent;
+    /**
+     * Gets the array of CSS classes that are applied to this frame
+     *
+     * @return array the array of CSS classes that are applied to this frame.
+     */
+    protected function _getCSSClassNames()
+    {
+        $classes = array('swat-frame');
+        $classes = array_merge($classes, parent::_getCSSClassNames());
+        return $classes;
+    }
 
-			// get appropriate header level, limit to h6
-			while ($ancestor !== null) {
-				if ($ancestor instanceof Zap_Frame) {
-					$level = $ancestor->getHeaderLevel() + 1;
-					$level = min($level, 6);
-					break;
-				}
+    /**
+     * Get the header level to be used when displaying the frame's title.
+     * If this isn't set manually, the frame's parent widgets will be examined
+     * to auto-set the header level.  If this frame is nested in another, this
+     * frame's header level will be raised to reflect that hierarchy.
+     *
+     * @return integer The level (between 1 and 6) for the <hX> tag of the title
+     */
+    protected function _getHeaderLevel()
+    {
+        // default header level is h2
+        $level = 2;
 
-				$ancestor = $ancestor->parent;
-			}
-		} else {
-			$level = $this->header_level;
-		}
+        if (null !== $this->_headerLevel) {
+            $level = $this->_headerLevel;
+        } else {
+            $ancestor = $this->_parent;
 
-		return $level;
-	}
+            // get appropriate header level, limit to h6
+            while (null !== $ancestor) {
+                if ($ancestor instanceof Zap_Frame) {
+                    $level = $ancestor->_getHeaderLevel() + 1;
+                    $level = min($level, 6);
+                    break;
+                }
 
-	// }}}
+                $ancestor = $ancestor->getParent();
+            }
+        }
+
+        return $level;
+    }
 }
 
 

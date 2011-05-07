@@ -174,21 +174,20 @@ class Zap_Container extends Zap_Widget implements Zap_UIParent
 	 */
 	public function packEnd(Zap_Widget $widget)
 	{
-		if ($widget->parent !== null)
-			throw new Zap_Exception('Attempting to add a widget that already '.
+		if (null !== $widget->getParent()) {
+			throw new Zap_Exception('Attempting to add a widget that already ' .
 				'has a parent.');
+		}
 
-		$this->children[] = $widget;
-		$widget->parent = $this;
+		$this->_children[] = $widget;
+		$widget->setParent($this);
 
-		if ($widget->id !== null)
-			$this->children_by_id[$widget->id] = $widget;
+		if (null !== $widget->getId()) {
+			$this->_childrenById[$widget->getId()] = $widget;
+		}
 
 		$this->sendAddNotifySignal($widget);
 	}
-
-	// }}}
-	// {{{ public function getChild()
 
 	/**
 	 * Gets a child widget
@@ -626,8 +625,12 @@ class Zap_Container extends Zap_Widget implements Zap_UIParent
 	{
 		$this->notifyOfAdd($widget);
 
-		if ($this->parent !== null && $this->parent instanceof Zap_Container)
-			$this->parent->sendAddNotifySignal($widget);
+		if (
+			null !== $this->_parent 
+			&& $this->_parent instanceof Zap_Container
+		) {
+			$this->_parent->sendAddNotifySignal($widget);
+		}
 	}
 
 	// }}}
