@@ -240,7 +240,7 @@ class Zap_Frame extends Zap_DisplayableContainer implements Zap_Titleable
         $innerDiv = new Zap_HtmlTag('div');
         $innerDiv->class = 'swat-frame-contents';
         $innerDiv->open();
-        $this->displayChildren();
+        $this->_displayChildren();
         $innerDiv->close();
     }
 

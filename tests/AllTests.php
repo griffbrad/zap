@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-require_once 'PHPUnit/Framework.php';
+require_once 'PHPUnit/Autoload.php';
 
 class AllTests
 {
@@ -12,6 +12,8 @@ class AllTests
 
         $suite->addTestSuite('Zap_ObjectTest');
         $suite->addTestSuite('Zap_FrameTest');
+        $suite->addTestSuite('Zap_DisplayableContainerTest');
+        $suite->addTestSuite('Zap_FormFieldTest');
 
         return $suite;
     }

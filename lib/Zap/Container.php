@@ -174,7 +174,7 @@ class Zap_Container extends Zap_Widget implements Zap_UIParent
             $this->_childrenById[$widget->getId()] = $widget;
         }
 
-        $this->sendAddNotifySignal($widget);
+        $this->_sendAddNotifySignal($widget);
     }
 
     /**
@@ -583,7 +583,7 @@ class Zap_Container extends Zap_Widget implements Zap_UIParent
      */
     protected function _sendAddNotifySignal($widget)
     {
-        $this->notifyOfAdd($widget);
+        $this->_notifyOfAdd($widget);
 
         if (
             null !== $this->_parent 
