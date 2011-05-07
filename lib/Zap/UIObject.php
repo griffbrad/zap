@@ -88,6 +88,13 @@ abstract class Zap_UIObject extends Zap_Object
 	{
 		return $this->_parent;
 	}
+
+	public function addClass($class)
+	{
+		$this->_classes[] = $class;
+
+		return $this;
+	}
 	
 	/**
 	 * Adds a stylesheet to the list of stylesheets needed by this

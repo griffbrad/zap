@@ -1,10 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
-require_once 'Zap/Container.php';
-require_once 'Zap/HtmlTag.php';
-
 /**
  * Base class for containers that display an XHTML element
  *
@@ -14,45 +9,40 @@ require_once 'Zap/HtmlTag.php';
  */
 class Zap_DisplayableContainer extends Zap_Container
 {
-	// {{{ public function display()
+    /**
+     * Displays this container
+     *
+     * @return null
+     */
+    public function display()
+    {
+        if (! $this->_visible) {
+            return;
+        }
 
-	/**
-	 * Displays this container
-	 */
-	public function display()
-	{
-		if (!$this->visible)
-			return;
+        Zap_Widget::display();
 
-		SwatWidget::display();
+        $div = new Zap_HtmlTag('div');
+        $div->id    = $this->_id;
+        $div->class = $this->_getCSSClassString();
 
-		$div = new SwatHtmlTag('div');
-		$div->id = $this->id;
-		$div->class = $this->getCSSClassString();
+        $div->open();
+        $this->_displayChildren();
+        $div->close();
+    }
 
-		$div->open();
-		$this->displayChildren();
-		$div->close();
-	}
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
-
-	/**
-	 * Gets the array of CSS classes that are applied to this displayable
-	 * container
-	 *
-	 * @return array the array of CSS classes that are applied to this
-	 *                displayable container.
-	 */
-	protected function getCSSClassNames()
-	{
-		$classes = array('swat-displayable-container');
-		$classes = array_merge($classes, parent::getCSSClassNames());
-		return $classes;
-	}
-
-	// }}}
+    /**
+     * Gets the array of CSS classes that are applied to this displayable
+     * container
+     *
+     * @return array the array of CSS classes that are applied to this
+     *                displayable container.
+     */
+    protected function _getCSSClassNames()
+    {
+        $classes = array('swat-displayable-container');
+        $classes = array_merge($classes, parent::_getCSSClassNames());
+        return $classes;
+    }
 }
-
 
