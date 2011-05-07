@@ -23,7 +23,7 @@ to widgets and client-side CSS and JS dependencies.
 
 `Zend_Cache` will be integrated throughout the codebase to allow for more 
 cohesive caching of slow tasks like escaping large numbers of flydown entries
-or rending complex data tables.
+or rendering complex data tables.
 
 Once the PHP fork is stable and a broad range of widgets are fully functional,
 we will look into porting the current YUI 2 based Javascript that ships with
