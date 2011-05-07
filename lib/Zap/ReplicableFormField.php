@@ -1,0 +1,54 @@
+<?php
+
+/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
+
+require_once 'Zap/FormField.php';
+require_once 'Zap/ReplicableContainer.php';
+
+/**
+ * A form field container that replicates its children
+ *
+ * The form field can dynamically create widgets based on an array of
+ * replicators identifiers.
+ *
+ * @package    Swat
+ * @copyright  2005-2008 silverorange
+ * @license    http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @deprecated Use a SwatReplicableContainer with a SwatFormField as the only
+ *             child widget. Automatic title-setting functionality will need to
+ *             be implemented manually.
+ */
+class Zap_ReplicableFormField extends Zap_ReplicableContainer
+{
+	// {{{ public function init()
+
+	/**
+	 * Initilizes this replicable form field
+	 */
+	public function init()
+	{
+		$children = array();
+		foreach ($this->children as $child_widget)
+			$children[] = $this->remove($child_widget);
+
+		$field = new SwatFormField();
+		$field->id = $field->getUniqueId();
+		$prototype_id = $field->id;
+
+		foreach ($children as $child_widget)
+			$field->add($child_widget);
+
+		$this->add($field);
+
+		parent::init();
+
+		foreach ($this->replicators as $id => $title) {
+			$field = $this->getWidget($prototype_id, $id);
+			$field->title = $title;
+		}
+	}
+
+	// }}}
+}
+
+

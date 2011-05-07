@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+$dir = opendir('lib/Zap');
+
+while ($file = readdir($dir)) {
+    if (0 === strpos($file, '.')) {
+        continue;
+    }
+
+    rename(
+        'lib/Zap/' . $file,
+        'lib/Zap/' . preg_replace('/^Swat/', '', $file)
+    );
+}
+
+closedir($dir);

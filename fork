@@ -1,0 +1,13 @@
+#!/bin/sh
+
+rm -rf lib/Zap
+
+svn export https://svn.silverorange.com/public/swat/trunk/Swat/ lib/Zap
+
+./move-files
+./adjust-copyright
+./change-package
+./rename-classes
+./remove-closing-php-tag
+./replace-require-once-statements
+./replace-require-once-of-base
