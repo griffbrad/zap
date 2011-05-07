@@ -1,14 +1,14 @@
 The core - What we want functional for the proof of concept
 -----------------------------------------------------------
-Zap/Object.php
+Zap/Object.php (Done)
 -- Zap/HtmlTag.php
 -- Zap/Message.php
 -- Zap/UIObject.php
 ---- Zap/Widget.php
------- Zap/Container.php
--------- Zap/DisplayableContainer.php
----------- Zap/FormField.php
----------- Zap/Frame.php
+------ Zap/Container.php (In progress)
+-------- Zap/DisplayableContainer.php (Done)
+---------- Zap/FormField.php (In progress)
+---------- Zap/Frame.php (Done)
 ------ Zap/Control.php
 -------- Zap/InputControl.php
 ---------- Zap/Entry.php
@@ -23,9 +23,9 @@ Zap/Number.php
 
 Interfaces - Should take little, if any, effort to port
 -------------------------------------------------------
-Zap/State.php
-Zap/Titleable.php
-Zap/UIParent.php
+Zap/State.php (Done)
+Zap/Titleable.php (Done)
+Zap/UIParent.php (Done)
 
 
 Targets for deletion - Want to refactor these to obsolescence
@@ -40,6 +40,6 @@ Zap/CommentHtmlHeadEntry.php
 
 Unnecessary depedencies - We can drop these right away
 ------------------------------------------------------
-Zap/ErrorDisplayer.php
-Zap/ErrorLogger.php
-Zap/Error.php
+Zap/ErrorDisplayer.php (Removed)
+Zap/ErrorLogger.php (Removed)
+Zap/Error.php (Removed)
