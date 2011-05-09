@@ -10,7 +10,7 @@ require_once 'Zap/JavaScriptHtmlHeadEntry.php';
 require_once 'Zap/StyleSheetHtmlHeadEntry.php';
 
 /**
- * A base class for Swat user-interface elements
+ * A base class for Zap user-interface elements
  *
  * TODO: describe our conventions on how CSS classes and XHTML ids are
  * displayed.
@@ -24,7 +24,7 @@ abstract class Zap_UIObject extends Zap_Object
 	/**
 	 * The object which contains this object
 	 *
-	 * @var SwatUIObject
+	 * @var Zap_UIObject
 	 */
 	protected $_parent = null;
 
@@ -35,7 +35,7 @@ abstract class Zap_UIObject extends Zap_Object
 	 *
 	 * @var boolean
 	 *
-	 * @see SwatUIObject::isVisible()
+	 * @see Zap_UIObject::isVisible()
 	 */
 	protected $_visible = true;
 
@@ -43,7 +43,7 @@ abstract class Zap_UIObject extends Zap_Object
 	 * A user-specified array of CSS classes that are applied to this
 	 * user-interface object
 	 *
-	 * See the class-level documentation for SwatUIObject for details on how
+	 * See the class-level documentation for ZapUIObject for details on how
 	 * CSS classes and XHTML ids are displayed on user-interface objects.
 	 *
 	 * @var array
@@ -53,16 +53,16 @@ abstract class Zap_UIObject extends Zap_Object
 	/**
 	 * A set of HTML head entries needed by this user-interface element
 	 *
-	 * Entries are stored in a data object called {@link SwatHtmlHeadEntry}.
+	 * Entries are stored in a data object called {@link Swat_HtmlHeadEntry}.
 	 * This property contains a set of such objects.
 	 *
-	 * @var SwatHtmlHeadEntrySet
+	 * @var Zap_tmlHeadEntrySet
 	 */
-	protected $html_head_entry_set;
+	protected $_htmlHeadEntrySet;
 
 	public function __construct()
 	{
-		$this->html_head_entry_set = new Zap_HtmlHeadEntrySet();
+		$this->_htmlHeadEntrySet = new Zap_HtmlHeadEntrySet();
 	}
 
 	public function setVisible($visible)
@@ -104,16 +104,18 @@ abstract class Zap_UIObject extends Zap_Object
 	 * @param integer $display_order the relative order in which to display
 	 *                                this stylesheet head entry.
 	 */
-	public function addStyleSheet($stylesheet, $package_id = null)
+	public function addStyleSheet($stylesheet, $packageId = null)
 	{
-		if ($this->html_head_entry_set === null)
-			throw new SwatException(sprintf("Child class '%s' did not ".
+		if (null === $this->_htmlHeadEntrySet) {
+			throw new Zap_Exception(sprintf("Child class '%s' did not ".
 				'instantiate a HTML head entry set. This should be done in  '.
 				'the constructor either by calling parent::__construct() or '.
 				'by creating a new HTML head entry set.', get_class($this)));
+		}
 
-		$this->html_head_entry_set->addEntry(
-			new Zap_StyleSheetHtmlHeadEntry($stylesheet, $package_id));
+		$this->_htmlHeadEntrySet->addEntry(
+			new Zap_StyleSheetHtmlHeadEntry($stylesheet, $packageId)
+		);
 	}
 
 	/**
@@ -124,20 +126,19 @@ abstract class Zap_UIObject extends Zap_Object
 	 * @param integer $display_order the relative order in which to display
 	 *                                this JavaScript head entry.
 	 */
-	public function addJavaScript($java_script, $package_id = null)
+	public function addJavaScript($javaScript, $packageId = null)
 	{
-		if ($this->html_head_entry_set === null)
-			throw new SwatException(sprintf("Child class '%s' did not ".
+		if (null === $this->_htmlHeadEntrySet) {
+			throw new Zap_Exception(sprintf("Child class '%s' did not ".
 				'instantiate a HTML head entry set. This should be done in  '.
 				'the constructor either by calling parent::__construct() or '.
 				'by creating a new HTML head entry set.', get_class($this)));
+		}
 
-		$this->html_head_entry_set->addEntry(
-			new SwatJavaScriptHtmlHeadEntry($java_script, $package_id));
+		$this->_htmlHeadEntrySet->addEntry(
+			new Zap_JavaScriptHtmlHeadEntry($javaScript, $packageId)
+		);
 	}
-
-	// }}}
-	// {{{ public function addComment()
 
 	/**
 	 * Adds a comment to the list of HTML head entries needed by this user-
@@ -146,20 +147,19 @@ abstract class Zap_UIObject extends Zap_Object
 	 * @param string  $comment the contents of the comment to include.
 	 * @param integer $package_id the package this comment belongs with.
 	 */
-	public function addComment($comment, $package_id = null)
+	public function addComment($comment, $packageId = null)
 	{
-		if ($this->html_head_entry_set === null)
-			throw new SwatException(sprintf("Child class '%s' did not ".
+		if (null === $this->_htmlHeadEntrySet) {
+			throw new Zap_Exception(sprintf("Child class '%s' did not ".
 				'instantiate a HTML head entry set. This should be done in  '.
 				'the constructor either by calling parent::__construct() or '.
 				'by creating a new HTML head entry set.', get_class($this)));
+		}
 
-		$this->html_head_entry_set->addEntry(
-			new SwatCommentHtmlHeadEntry($comment, $package_id));
+		$this->_htmlHeadEntrySet->addEntry(
+			new SwatCommentHtmlHeadEntry($comment, $packageId)
+		);
 	}
-
-	// }}}
-	// {{{ public function addTangoAttribution()
 
 	/**
 	 * Convenience method to add Tango attribution comment
@@ -177,9 +177,6 @@ abstract class Zap_UIObject extends Zap_Object
 	{
 	}
 
-	// }}}
-	// {{{ public function getFirstAncestor()
-
 	/**
 	 * Gets the first ancestor object of a specific class
 	 *
@@ -191,19 +188,20 @@ abstract class Zap_UIObject extends Zap_Object
 	 * @return mixed the first ancestor object or null if no matching ancestor
 	 *                is found.
 	 *
-	 * @see SwatUIParent::getFirstDescendant()
+	 * @see Zap_UIParent::getFirstDescendant()
 	 */
 	public function getFirstAncestor($class_name)
 	{
-		if (!class_exists($class_name))
+		if (! class_exists($class_name)) {
 			return null;
+		}
 
-		if ($this->parent === null) {
+		if (null === $this->_parent) {
 			$out = null;
-		} elseif ($this->parent instanceof $class_name) {
-			$out = $this->parent;
+		} elseif ($this->_parent instanceof $class_name) {
+			$out = $this->_parent;
 		} else {
-			$out = $this->parent->getFirstAncestor($class_name);
+			$out = $this->_parent->getFirstAncestor($class_name);
 		}
 
 		return $out;

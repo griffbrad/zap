@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+$dir = opendir('../lib/Zap');
+
+while ($file = readdir($dir)) {
+    if (0 === strpos($file, '.') || is_dir('../lib/Zap/' . $file)) {
+        continue;
+    }
+
+    $contents = file_get_contents('../lib/Zap/' . $file);
+
+    $contents = str_replace(
+        'Swat::',
+        'Zap::',
+        $contents
+    );
+
+    file_put_contents(
+        '../lib/Zap/' . $file,
+        $contents
+    );
+}
+
+closedir($dir);

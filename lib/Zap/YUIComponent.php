@@ -1,14 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
-require_once 'Zap/Object.php';
-require_once 'Zap/JavaScriptHtmlHeadEntry.php';
-require_once 'Zap/StyleSheetHtmlHeadEntry.php';
-require_once 'Zap/HtmlHeadEntrySet.php';
-require_once 'Zap/HtmlHeadEntry.php';
-require_once 'Zap/YUI.php';
-
 /**
  * A component in the Yahoo UI Library
  *
@@ -22,15 +13,13 @@ require_once 'Zap/YUI.php';
  */
 class Zap_YUIComponent extends Zap_Object
 {
-	// {{{ private properties
+	private $_id;
 
-	private $id;
-	private $dependencies = array();
-	private $html_head_entries = array();
-	private $beta = false;
+	private $_dependencies = array();
 
-	// }}}
-	// {{{ public function __construct()
+	private $_htmlHeadEntries = array();
+
+	private $_beta = false;
 
 	/**
 	 * Creates a new YUI component
@@ -44,34 +33,23 @@ class Zap_YUIComponent extends Zap_Object
 	 */
 	public function __construct($id, $beta = false)
 	{
-		$this->id = $id;
-		$this->beta = $beta;
+		$this->_id   = $id;
+		$this->_beta = $beta;
 
-		$this->html_head_entry_set['normal'] =
-			new SwatHtmlHeadEntrySet();
-
-		$this->html_head_entry_set['debug'] =
-			new SwatHtmlHeadEntrySet();
-
-		$this->html_head_entry_set['min'] =
-			new SwatHtmlHeadEntrySet();
+		$this->_htmlHeadEntrySet['normal'] = new Zap_HtmlHeadEntrySet();
+		$this->_htmlHeadEntrySet['debug']  = new Zap_HtmlHeadEntrySet();
+		$this->_htmlHeadEntrySet['min']    = new Zap_HtmlHeadEntrySet();
 	}
-
-	// }}}
-	// {{{ public function addDependency()
 
 	/**
 	 * Adds a YUI component dependency to this YUI component
 	 *
 	 * @param SwatYUIComponent the YUI component this component depends on.
 	 */
-	public function addDependency(SwatYUIComponent $component)
+	public function addDependency(Zap_YUIComponent $component)
 	{
-		$this->dependencies[] = $component;
+		$this->_dependencies[] = $component;
 	}
-
-	// }}}
-	// {{{ public function addJavaScript()
 
 	/**
 	 * Adds a {@link SwatJavaScriptHtmlHeadEntry} to this YUI component
@@ -93,13 +71,15 @@ class Zap_YUIComponent extends Zap_Object
 	 *                          the component is used. Do not specify the file
 	 *                          extension or the -min/-debug suffix here.
 	 */
-	public function addJavaScript($component_directory = '', $filename = '')
+	public function addJavaScript($componentDirectory = '', $filename = '')
 	{
-		if ($component_directory == '')
-			$component_directory = $this->id;
+		if ('' == $componentDirectory) {
+			$componentDirectory = $this->_id;
+		}
 
-		if ($filename == '')
-			$filename = $this->id;
+		if ('' == $filename) {
+			$filename = $this->_id;
+		}
 
 		$modes = array(
 			'min'    => '-min',
@@ -107,24 +87,24 @@ class Zap_YUIComponent extends Zap_Object
 			'normal' => '',
 		);
 
-		if ($this->beta) {
-			$filename_template =
-				'packages/yui/'.$component_directory.'/'.$filename.'-beta%s.js';
+		if ($this->_beta) {
+			$filenameTemplate =
+				'packages/yui/' . $componentDirectory . '/' . $filename . '-beta%s.js';
 		} else {
-			$filename_template =
-				'packages/yui/'.$component_directory.'/'.$filename.'%s.js';
+			$filenameTemplate =
+				'packages/yui/' . $componentDirectory . '/' . $filename . '%s.js';
 		}
 
 		foreach ($modes as $mode => $suffix) {
-			$filename = sprintf($filename_template, $suffix);
-			$this->html_head_entry_set[$mode]->addEntry(
-				new SwatJavaScriptHtmlHeadEntry($filename,
-					SwatYUI::PACKAGE_ID));
+			$filename = sprintf($filenameTemplate, $suffix);
+			$entry    = new Zap_JavaScriptHtmlHeadEntry(
+				$filename, 
+				Zap_YUI::PACKAGE_ID
+			);
+
+			$this->_htmlHeadEntrySet[$mode]->addEntry($entry);
 		}
 	}
-
-	// }}}
-	// {{{ public function addStyleSheet()
 
 	/**
 	 * Adds a {@link SwatStyleSheetHtmlHeadEntry} to this YUI component
@@ -149,14 +129,16 @@ class Zap_YUIComponent extends Zap_Object
 	 *                                  version in the YUI distribution.
 	 *                                  Defaults to true.
 	 */
-	public function addStyleSheet($component_directory = '', $filename = '',
-		$has_min_version = true)
+	public function addStyleSheet($componentDirectory = '', $filename = '',
+		$hasMinVersion = true)
 	{
-		if ($component_directory == '')
-			$component_directory = $this->id;
+		if ('' == $componentDirectory) {
+			$componentDirectory = $this->_id;
+		}
 
-		if ($filename == '')
-			$filename = $this->id;
+		if ('' == $filename) {
+			$filename = $this->_id;
+		}
 
 		$modes = array(
 			'min'    => '-min',
@@ -164,22 +146,23 @@ class Zap_YUIComponent extends Zap_Object
 			'normal' => '',
 		);
 
-		if (!$has_min_version)
+		if (! $hasMinVersion) {
 			$modes['min'] = '';
+		}
 
-		$filename_template =
-			'packages/yui/'.$component_directory.'/'.$filename.'%s.css';
+		$filenameTemplate =
+			'packages/yui/' . $componentDirectory . '/' . $filename.'%s.css';
 
 		foreach ($modes as $mode => $suffix) {
-			$filename = sprintf($filename_template, $suffix);
-			$this->html_head_entry_set[$mode]->addEntry(
-				new SwatStyleSheetHtmlHeadEntry($filename,
-					SwatYUI::PACKAGE_ID));
+			$filename = sprintf($filenameTemplate, $suffix);
+			$entry    = new Zap_StyleSheetHtmlHeadEntry(
+				$filename,
+				Zap_YUI::PACKAGE_ID
+			);
+
+			$this->_htmlHeadEntrySet[$mode]->addEntry($entry);
 		}
 	}
-
-	// }}}
-	// {{{ public function getHtmlHeadEntrySet()
 
 	/**
 	 * Gets the set of {@link SwatHtmlHeadEntry} objects required for this
@@ -190,18 +173,18 @@ class Zap_YUIComponent extends Zap_Object
 	 */
 	public function getHtmlHeadEntrySet($mode = 'min')
 	{
-		$set = new SwatHtmlHeadEntrySet();
-		if (isset($this->html_head_entry_set[$mode])) {
-			foreach ($this->dependencies as $component) {
+		$set = new Zap_HtmlHeadEntrySet();
+
+		if (isset($this->_htmlHeadEntrySet[$mode])) {
+			foreach ($this->_dependencies as $component) {
 				$set->addEntrySet($component->getHtmlHeadEntrySet($mode));
 			}
-			$set->addEntrySet($this->html_head_entry_set[$mode]);
+
+			$set->addEntrySet($this->_htmlHeadEntrySet[$mode]);
 		}
 
 		return $set;
 	}
-
-	// }}}
 }
 
 

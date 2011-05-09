@@ -1,12 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
-require_once 'Zap/Object.php';
-require_once 'Zap/HtmlHeadEntrySet.php';
-require_once 'Zap/YUIComponent.php';
-require_once 'Swat/exceptions/SwatException.php';
-
 /**
  * Object for building Swat HTML head entry dependencies for Yahoo UI Library
  * components
@@ -44,15 +37,10 @@ require_once 'Swat/exceptions/SwatException.php';
  */
 class Zap_YUI extends Zap_Object
 {
-	// {{{ class constants
-
 	/**
 	 * Package ID for YUI component HTML head entries
 	 */
 	const PACKAGE_ID = 'SwatYUI';
-
-	// }}}
-	// {{{ private static properties
 
 	/**
 	 * Static component definitions
@@ -63,20 +51,14 @@ class Zap_YUI extends Zap_Object
 	 * @var array
 	 * @see SwatYUI::buildComponents()
 	 */
-	private static $components = array();
-
-	// }}}
-	// {{{ private properties
+	private static $_components = array();
 
 	/**
 	 * The {@link SwatHtmlHeadEntrySet} required for this SwaYUI object
 	 *
 	 * @var SwatHtmlHeadEntrySet
 	 */
-	private $html_head_entry_set;
-
-	// }}}
-	// {{{ public function __construct()
+	private $_htmlHeadEntrySet;
 
 	/**
 	 * Creates a new SwatYUI HTML head entry set building object
@@ -87,19 +69,17 @@ class Zap_YUI extends Zap_Object
 	 *                      'min', 'normal' or 'debug'. The default mode is
 	 *                      'normal'.
 	 */
-	public function __construct(array $component_ids, $mode = 'normal')
+	public function __construct(array $componentIds, $mode = 'normal')
 	{
 		self::buildComponents();
 
-		if (!is_array($component_ids))
-			$component_ids = array($component_ids);
+		if (! is_array($componentIds)) {
+			$componentIds = array($componentIds);
+		}
 
-		$this->html_head_entry_set =
-			$this->buildHtmlHeadEntrySet($component_ids, $mode);
+		$this->_htmlHeadEntrySet =
+			$this->buildHtmlHeadEntrySet($componentIds, $mode);
 	}
-
-	// }}}
-	// {{{ public function getHtmlHeadEntrySet()
 
 	/**
 	 * Gets the HTML head entry set required for the YUI components of this
@@ -109,11 +89,8 @@ class Zap_YUI extends Zap_Object
 	 */
 	public function getHtmlHeadEntrySet()
 	{
-		return $this->html_head_entry_set;
+		return $this->_htmlHeadEntrySet;
 	}
-
-	// }}}
-	// {{{ private function buildHtmlHeadEntrySet()
 
 	/**
 	 * Builds the HTML head entry set required for the YUI components of this
@@ -126,33 +103,28 @@ class Zap_YUI extends Zap_Object
 	 * @return SwatHtmlHeadEntrySet the full constructed set of HTML head
 	 *                               entries.
 	 */
-	private function buildHtmlHeadEntrySet(array $component_ids, $mode)
+	private function buildHtmlHeadEntrySet(array $componentIds, $mode)
 	{
-		$set = new SwatHtmlHeadEntrySet();
+		$set = new Zap_HtmlHeadEntrySet();
 
-		foreach ($component_ids as $component_id) {
+		foreach ($componentIds as $componentId) {
 			$set->addEntrySet(
-				self::$components[$component_id]->getHtmlHeadEntrySet($mode));
+				self::$_components[$componentId]->getHtmlHeadEntrySet($mode)
+			);
 		}
 
-		$set->addEntry($this->getAttributionHtmlHeadEntry());
+		$set->addEntry($this->_getAttributionHtmlHeadEntry());
 
 		return $set;
 	}
 
-	// }}}
-	// {{{ private function getAttributionHtmlHeadEntry()
-
-	private function getAttributionHtmlHeadEntry()
+	private function _getAttributionHtmlHeadEntry()
 	{
 		$comment = "Yahoo! UI Library (YUI) is Copyright (c) 2007-2009, ".
 			"Yahoo! Inc.\n\t     http://developer.yahoo.com/yui/license.html";
 
-		return new SwatCommentHtmlHeadEntry($comment, self::PACKAGE_ID);
+		return new Zap_CommentHtmlHeadEntry($comment, self::PACKAGE_ID);
 	}
-
-	// }}}
-	// {{{ private static function buildComponents()
 
 	/**
 	 * Builds the YUI component definitions and dependency information
@@ -162,129 +134,130 @@ class Zap_YUI extends Zap_Object
 	 */
 	private static function buildComponents()
 	{
-		static $components_built = false;
-		static $components = array();
+		static $componentsBuilt = false;
+		static $components      = array();
 
-		if ($components_built)
+		if ($componentsBuilt) {
 			return;
+		}
 
-		$components['animation'] = new SwatYUIComponent('animation');
+		$components['animation'] = new Zap_YUIComponent('animation');
 		$components['animation']->addJavaScript();
 
-		$components['autocomplete'] = new SwatYUIComponent('autocomplete');
+		$components['autocomplete'] = new Zap_YUIComponent('autocomplete');
 		$components['autocomplete']->addJavaScript();
 
-		$components['base'] = new SwatYUIComponent('base');
+		$components['base'] = new Zap_YUIComponent('base');
 		$components['base']->addStyleSheet();
 
-		$components['button'] = new SwatYUIComponent('button');
+		$components['button'] = new Zap_YUIComponent('button');
 		$components['button']->addJavaScript();
 		$components['button']->addStyleSheet('button/assets/skins/sam', '',
 			false);
 
-		$components['calendar'] = new SwatYUIComponent('calendar');
+		$components['calendar'] = new Zap_YUIComponent('calendar');
 		$components['calendar']->addJavaScript();
 
-		$components['charts'] = new SwatYUIComponent('charts');
+		$components['charts'] = new Zap_YUIComponent('charts');
 		$components['charts']->addJavaScript();
 
-		$components['connection'] = new SwatYUIComponent('connection');
+		$components['connection'] = new Zap_YUIComponent('connection');
 		$components['connection']->addJavaScript();
 
-		$components['container'] = new SwatYUIComponent('container');
+		$components['container'] = new Zap_YUIComponent('container');
 		$components['container']->addJavaScript();
 		$components['container']->addStyleSheet('container/assets', '', false);
 
-		$components['container_core'] = new SwatYUIComponent('container_core');
+		$components['container_core'] = new Zap_YUIComponent('container_core');
 		$components['container_core']->addJavaScript('container');
 		$components['container_core']->addStyleSheet('container/assets',
 			'container-core', false);
 
-		$components['datasource'] = new SwatYUIComponent('datasource');
+		$components['datasource'] = new Zap_YUIComponent('datasource');
 		$components['datasource']->addJavaScript();
 
-		$components['datatable'] = new SwatYUIComponent('datatable');
+		$components['datatable'] = new Zap_YUIComponent('datatable');
 		$components['datatable']->addJavaScript();
 		$components['datatable']->addStyleSheet('datatable/assets/skins/sam', '',
 			false);
 
-		$components['dom'] = new SwatYUIComponent('dom');
+		$components['dom'] = new Zap_YUIComponent('dom');
 		$components['dom']->addJavaScript();
 
-		$components['dragdrop'] = new SwatYUIComponent('dragdrop');
+		$components['dragdrop'] = new Zap_YUIComponent('dragdrop');
 		$components['dragdrop']->addJavaScript();
 
-		$components['editor'] = new SwatYUIComponent('editor');
+		$components['editor'] = new Zap_YUIComponent('editor');
 		$components['editor']->addJavaScript();
 		$components['editor']->addStyleSheet('editor/assets/skins/sam', '',
 			false);
 
-		$components['simpleeditor'] = new SwatYUIComponent('simpleeditor');
+		$components['simpleeditor'] = new Zap_YUIComponent('simpleeditor');
 		$components['simpleeditor']->addJavaScript('editor');
 		$components['simpleeditor']->addStyleSheet('editor/assets/skins/sam',
 			'', false);
 
-		$components['element'] = new SwatYUIComponent('element');
+		$components['element'] = new Zap_YUIComponent('element');
 		$components['element']->addJavaScript();
 
-		$components['event'] = new SwatYUIComponent('event');
+		$components['event'] = new Zap_YUIComponent('event');
 		$components['event']->addJavaScript();
 
-		$components['fonts'] = new SwatYUIComponent('fonts');
+		$components['fonts'] = new Zap_YUIComponent('fonts');
 		$components['fonts']->addStyleSheet();
 
-		$components['grids'] = new SwatYUIComponent('grids');
+		$components['grids'] = new Zap_YUIComponent('grids');
 		$components['grids']->addStyleSheet();
 
-		$components['imagecropper'] = new SwatYUIComponent('imagecropper');
+		$components['imagecropper'] = new Zap_YUIComponent('imagecropper');
 		$components['imagecropper']->addJavaScript();
 		$components['imagecropper']->addStyleSheet(
 			'imagecropper/assets/skins/sam', '', false);
 
-		$components['json'] = new SwatYUIComponent('json');
+		$components['json'] = new Zap_YUIComponent('json');
 		$components['json']->addJavaScript();
 
-		$components['logger'] = new SwatYUIComponent('logger');
+		$components['logger'] = new Zap_YUIComponent('logger');
 		$components['logger']->addJavaScript();
 
-		$components['menu'] = new SwatYUIComponent('menu');
+		$components['menu'] = new Zap_YUIComponent('menu');
 		$components['menu']->addJavaScript();
 		$components['menu']->addStyleSheet('menu/assets/skins/sam', '', false);
 
-		$components['paginator'] = new SwatYUIComponent('paginator');
+		$components['paginator'] = new Zap_YUIComponent('paginator');
 		$components['paginator']->addJavaScript();
 		$components['paginator']->addStyleSheet(
 			'paginator/assets/skins/sam', '', false);
 
-		$components['reset-fonts-grids'] = new SwatYUIComponent('reset-fonts-grids');
+		$components['reset-fonts-grids'] = new Zap_YUIComponent('reset-fonts-grids');
 		$components['reset-fonts-grids']->addStyleSheet('', '', false);
 
-		$components['reset'] = new SwatYUIComponent('reset');
+		$components['reset'] = new Zap_YUIComponent('reset');
 		$components['reset']->addStyleSheet();
 
-		$components['resize'] = new SwatYUIComponent('resize');
+		$components['resize'] = new Zap_YUIComponent('resize');
 		$components['resize']->addJavaScript();
 		$components['resize']->addStyleSheet(
 			'resize/assets/skins/sam', '', false);
 
-		$components['slider'] = new SwatYUIComponent('slider');
+		$components['slider'] = new Zap_YUIComponent('slider');
 		$components['slider']->addJavaScript();
 
-		$components['stylesheet'] = new SwatYUIComponent('stylesheet');
+		$components['stylesheet'] = new Zap_YUIComponent('stylesheet');
 		$components['stylesheet']->addJavaScript();
 
-		$components['swf'] = new SwatYUIComponent('swf');
+		$components['swf'] = new Zap_YUIComponent('swf');
 		$components['swf']->addJavaScript();
 
-		$components['tabview'] = new SwatYUIComponent('tabview');
+		$components['tabview'] = new Zap_YUIComponent('tabview');
 		$components['tabview']->addJavaScript();
 		$components['tabview']->addStyleSheet(
 			'tabview/assets/skins/sam', '', false);
 
-		$components['treeview'] = new SwatYUIComponent('treeview');
+		$components['treeview'] = new Zap_YUIComponent('treeview');
 		$components['treeview']->addJavaScript();
 
-		$components['yahoo'] = new SwatYUIComponent('yahoo');
+		$components['yahoo'] = new Zap_YUIComponent('yahoo');
 		$components['yahoo']->addJavaScript();
 
 		// dependencies
@@ -415,12 +388,10 @@ class Zap_YUI extends Zap_Object
 
 		$components['treeview']->addDependency($components['yahoo']);
 
-		self::$components = $components;
+		self::$_components = $components;
 
-		$components_built = true;
+		$componentsBuilt = true;
 	}
-
-	// }}}
 }
 
 

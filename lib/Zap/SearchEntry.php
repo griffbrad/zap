@@ -13,8 +13,6 @@ require_once 'Zap/Entry.php';
  */
 class Zap_SearchEntry extends Zap_Entry
 {
-	// {{{ public properties
-
 	/**
 	 * An XHTML name for this search entry widget
 	 *
@@ -24,28 +22,26 @@ class Zap_SearchEntry extends Zap_Entry
 	 *
 	 * @var string
 	 */
-	public $name;
-
-	// }}}
-	// {{{ public function __construct()
-
+	public $_name;
+	
 	public function __construct($id = null)
 	{
 		parent::__construct($id);
 
-		$this->requires_id = true;
+		$this->_requiresId = true;
 
-		$yui = new SwatYUI(array('dom', 'event'));
-		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
-		$this->addJavaScript('packages/swat/javascript/swat-search-entry.js',
-			Zap::PACKAGE_ID);
+		$yui = new Zap_YUI(array('dom', 'event'));
+		$this->_htmlHeadEntrySet->addEntrySet($yui->getHtmlHeadEntrySet());
+		$this->addJavaScript(
+			'packages/swat/javascript/swat-search-entry.js',
+			Zap::PACKAGE_ID
+		);
 
-		$this->addStyleSheet('packages/swat/styles/swat-search-entry.css',
-			Zap::PACKAGE_ID);
+		$this->addStyleSheet(
+			'packages/swat/styles/swat-search-entry.css',
+			Zap::PACKAGE_ID
+		);
 	}
-
-	// }}}
-	// {{{ public function display()
 
 	/**
 	 * Displays this search entry
@@ -54,16 +50,14 @@ class Zap_SearchEntry extends Zap_Entry
 	 */
 	public function display()
 	{
-		if (!$this->visible)
+		if (! $this->_visible) {
 			return;
+		}
 
 		parent::display();
 
-		Zap::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->_getInlineJavaScript());
 	}
-
-	// }}}
-	// {{{ protected function getInlineJavaScript()
 
 	/**
 	 * Gets the inline JavaScript for this entry to function
@@ -74,26 +68,21 @@ class Zap_SearchEntry extends Zap_Entry
 	 * @return srting the inline JavaScript required for this control to
 	 *					function
 	 */
-	protected function getInlineJavaScript()
+	protected function _getInlineJavaScript()
 	{
-		return "var {$this->id}_obj = new SwatSearchEntry('{$this->id}');";
+		return "var {$this->_id}_obj = new SwatSearchEntry('{$this->_id}');";
 	}
-
-	// }}}
-	// {{{ protected function getInputTag()
 
 	protected function getInputTag()
 	{
 		$tag = parent::getInputTag();
 
-		if ($this->name !== null)
-			$tag->name = $this->name;
+		if (null !== $this->_name) {
+			$tag->_name = $this->_name;
+		}
 
 		return $tag;
 	}
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
 
 	/**
 	 * Gets the array of CSS classes that are applied to this entry
@@ -101,15 +90,12 @@ class Zap_SearchEntry extends Zap_Entry
 	 * @return array the array of CSS classes that are applied to this
 	 *                entry.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-search-entry');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
-
-	// }}}
-	// {{{ protected function getRawValue()
 
 	/**
 	 * Gets the raw value entered by the user before processing
@@ -134,9 +120,6 @@ class Zap_SearchEntry extends Zap_Entry
 		return $value;
 	}
 
-	// }}}
-	// {{{ protected function hasRawValue()
-
 	/**
 	 * Gets whether or not a value was submitted by the user for this entry
 	 *
@@ -148,22 +131,21 @@ class Zap_SearchEntry extends Zap_Entry
 	 */
 	protected function hasRawValue()
 	{
-		$has_value = false;
+		$hasValue = false;
 
-		if ($this->name === null) {
-			$has_value = parent::hasRawValue();
+		if (null === $this->name) {
+			$hasValue = parent::hasRawValue();
 		} else {
 			$data = &$this->getForm()->getFormData();
-			$id = $this->name;
+			$id   = $this->_name;
+
 			if (isset($data[$id])) {
-				$has_value = true;
+				$hasValue = true;
 			}
 		}
 
-		return $has_value;
+		return $hasValue;
 	}
-
-	// }}}
 }
 
 

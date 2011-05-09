@@ -28,22 +28,24 @@ abstract class Zap_Control extends Zap_Widget
 	 */
 	public function addMessage(Zap_Message $message)
 	{
-		if ($this->_parent instanceof SwatTitleable) {
+		if (! $this->_parent instanceof Zap_Titleable) {
+			$fieldTitle = '';
+		} else {
 			$title = $this->_parent->getTitle();
-			if ($title === null)
-				$field_title = '';
-			else
-				if ($this->_parent->getTitleContentType() === 'text/xml') {
-					$field_title =
-						'<strong>'.$this->parent->getTitle().'</strong>';
+
+			if (null === $title) {
+				$fieldTitle = '';
+			} else {
+				if ('text/xml' === $this->_parent->getTitleContentType()) {
+					$fieldTitle =
+						'<strong>'.$this->_parent->getTitle().'</strong>';
 				} else {
-					$field_title =
+					$fieldTitle =
 						'<strong>'.
-						SwatString::minimizeEntities($this->parent->getTitle()).
+						Zap_String::minimizeEntities($this->_parent->getTitle()).
 						'</strong>';
 				}
-		} else {
-			$field_title = '';
+			}
 		}
 
 		if ('text/plain' === $message->getContentType()) {
@@ -52,7 +54,7 @@ abstract class Zap_Control extends Zap_Widget
 			$content = $message->getPrimaryContent();
 		}
 
-		$message->setPrimaryContent(sprintf($content, $field_title))
+		$message->setPrimaryContent(sprintf($content, $fieldTitle))
 			    ->setContentType('text/xml');
 
 		parent::addMessage($message);

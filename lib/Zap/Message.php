@@ -131,6 +131,18 @@ class Zap_Message extends Zap_Object
 		return $this->_primaryContent;
 	}
 
+	public function setSecondaryContent($secondaryContent)
+	{
+		$this->_secondaryContent = $secondaryContent;
+
+		return $this;
+	}
+
+	public function getSecondaryContent()
+	{
+		return $this->_secondaryContent;
+	}
+
 	public function setContentType($contentType)
 	{
 		$this->_contentType = $contentType;

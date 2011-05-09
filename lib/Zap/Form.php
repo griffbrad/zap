@@ -3,10 +3,10 @@
 /**
  * A form widget which can contain other widgets
  *
- * SwatForms are very useful for processing widgets. For most widgets, if they
- * are not inside a SwatForm they will not be able to be processed properly.
+ * Zap_Forms are very useful for processing widgets. For most widgets, if they
+ * are not inside a Zap_Form they will not be able to be processed properly.
  *
- * With Swat's default style, SwatForm widgets have no visible margins, padding
+ * With Swat's default style, Zap_Form widgets have no visible margins, padding
  * or borders.
  *
  * @package   Zap
@@ -149,8 +149,8 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var string
 	 *
-	 * @see SwatForm::setDefault8BitEncoding()
-	 * @see SwatForm::set8BitEncoding()
+	 * @see Zap_Form::setDefault8BitEncoding()
+	 * @see Zap_Form::set8BitEncoding()
 	 */
 	protected static $_default8bitEncoding = 'windows-1252';
 
@@ -162,7 +162,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var string
 	 *
-	 * @see SwatForm::set8BitEncoding()
+	 * @see Zap_Form::set8BitEncoding()
 	 */
 	protected $_8bitEncoding = null;
 
@@ -174,12 +174,12 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * {@link https://bugs.webkit.org/show_bug.cgi?id=5760 Webkit bug #5760}.
 	 *
 	 * By default, no Connection: close URI is specified. In this case, no
-	 * workaround is attempted when SwatForm forms are submitted.
+	 * workaround is attempted when Zap_Form forms are submitted.
 	 *
 	 * @var string
 	 *
-	 * @see SwatForm::setDefaultConnectionCloseUri()
-	 * @see SwatForm::setConnectionCloseUri()
+	 * @see Zap_Form::setDefaultConnectionCloseUri()
+	 * @see Zap_Form::setConnectionCloseUri()
 	 */
 	protected static $_defaultConnectionCloseUri = null;
 
@@ -191,18 +191,18 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var string
 	 *
-	 * @see SwatForm::setConnectionCloseUri()
+	 * @see Zap_Form::setConnectionCloseUri()
 	 */
 	protected $_connectionCloseUri = null;
 
 	/**
 	 * The method to use for this form
 	 *
-	 * Is one of SwatForm::METHOD_* constants.
+	 * Is one of Zap_Form::METHOD_* constants.
 	 *
 	 * @var string
 	 */
-	private $_method = SwatForm::METHOD_POST;
+	private $_method = Zap_Form::METHOD_POST;
 
 	/**
 	 * The token value used to prevent cross-site request forgeries
@@ -212,9 +212,9 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var string
 	 *
-	 * @see SwatForm::setAuthenticationToken()
-	 * @see SwatForm::clearAuthenticationToken()
-	 * @see SwatForm::isAuthenticated()
+	 * @see Zap_Form::setAuthenticationToken()
+	 * @see Zap_Form::clearAuthenticationToken()
+	 * @see Zap_Form::isAuthenticated()
 	 */
 	private static $_authenticationToken = null;
 
@@ -253,16 +253,16 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * Sets the HTTP method this form uses to send data
 	 *
 	 * @param string $method a method constant. Must be one of
-	 *                        SwatForm::METHOD_* otherwise an error is thrown.
+	 *                        Zap_Form::METHOD_* otherwise an error is thrown.
 	 *
 	 * @throws SwatException
 	 */
 	public function setMethod($method)
 	{
-		$validMethods = array(SwatForm::METHOD_POST, SwatForm::METHOD_GET);
+		$validMethods = array(Zap_Form::METHOD_POST, Zap_Form::METHOD_GET);
 
 		if (! in_array($method, $validMethods)) {
-			throw new SwatException("'{$method}' is not a valid form method.");
+			throw new Zap_Exception("'{$method}' is not a valid form method.");
 		}
 
 		$this->_method = $method;
@@ -296,7 +296,7 @@ class Zap_Form extends Zap_DisplayableContainer
 			return;
 		}
 
-		SwatWidget::display();
+		Zap_Widget::display();
 
 		$this->addHiddenField(self::PROCESS_FIELD, $this->_id);
 
@@ -308,7 +308,7 @@ class Zap_Form extends Zap_DisplayableContainer
 		$formTag->close();
 
 		if ('' != $this->_connectionCloseUri) {
-			$yui = new SwatYUI(array('event'));
+			$yui = new Zap_YUI(array('event'));
 			$this->html_head_entry_set->addEntrySet(
 				$yui->getHtmlHeadEntrySet());
 		}
@@ -351,15 +351,15 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * form fields are outputted as <i>type="hidden"</i> input tags. Values are
 	 * serialized before being output so the value can be either a primitive
 	 * type or an object. Unserialization happens automatically when
-	 * {@link SwatForm::getHiddenField()} is used to retrieve the value. For
+	 * {@link Zap_Form::getHiddenField()} is used to retrieve the value. For
 	 * non-array and non-object types, the value is also stored as an
 	 * unserialized value that can be retrieved without using
-	 * SwatForm::getHiddenField().
+	 * Zap_Form::getHiddenField().
 	 *
 	 * @param string $name the name of the field.
 	 * @param mixed $value the value of the field, either a string or an array.
 	 *
-	 * @see SwatForm::getHiddenField()
+	 * @see Zap_Form::getHiddenField()
 	 *
 	 * @throws SwatInvalidTypeException if an attempt is made to add a value
 	 *                                  of type 'resource'.
@@ -368,7 +368,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	{
 		if (is_resource($value)) {
 			throw new Zap_Exception_InvalidType(
-				'Cannot add a hidden field of type ‘resource’ to a SwatForm.',
+				'Cannot add a hidden field of type ‘resource’ to a Zap_Form.',
 				0, $value);
 		}
 
@@ -396,17 +396,19 @@ class Zap_Form extends Zap_DisplayableContainer
 
 		// get value of a hidden field we've already unserialized after
 		// processing this form
-		if (isset($this->hidden_fields[$name])) {
-			$data = $this->hidden_fields[$name];
+		if (isset($this->_hiddenFields[$name])) {
+			$data = $this->_hiddenFields[$name];
 
 		// otherwise, make sure this form was processed and get hidden field
 		// from raw form data
-		} elseif (!$this->processed && $this->isSubmitted()) {
-			$raw_data = $this->getFormData();
-			$serialized_field_name = self::SERIALIZED_PREFIX.$name;
-			if (isset($raw_data[$serialized_field_name])) {
-				$data = $this->unserializeHiddenField(
-					$raw_data[$serialized_field_name]);
+		} elseif (! $this->_processed && $this->isSubmitted()) {
+			$rawData = $this->getFormData();
+			$serializedFieldName = self::SERIALIZED_PREFIX . $name;
+
+			if (isset($rawData[$serializedFieldName])) {
+				$data = $this->_unserializeHiddenField(
+					$rawData[$serializedFieldName]
+				);
 			}
 		}
 
@@ -422,12 +424,12 @@ class Zap_Form extends Zap_DisplayableContainer
 	}
 
 	/**
-	 * Adds a widget within a new SwatFormField
+	 * Adds a widget within a new Zap_Form
 	 *
 	 * This is a convenience method that does the following:
-	 * - creates a new SwatFormField,
+	 * - creates a new Zap_Form,
 	 * - adds the widget as a child of the form field,
-	 * - and then adds the SwatFormField to this form.
+	 * - and then adds the Zap_Form to this form.
 	 *
 	 * @param SwatWidget $widget a reference to a widget to add.
 	 * @param string $title the visible title of the form field.
@@ -453,11 +455,11 @@ class Zap_Form extends Zap_DisplayableContainer
 	{
 		$data = null;
 
-		switch ($this->method) {
-		case SwatForm::METHOD_POST:
+		switch ($this->_method) {
+		case Zap_Form::METHOD_POST:
 			$data = &$_POST;
 			break;
-		case SwatForm::METHOD_GET:
+		case Zap_Form::METHOD_GET:
 			$data = &$_GET;
 			break;
 		}
@@ -468,9 +470,9 @@ class Zap_Form extends Zap_DisplayableContainer
 	/**
 	 * Whether or not this form was submitted on the previous page request
 	 *
-	 * This method may becalled before or after the SwatForm::process() method.
-	 * and is thus sometimes more useful than SwatForm::isProcessed() which
-	 * only returns a meaningful value after SwatForm::process() is called.
+	 * This method may becalled before or after the Zap_Form::process() method.
+	 * and is thus sometimes more useful than Zap_Form::isProcessed() which
+	 * only returns a meaningful value after Zap_Form::process() is called.
 	 *
 	 * @return boolean true if this form was submitted on the previous page
 	 *                  request and false if it was not.
@@ -479,15 +481,15 @@ class Zap_Form extends Zap_DisplayableContainer
 	{
 		$rawData = $this->getFormData();
 
-		return (isset($rawData[self::PROCESS_FIELD]) &&
-			$rawData[self::PROCESS_FIELD] == $this->_id);
+		return (isset($rawData[self::PROCESS_FIELD]) 
+			&& $rawData[self::PROCESS_FIELD] == $this->_id);
 	}
 
 	/**
 	 * Whether or not this form is authenticated
 	 *
 	 * This can be used to catch cross-site request forgeries if the
-	 * {@link SwatForm::setAuthenticationToken()} method was previously called.
+	 * {@link Zap_Form::setAuthenticationToken()} method was previously called.
 	 *
 	 * If form authentication is used, processing should only be performed on
 	 * authenticated forms. An unauthenticated form may be a malicious
@@ -511,7 +513,7 @@ class Zap_Form extends Zap_DisplayableContainer
 		$token   = null;
 
 		if (isset($raw_data[self::AUTHENTICATION_TOKEN_FIELD])) {
-			$token = SwatString::signedUnserialize(
+			$token = Zap_String::signedUnserialize(
 				$raw_data[self::AUTHENTICATION_TOKEN_FIELD], 
 				$this->_salt
 			);
@@ -521,8 +523,8 @@ class Zap_Form extends Zap_DisplayableContainer
 		 * If this form's authentication token is set, the token in submitted
 		 * data must match.
 		 */
-		return (null === self::$_authenticationToken ||
-			self::$_authenticationToken === $token);
+		return (null === self::$_authenticationToken 
+			|| self::$_authenticationToken === $token);
 	}
 
 	/**
@@ -563,7 +565,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @param string $encoding the encoding to use. If null is specified, no
 	 *                          character encoding conversion is performed.
 	 *
-	 * @see SwatForm::setDefault8BitEncoding()
+	 * @see Zap_Form::setDefault8BitEncoding()
 	 */
 	public function set8BitEncoding($encoding)
 	{
@@ -581,7 +583,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *                                      no workarounds will be performed
 	 *                                      for Safari.
 	 *
-	 * @see SwatForm::setDefaultConnectionCloseUri()
+	 * @see Zap_Form::setDefaultConnectionCloseUri()
 	 */
 	public function setConnectionCloseUri($connectionCloseUri)
 	{
@@ -598,7 +600,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @param string $encoding the encoding to use. If null is specified, no
 	 *                          character encoding conversion is performed.
 	 *
-	 * @see SwatForm::set8BitEncoding()
+	 * @see Zap_Form::set8BitEncoding()
 	 */
 	public static function setDefault8BitEncoding($encoding)
 	{
@@ -617,7 +619,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *                                      for Safari. The null behavior is
 	 *                                      the default behavior.
 	 *
-	 * @see SwatForm::setConnectionCloseUri()
+	 * @see Zap_Form::setConnectionCloseUri()
 	 */
 	public static function setDefaultConnectionCloseUri($connectionCloseUri)
 	{
@@ -675,7 +677,7 @@ class Zap_Form extends Zap_DisplayableContainer
 		if (! isset($raw_data[$serialized_field_name])) {
 			return;
 		} else {
-			$fields = SwatString::signedUnserialize(
+			$fields = Zap_String::signedUnserialize(
 				$rawData[$serializedFieldName], 
 				$this->_salt
 			);
@@ -685,7 +687,7 @@ class Zap_Form extends Zap_DisplayableContainer
 			$serializedFieldName = self::SERIALIZED_PREFIX . $name;
 
 			if (isset($rawData[$serializedFieldName])) {
-				$this->hiddenFields[$name] = $this->unserializeHiddenField(
+				$this->hiddenFields[$name] = $this->_unserializeHiddenField(
 					$rawData[$serializedFieldName]);
 			}
 		}
@@ -695,7 +697,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * Detects 8-bit character encoding in form data and converts data to UTF-8
 	 *
 	 * Conversion is only performed if this form's 8-bit encoding is set. This
-	 * form's 8-bit encoding may be set automatically if the SwatForm default
+	 * form's 8-bit encoding may be set automatically if the Zap_Form default
 	 * 8-bit encoding is set.
 	 *
 	 * This algorithm is adapted from a blog post at
@@ -762,9 +764,6 @@ class Zap_Form extends Zap_DisplayableContainer
 		}
 	}
 
-	// }}}
-	// {{{ protected function displayHiddenFields()
-
 	/**
 	 * Displays hidden form fields
 	 *
@@ -778,14 +777,14 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * If an authentication token is set on this form to prevent cross-site
 	 * request forgeries, the token is displayed in a hidden field.
 	 */
-	protected function displayHiddenFields()
+	protected function _displayHiddenFields()
 	{
-		$input_tag = new SwatHtmlTag('input');
-		$input_tag->type = 'hidden';
+		$inputTag = new Zap_HtmlTag('input');
+		$inputTag->type = 'hidden';
 
 		echo '<div class="swat-hidden">';
 
-		if ($this->_8bit_encoding !== null) {
+		if (null !== $this->_8bitEncoding) {
 			// The character encoding detection field is intentionally not using
 			// SwatHtmlTag to avoid minimizing entities.
 			echo '<input type="hidden" ',
@@ -793,66 +792,65 @@ class Zap_Form extends Zap_DisplayableContainer
 				'value="', self::ENCODING_ENTITY_VALUE, '" />';
 		}
 
-		foreach ($this->hidden_fields as $name => $value) {
+		foreach ($this->_hiddenFields as $name => $value) {
 			// display unserialized value for primative types
-			if ($value !== null && !is_array($value) && !is_object($value)) {
+			if (null !== $value && ! is_array($value) && ! is_object($value)) {
 
-				// SwatHtmlTag uses SwatString::minimizeEntities(), which
+				// SwatHtmlTag uses Zap_String::minimizeEntities(), which
 				// prevents double-escaping entities. For hidden form-fields,
 				// we want data to be returned exactly as it was specified. This
 				// necessitates double-escaping to ensure any entities that were
 				// specified in the hidden field value are returned correctly.
-				$escaped_value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
+				$escapedValue = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
 
-				$input_tag->name = $name;
-				$input_tag->value = $escaped_value;
-				$input_tag->display();
+				$inputTag->name  = $name;
+				$inputTag->value = $escapedValue;
+				$inputTag->display();
 			}
 
 			// display serialized value
-			$serialized_data = $this->serializeHiddenField($value);
+			$serializedData = $this->_serializeHiddenField($value);
 
-			// SwatHtmlTag uses SwatString::minimizeEntities(), which prevents
+			// SwatHtmlTag uses Zap_String::minimizeEntities(), which prevents
 			// double-escaping entities. For hidden form-fields, we want data
 			// to be returned exactly as it was specified. This  necessitates
 			// double-escaping to ensure any entities that were specified in
 			// the hidden field value are returned correctly.
-			$escaped_serialized_data = htmlspecialchars($serialized_data,
+			$escapedSerializedData = htmlspecialchars($serializedData,
 				ENT_COMPAT, 'UTF-8');
 
-			$input_tag->name = self::SERIALIZED_PREFIX.$name;
-			$input_tag->value = $escaped_serialized_data;
-			$input_tag->display();
+			$inputTag->name  = self::SERIALIZED_PREFIX . $name;
+			$inputTag->value = $escapedSerializedData;
+			$inputTag->display();
 		}
 
 		// display hidden field names
-		if (count($this->hidden_fields) > 0) {
+		if (0 < count($this->_hiddenFields)) {
 			// array of field names
-			$serialized_data = SwatString::signedSerialize(
-				array_keys($this->hidden_fields), $this->salt);
+			$serializedData = Zap_String::signedSerialize(
+				array_keys($this->_hiddenFields), $this->_salt);
 
-			$input_tag->name = self::HIDDEN_FIELD;
-			$input_tag->value = $serialized_data;
-			$input_tag->display();
+			$inputTag->name  = self::HIDDEN_FIELD;
+			$inputTag->value = $serializedData;
+			$inputTag->display();
 		}
 
 		// display authentication token
-		if (self::$authentication_token !== null) {
-			$serialized_data = SwatString::signedSerialize(
-				self::$authentication_token, $this->salt);
+		if (null !== self::$_authenticationToken) {
+			$serializedData = Zap_String::signedSerialize(
+				self::$_authentication_token, 
+				$this->_salt
+			);
 
-			$input_tag = new SwatHtmlTag('input');
-			$input_tag->type = 'hidden';
-			$input_tag->name = self::AUTHENTICATION_TOKEN_FIELD;
-			$input_tag->value = $serialized_data;
-			$input_tag->display();
+			$inputTag = new SwatHtmlTag('input');
+			$inputTag->type  = 'hidden';
+			$inputTag->name  = self::AUTHENTICATION_TOKEN_FIELD;
+			$inputTag->value = $serializedData;
+			$inputTag->display();
 		}
 
 		echo '</div>';
 	}
-
-	// }}}
-	// {{{ protected fucntion getFormTag()
 
 	/**
 	 * Gets the XHTML form tag used to display this form
@@ -861,39 +859,33 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	protected function getFormTag()
 	{
-		$form_tag = new SwatHtmlTag('form');
+		$formTag = new Zap_HtmlTag('form');
 
-		$form_tag->addAttributes(
+		$formTag->addAttributes(
 			array(
-				'id'             => $this->id,
-				'method'         => $this->method,
-				'enctype'        => $this->encoding_type,
-				'accept-charset' => $this->accept_charset,
-				'action'         => $this->action,
-				'class'          => $this->getCSSClassString(),
+				'id'             => $this->_id,
+				'method'         => $this->_method,
+				'enctype'        => $this->_encodingType,
+				'accept-charset' => $this->_acceptCharset,
+				'action'         => $this->_action,
+				'class'          => $this->_getCSSClassString(),
 			)
 		);
 
-		return $form_tag;
+		return $formTag;
 	}
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
 
 	/**
 	 * Gets the array of CSS classes that are applied to this form
 	 *
 	 * @return array the array of CSS classes that are applied to this form.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-form');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
-
-	// }}}
-	// {{{ protected function getInlineJavaScript()
 
 	/**
 	 * Gets inline JavaScript required for this form
@@ -902,48 +894,51 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @return string inline JavaScript required for this form.
 	 */
-	protected function getInlineJavaScript()
+	protected function _getInlineJavaScript()
 	{
-		$javascript = sprintf("var %s_obj = new %s(%s, %s);",
-			$this->id,
-			$this->getJavaScriptClass(),
-			SwatString::quoteJavaScriptString($this->id),
-			SwatString::quoteJavaScriptString($this->connection_close_uri));
+		$javaScript = sprintf(
+			"var %s_obj = new %s(%s, %s);",
+			$this->_id,
+			$this->_getJavaScriptClass(),
+			Zap_String::quoteJavaScriptString($this->_id),
+			Zap_String::quoteJavaScriptString($this->_connectionCloseUri)
+		);
 
-		if ($this->autofocus) {
+		if ($this->_autofocus) {
 			$focusable = true;
-			if ($this->default_focused_control === null) {
+
+			if (null === $this->_defaultFocusedControl) {
 				$control = $this->getFirstDescendant('SwatControl');
-				if ($control === null) {
+
+				if (null === $control) {
 					$focusable = false;
 				} else {
-					$focus_id = $control->getFocusableHtmlId();
-					if ($focus_id === null)
+					$focusId = $control->getFocusableHtmlId();
+
+					if ($focusId === null) {
 						$focusable = false;
+					}
 				}
 			} else {
-				$focus_id =
-					$this->default_focused_control->getFocusableHtmlId();
+				$focusId = $this->_defaultFocusedControl->getFocusableHtmlId();
 
-				if ($focus_id === null)
+				if (null === $focusId) {
 					$focusable = false;
+				}
 			}
 
-			if ($focusable)
-				$javascript.=
-					"\n{$this->id}_obj.setDefaultFocus('{$focus_id}');";
+			if ($focusable) {
+				$javascript .= 
+					"\n{$this->_id}_obj.setDefaultFocus('{$focusId}');";
+			}
 		}
 
-		if (!$this->autocomplete) {
-			$javascript.=
-				"\n{$this->id}_obj.setAutocomplete(false);";
+		if (! $this->_autocomplete) {
+			$javascript .= "\n{$this->_id}_obj.setAutocomplete(false);";
 		}
 
 		return $javascript;
 	}
-
-	// }}}
-	// {{{ protected function getJavaScriptClass()
 
 	/**
 	 * Gets the name of the JavaScript class to instantiate for this form
@@ -952,15 +947,12 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * JavaScript form class.
 	 *
 	 * @return string the name of the JavaScript class to instantiate for this
-	 *                 form . Defaults to 'SwatForm'.
+	 *                 form . Defaults to 'Zap_Form'.
 	 */
-	protected function getJavaScriptClass()
+	protected function _getJavaScriptClass()
 	{
 		return 'SwatForm';
 	}
-
-	// }}}
-	// {{{ protected function serializeHiddenField()
 
 	/**
 	 * Serializes a hidden field value into a string safe for including in
@@ -971,9 +963,9 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @return string the hidden field value serialized for safely including in
 	 *                 form data.
 	 */
-	protected function serializeHiddenField($value)
+	protected function _serializeHiddenField($value)
 	{
-		$value = SwatString::signedSerialize($value, $this->salt);
+		$value = Zap_String::signedSerialize($value, $this->_salt);
 
 		// escape special characters that confuse browsers (mostly IE;
 		// null characters confuse all browsers)
@@ -985,12 +977,9 @@ class Zap_Form extends Zap_DisplayableContainer
 		return $value;
 	}
 
-	// }}}
-	// {{{ protected function unserializeHiddenField()
-
 	/**
 	 * Unserializes a hidden field value that was serialized using
-	 * {@link SwatForm::serializeHiddenField()}
+	 * {@link Zap_Form::serializeHiddenField()}
 	 *
 	 * @param string $value the hidden field value to unserialize.
 	 *
@@ -1008,12 +997,10 @@ class Zap_Form extends Zap_DisplayableContainer
 		$value = str_replace('\x0d', "\x0d", $value);
 		$value = str_replace('\\\\', '\\',   $value);
 
-		$value = SwatString::signedUnserialize($value, $this->salt);
+		$value = Zap_String::signedUnserialize($value, $this->_salt);
 
 		return $value;
 	}
-
-	// }}}
 }
 
 

@@ -273,13 +273,15 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function getHtmlHeadEntrySet()
 	{
-		if ($this->isDisplayed())
-			$set = new Zap_HtmlHeadEntrySet($this->html_head_entry_set);
-		else
+		if ($this->isDisplayed()) {
+			$set = new Zap_HtmlHeadEntrySet($this->_htmlHeadEntrySet);
+		} else {
 			$set = new Zap_HtmlHeadEntrySet();
+		}
 
-		foreach ($this->getCompositeWidgets() as $widget)
+		foreach ($this->getCompositeWidgets() as $widget) {
 			$set->addEntrySet($widget->getHtmlHeadEntrySet());
+		}
 
 		return $set;
 	}
@@ -297,11 +299,8 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function addMessage(Zap_Message $message)
 	{
-		$this->messages[] = $message;
+		$this->_messages[] = $message;
 	}
-
-	// }}}
-	// {{{ public function getMessages()
 
 	/**
 	 * Gets all messages
@@ -315,15 +314,14 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function getMessages()
 	{
-		$messages = $this->messages;
-		foreach ($this->getCompositeWidgets() as $widget)
+		$messages = $this->_messages;
+
+		foreach ($this->getCompositeWidgets() as $widget) {
 			$messages = array_merge($messages, $widget->getMessages());
+		}
 
 		return $messages;
 	}
-
-	// }}}
-	// {{{ public function hasMessage()
 
 	/**
 	 * Checks for the presence of messages
@@ -501,14 +499,15 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @return array the array of CSS  classes that are applied to this widget.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array();
 
-		if (!$this->isSensitive())
+		if (! $this->isSensitive()) {
 			$classes[] = 'swat-insensitive';
+		}
 
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 
 		return $classes;
 	}

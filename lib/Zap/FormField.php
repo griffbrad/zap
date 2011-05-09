@@ -219,6 +219,13 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
         return $this->_showColon;
     }
 
+    public function setTitleContentType($contentType)
+    {
+        $this->_titleContentType = $contentType;
+
+        return $this;
+    }
+
     /**
      * Gets the title content-type of this form field
      *
@@ -228,7 +235,7 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
      */
     public function getTitleContentType()
     {
-        return $this->title_content_type;
+        return $this->_titleContentType;
     }
 
     /**

@@ -66,7 +66,7 @@ abstract class Zap_InputControl extends Zap_Control
 	 */
 	public function getForm()
 	{
-		$form = $this->getFirstAncestor('SwatForm');
+		$form = $this->getFirstAncestor('Zap_Form');
 
 		if (null === $form) {
 			$path   = get_class($this);

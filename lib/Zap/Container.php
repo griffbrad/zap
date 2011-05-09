@@ -589,7 +589,7 @@ class Zap_Container extends Zap_Widget implements Zap_UIParent
             null !== $this->_parent 
             && $this->_parent instanceof Zap_Container
         ) {
-            $this->_parent->sendAddNotifySignal($widget);
+            $this->_parent->_sendAddNotifySignal($widget);
         }
     }
 }
