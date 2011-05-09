@@ -87,7 +87,7 @@ class Zap_ReCaptcha extends Zap_InputControl
 			$data['recaptcha_response_field']);
 
 		if (!$response->is_valid) {
-			$message = new SwatMessage(Swat::_(
+			$message = new SwatMessage(Zap::_(
 				'The words you entered did not match the words displayed. '.
 				'Please try again.'), 'error');
 

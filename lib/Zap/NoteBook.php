@@ -97,7 +97,7 @@ class Zap_NoteBook extends Zap_Widget implements Zap_UIParent
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addStyleSheet('packages/swat/styles/swat-note-book.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -234,7 +234,7 @@ class Zap_NoteBook extends Zap_Widget implements Zap_UIParent
 
 		echo '</div>';
 		$div_tag->close();
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

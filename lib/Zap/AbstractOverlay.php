@@ -64,10 +64,10 @@ abstract class Zap_AbstractOverlay extends Zap_InputControl implements Zap_State
 
 		$this->addJavaScript(
 			'packages/swat/javascript/swat-abstract-overlay.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addJavaScript('packages/swat/javascript/swat-z-index-manager.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -99,7 +99,7 @@ abstract class Zap_AbstractOverlay extends Zap_InputControl implements Zap_State
 
 		$container_div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -143,7 +143,7 @@ abstract class Zap_AbstractOverlay extends Zap_InputControl implements Zap_State
 	protected function getInlineJavaScript()
 	{
 		return sprintf("SwatAbstractOverlay.close_text = %s;\n",
-			SwatString::quoteJavaScriptString(Swat::_('Close')));
+			SwatString::quoteJavaScriptString(Zap::_('Close')));
 	}
 
 	// }}}

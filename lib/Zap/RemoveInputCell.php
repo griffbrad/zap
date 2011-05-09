@@ -54,7 +54,7 @@ class Zap_RemoveInputCell extends Zap_InputCell
 		$id = ($view_id === null) ? $row->id : $view_id.'_'.$row->id;
 
 		$anchor_tag = new SwatHtmlTag('a');
-		$anchor_tag->title = Swat::_('remove this row');
+		$anchor_tag->title = Zap::_('remove this row');
 		$anchor_tag->href =
 			sprintf("javascript:%s_obj.removeRow('%%s');", $id);
 
@@ -62,7 +62,7 @@ class Zap_RemoveInputCell extends Zap_InputCell
 
 		$image_tag = new SwatHtmlTag('img');
 		$image_tag->src = 'packages/swat/images/list-remove.png';
-		$image_tag->alt = Swat::_('remove graphic');
+		$image_tag->alt = Zap::_('remove graphic');
 
 		$image_tag->display();
 

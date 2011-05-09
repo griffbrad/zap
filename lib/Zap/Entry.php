@@ -1,11 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
-require_once 'Zap/InputControl.php';
-require_once 'Zap/HtmlTag.php';
-require_once 'Zap/State.php';
-
 /**
  * A single line text entry widget
  *
@@ -15,8 +9,6 @@ require_once 'Zap/State.php';
  */
 class Zap_Entry extends Zap_InputControl implements Zap_State
 {
-	// {{{ public properties
-
 	/**
 	 * Entry value
 	 *
@@ -24,7 +16,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var string
 	 */
-	public $value = null;
+	protected $_value = null;
 
 	/**
 	 * Input size
@@ -33,7 +25,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var integer
 	 */
-	public $size = 50;
+	protected $_size = 50;
 
 	/**
 	 * Maximum length
@@ -42,7 +34,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var integer
 	 */
-	public $maxlength = null;
+	protected $_maxlength = null;
 
 	/**
 	 * Access key
@@ -51,7 +43,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var string
 	 */
-	public $access_key = null;
+	protected $_accessKey = null;
 
 	/**
 	 * Minimum length
@@ -60,7 +52,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var integer
 	 */
-	public $minlength = null;
+	protected $_minlength = null;
 
 	/**
 	 * Tab index
@@ -72,7 +64,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var integer
 	 */
-	public $tab_index = null;
+	protected $_tabIndex = null;
 
 	/**
 	 * Whether or not to use browser-based autocompletion on this entry
@@ -82,7 +74,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var boolean
 	 */
-	public $autocomplete = true;
+	protected $_autocomplete = true;
 
 	/**
 	 * Read only?
@@ -91,10 +83,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var boolean
 	 */
-	public $read_only = false;
-
-	// }}}
-	// {{{ protected properties
+	protected $_readOnly = false;
 
 	/**
 	 * If autocomplete is turned off, this nonce is used to obfuscate the
@@ -102,7 +91,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var string
 	 */
-	protected $nonce = null;
+	protected $_nonce = null;
 
 	/**
 	 * Whether or not to trim the value on process.
@@ -112,11 +101,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var boolean
 	 */
-	public $auto_trim = true;
-
-
-	// }}}
-	// {{{ public function display()
+	protected $_autoTrim = true;
 
 	/**
 	 * Displays this entry widget
@@ -125,20 +110,21 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 */
 	public function display()
 	{
-		if (!$this->visible)
+		if (! $this->_visible) {
 			return;
+		}
 
 		parent::display();
 
 		$input_tag = $this->getInputTag();
 		$input_tag->display();
 
-		if (!$this->autocomplete) {
-			$nonce_tag = new Zap_HtmlTag('input');
-			$nonce_tag->type = 'hidden';
-			$nonce_tag->name = $this->id.'_nonce';
-			$nonce_tag->value = $this->getNonce();
-			$nonce_tag->display();
+		if (! $this->_autocomplete) {
+			$nonceTag = new Zap_HtmlTag('input');
+			$nonceTag->type  = 'hidden';
+			$nonceTag->name  = $this->_id . '_nonce';
+			$nonceTag->value = $this->getNonce();
+			$nonceTag->display();
 		}
 	}
 
@@ -171,7 +157,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 
 		$len = ($this->value === null) ? 0 : strlen($this->value);
 
-		if (!$this->required && $this->value === null) {
+		if (! $this->_required && null === $this->value) {
 			return;
 
 		} elseif ($this->value === null) {
@@ -238,10 +224,11 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 */
 	public function getFocusableHtmlId()
 	{
-		if ($this->visible)
-			return ($this->autocomplete) ? $this->id : $this->getNonce();
-		else
+		if ($this->_visible) {
+			return ($this->_autocomplete) ? $this->_id : $this->getNonce();
+		} else {
 			return null;
+		}
 	}
 
 	// }}}
@@ -274,7 +261,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	}
 
 	// }}}
-	// {{{ protected function getInputTag()
 
 	/**
 	 * Get the input tag to display
@@ -286,10 +272,10 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	protected function getInputTag()
 	{
 		$tag = new Zap_HtmlTag('input');
-		$tag->type = 'text';
-		$tag->name = ($this->autocomplete) ? $this->id : $this->getNonce();
-		$tag->id = ($this->autocomplete) ? $this->id : $this->getNonce();
-		$tag->class = $this->getCSSClassString();
+		$tag->type  = 'text';
+		$tag->name  = ($this->_autocomplete) ? $this->_id : $this->getNonce();
+		$tag->id    = ($this->_autocomplete) ? $this->_id : $this->getNonce();
+		$tag->class = $this->_getCSSClassString();
 
 		// event handlers to select on focus
 		$tag->onmousedown = 'if(!this._focused){this._focus_click=true;}';
@@ -301,29 +287,27 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 
 		$tag->onblur = 'this._focused=false;this._focus_click=false;';
 
-		if ($this->read_only)
+		if ($this->_readOnly) {
 			$tag->readonly = 'readonly';
+		}
 
 		if (!$this->isSensitive())
 			$tag->disabled = 'disabled';
 
-		$value = $this->getDisplayValue($this->value);
+		$value = $this->getDisplayValue($this->_value);
 
 		// escape value for display because we actually want to show entities
 		// for editing
 		$value = htmlspecialchars($value);
 		$tag->value = $value;
 
-		$tag->size = $this->size;
-		$tag->maxlength = $this->maxlength;
-		$tag->accesskey = $this->access_key;
-		$tag->tabindex = $this->tab_index;
+		$tag->size      = $this->_size;
+		$tag->maxlength = $this->_maxlength;
+		$tag->accesskey = $this->_accessKey;
+		$tag->tabindex  = $this->_tabIndex;
 
 		return $tag;
 	}
-
-	// }}}
-	// {{{ protected function getDisplayValue()
 
 	/**
 	 * Formats a value to display
@@ -339,19 +323,16 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 		return $value;
 	}
 
-	// }}}
-	// {{{ protected function getCSSClassNames()
-
 	/**
 	 * Gets the array of CSS classes that are applied to this entry widget
 	 *
 	 * @return array the array of CSS classes that are applied to this entry
 	 *                widget.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-entry');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
 

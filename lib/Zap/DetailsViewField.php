@@ -144,7 +144,7 @@ class Zap_DetailsViewField extends Zap_CellRendererContainer
 		if ($this->title == '') {
 			$th_tag->setContent('&nbsp;');
 		} else {
-			$th_tag->setContent(sprintf(Swat::_('%s:'), $this->title),
+			$th_tag->setContent(sprintf(Zap::_('%s:'), $this->title),
 				$this->title_content_type);
 		}
 

@@ -1,16 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
-require_once 'Swat/exceptions/SwatException.php';
-require_once 'Swat/exceptions/SwatInvalidCharacterEncodingException.php';
-require_once 'Swat/exceptions/SwatInvalidTypeException.php';
-require_once 'Zap/DisplayableContainer.php';
-require_once 'Zap/MessageDisplay.php';
-require_once 'Zap/HtmlTag.php';
-require_once 'Zap/String.php';
-require_once 'Zap/YUI.php';
-
 /**
  * A form widget which can contain other widgets
  *
@@ -26,8 +15,6 @@ require_once 'Zap/YUI.php';
  */
 class Zap_Form extends Zap_DisplayableContainer
 {
-	// {{{ constants
-
 	const METHOD_POST = 'post';
 	const METHOD_GET  = 'get';
 
@@ -41,15 +28,12 @@ class Zap_Form extends Zap_DisplayableContainer
 	const ENCODING_UTF8_VALUE   = "\xc3\xa4\xe2\x84\xa2\xc2\xae";
 	const ENCODING_8BIT_VALUE   = "\xe4\x99\xae";
 
-	// }}}
-	// {{{ public properties
-
 	/**
 	 * The action attribute of the HTML form tag
 	 *
 	 * @var string
 	 */
-	public $action = '#';
+	protected $_action = '#';
 
 	/**
 	 * Encoding type of the form
@@ -58,7 +42,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var string
 	 */
-	public $encoding_type = null;
+	protected $_encodingType = null;
 
 	/**
 	 * A list of character set encodings the server can process
@@ -74,7 +58,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var string
 	 */
-	public $accept_charset = 'utf-8';
+	protected $_acceptCharset = 'utf-8';
 
 	/**
 	 * Whether or not to automatically focus the a default SwatControl when
@@ -86,7 +70,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var boolean
 	 */
-	public $autofocus = false;
+	protected $_autofocus = false;
 
 	/**
 	 * A reference to the default control to focus when the form loads
@@ -96,7 +80,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var SwatControl
 	 */
-	public $default_focused_control = null;
+	protected $_defaultFocusedControl = null;
 
 	/**
 	 * A reference to the button that was clicked to submit the form,
@@ -107,7 +91,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var SwatButton
 	 */
-	public $button = null;
+	protected $_button = null;
 
 	/**
 	 * Whether or not to use auto-complete for elements in this form
@@ -120,7 +104,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var boolean
 	 */
-	public $autocomplete = true;
+	protected $_autocomplete = true;
 
 	/**
 	 * The default value to use for signature salt
@@ -131,10 +115,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var string
 	 */
-	public static $default_salt = null;
-
-	// }}}
-	// {{{ protected properties
+	protected static $_defaultSalt = null;
 
 	/**
 	 * Hidden form fields
@@ -148,14 +129,14 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @see SwatForm::addHiddenField()
 	 * @see SwatForm::getHiddenField()
 	 */
-	protected $hidden_fields = array();
+	protected $_hiddenFields = array();
 
 	/**
 	 * The value to use when salting serialized data signatures
 	 *
 	 * @var string
 	 */
-	protected $salt = null;
+	protected $_salt = null;
 
 	/**
 	 * The default encoding to assume for 8-bit content submitted from clients
@@ -171,7 +152,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @see SwatForm::setDefault8BitEncoding()
 	 * @see SwatForm::set8BitEncoding()
 	 */
-	protected static $default_8bit_encoding = 'windows-1252';
+	protected static $_default8bitEncoding = 'windows-1252';
 
 	/**
 	 * The encoding to assume for 8-bit content submitted from clients
@@ -183,7 +164,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @see SwatForm::set8BitEncoding()
 	 */
-	protected $_8bit_encoding = null;
+	protected $_8bitEncoding = null;
 
 	/**
 	 * The default URI at which a Connection: close header may be sent to the
@@ -200,7 +181,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @see SwatForm::setDefaultConnectionCloseUri()
 	 * @see SwatForm::setConnectionCloseUri()
 	 */
-	protected static $default_connection_close_uri = null;
+	protected static $_defaultConnectionCloseUri = null;
 
 	/**
 	 * URI at which a Connection: close header may be sent to the browser
@@ -212,10 +193,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @see SwatForm::setConnectionCloseUri()
 	 */
-	protected $connection_close_uri = null;
-
-	// }}}
-	// {{{ private properties
+	protected $_connectionCloseUri = null;
 
 	/**
 	 * The method to use for this form
@@ -224,7 +202,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var string
 	 */
-	private $method = SwatForm::METHOD_POST;
+	private $_method = SwatForm::METHOD_POST;
 
 	/**
 	 * The token value used to prevent cross-site request forgeries
@@ -238,10 +216,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @see SwatForm::clearAuthenticationToken()
 	 * @see SwatForm::isAuthenticated()
 	 */
-	private static $authentication_token = null;
-
-	// }}}
-	// {{{ public function __construct()
+	private static $_authenticationToken = null;
 
 	/**
 	 * Creates a new form
@@ -254,26 +229,25 @@ class Zap_Form extends Zap_DisplayableContainer
 	{
 		parent::__construct($id);
 
-		if (self::$default_salt !== null) {
-			$this->setSalt(self::$default_salt);
+		if (null !== self::$_defaultSalt) {
+			$this->setSalt(self::$_defaultSalt);
 		}
 
-		if (self::$default_8bit_encoding !== null) {
-			$this->set8BitEncoding(self::$default_8bit_encoding);
+		if (null !== self::$_default8bitEncoding) {
+			$this->set8BitEncoding(self::$_default8bitEncoding);
 		}
 
-		if (self::$default_connection_close_uri !== null) {
-			$this->setConnectionCloseUri(self::$default_connection_close_uri);
+		if (null !== self::$_defaultConnectionCloseUri) {
+			$this->setConnectionCloseUri(self::$_defaultConnectionCloseUri);
 		}
 
-		$this->requires_id = true;
+		$this->_requiresId = true;
 
-		$this->addJavaScript('packages/swat/javascript/swat-form.js',
-			Swat::PACKAGE_ID);
+		$this->addJavaScript(
+			'packages/swat/javascript/swat-form.js',
+			Zap::PACKAGE_ID
+		);
 	}
-
-	// }}}
-	// {{{ public function setMethod()
 
 	/**
 	 * Sets the HTTP method this form uses to send data
@@ -285,16 +259,16 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function setMethod($method)
 	{
-		$valid_methods = array(SwatForm::METHOD_POST, SwatForm::METHOD_GET);
+		$validMethods = array(SwatForm::METHOD_POST, SwatForm::METHOD_GET);
 
-		if (!in_array($method, $valid_methods))
-			throw new SwatException("‘{$method}’ is not a valid form method.");
+		if (! in_array($method, $validMethods)) {
+			throw new SwatException("'{$method}' is not a valid form method.");
+		}
 
-		$this->method = $method;
+		$this->_method = $method;
+
+		return $this;
 	}
-
-	// }}}
-	// {{{ public function getMethod()
 
 	/**
 	 * Gets the HTTP method this form uses to send data
@@ -303,11 +277,8 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function getMethod()
 	{
-		return $this->method;
+		return $this->_method;
 	}
-
-	// }}}
-	// {{{ public function display()
 
 	/**
 	 * Displays this form
@@ -321,31 +292,29 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function display()
 	{
-		if (!$this->visible)
+		if (! $this->_visible) {
 			return;
+		}
 
 		SwatWidget::display();
 
-		$this->addHiddenField(self::PROCESS_FIELD, $this->id);
+		$this->addHiddenField(self::PROCESS_FIELD, $this->_id);
 
-		$form_tag = $this->getFormTag();
+		$formTag = $this->getFormTag();
 
-		$form_tag->open();
-		$this->displayChildren();
-		$this->displayHiddenFields();
-		$form_tag->close();
+		$formTag->open();
+		$this->_displayChildren();
+		$this->_displayHiddenFields();
+		$formTag->close();
 
-		if ($this->connection_close_uri != '') {
+		if ('' != $this->_connectionCloseUri) {
 			$yui = new SwatYUI(array('event'));
 			$this->html_head_entry_set->addEntrySet(
 				$yui->getHtmlHeadEntrySet());
 		}
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
-
-	// }}}
-	// {{{ public function process()
 
 	/**
 	 * Processes this form
@@ -361,20 +330,19 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function process()
 	{
-		$this->processed = $this->isSubmitted();
+		$this->_processed = $this->isSubmitted();
 
-		if ($this->processed) {
-			$this->processEncoding();
-			$this->processHiddenFields();
+		if ($this->_processed) {
+			$this->_processEncoding();
+			$this->_processHiddenFields();
 
-			foreach ($this->children as $child)
-				if ($child !== null && !$child->isProcessed())
+			foreach ($this->children as $child) {
+				if (null !== $child && ! $child->isProcessed()) {
 					$child->process();
+				}
+			}
 		}
 	}
-
-	// }}}
-	// {{{ public function addHiddenField()
 
 	/**
 	 * Adds a hidden form field
@@ -398,16 +366,14 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function addHiddenField($name, $value)
 	{
-		if (is_resource($value))
-			throw new SwatInvalidTypeException(
+		if (is_resource($value)) {
+			throw new Zap_Exception_InvalidType(
 				'Cannot add a hidden field of type ‘resource’ to a SwatForm.',
 				0, $value);
+		}
 
-		$this->hidden_fields[$name] = $value;
+		$this->_hiddenFields[$name] = $value;
 	}
-
-	// }}}
-	// {{{ public function getHiddenField()
 
 	/**
 	 * Gets the value of a hidden form field
@@ -415,14 +381,14 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @param string $name the name of the field whose value to get.
 	 *
 	 * @return mixed the value of the field. The type of the field is preserved
-	 *                from the call to {@link SwatForm::addHiddenField()}. If
+	 *                from the call to {@link Zap_Form::addHiddenField()}. If
 	 *                the field does not exist, null is returned.
 	 *
-	 * @throws SwatInvalidSerializedDataException if the serialized form data
-	 *                                            does not match the signature
-	 *                                            data.
+	 * @throws Zap_Exception_InvalidSerializedData if the serialized form data
+	 *                                             does not match the signature
+	 *                                             data.
 	 *
-	 * @see SwatForm::addHiddenField()
+	 * @see Zap_Form::addHiddenField()
 	 */
 	public function getHiddenField($name)
 	{
@@ -447,19 +413,13 @@ class Zap_Form extends Zap_DisplayableContainer
 		return $data;
 	}
 
-	// }}}
-	// {{{ public function clearHiddenFields()
-
 	/**
 	 * Clears all hidden fields
 	 */
 	public function clearHiddenFields()
 	{
-		$this->hidden_fields = array();
+		$this->_hiddenFields = array();
 	}
-
-	// }}}
-	// {{{ public function addWithField()
 
 	/**
 	 * Adds a widget within a new SwatFormField
@@ -474,15 +434,11 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function addWithField(SwatWidget $widget, $title)
 	{
-		require_once 'Zap/FormField.php';
-		$field = new SwatFormField();
+		$field = new Zap_FormField();
 		$field->add($widget);
 		$field->title = $title;
 		$this->add($field);
 	}
-
-	// }}}
-	// {{{ public function &getFormData()
 
 	/**
 	 * Returns the super-global array with this form's data
@@ -509,9 +465,6 @@ class Zap_Form extends Zap_DisplayableContainer
 		return $data;
 	}
 
-	// }}}
-	// {{{ public function isSubmitted()
-
 	/**
 	 * Whether or not this form was submitted on the previous page request
 	 *
@@ -524,14 +477,11 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function isSubmitted()
 	{
-		$raw_data = $this->getFormData();
+		$rawData = $this->getFormData();
 
-		return (isset($raw_data[self::PROCESS_FIELD]) &&
-			$raw_data[self::PROCESS_FIELD] == $this->id);
+		return (isset($rawData[self::PROCESS_FIELD]) &&
+			$rawData[self::PROCESS_FIELD] == $this->_id);
 	}
-
-	// }}}
-	// {{{ public function isAuthenticated()
 
 	/**
 	 * Whether or not this form is authenticated
@@ -553,26 +503,27 @@ class Zap_Form extends Zap_DisplayableContainer
 		 * If this form was not submitted, consider it authenticated. Processing
 		 * should be safe on forms that were not submitted.
 		 */
-		if (!$this->isSubmitted())
+		if (! $this->isSubmitted()) {
 			return true;
+		}
 
-		$raw_data = $this->getFormData();
+		$rawData = $this->getFormData();
+		$token   = null;
 
-		$token = null;
-		if (isset($raw_data[self::AUTHENTICATION_TOKEN_FIELD]))
+		if (isset($raw_data[self::AUTHENTICATION_TOKEN_FIELD])) {
 			$token = SwatString::signedUnserialize(
-				$raw_data[self::AUTHENTICATION_TOKEN_FIELD], $this->salt);
+				$raw_data[self::AUTHENTICATION_TOKEN_FIELD], 
+				$this->_salt
+			);
+		}
 
 		/*
 		 * If this form's authentication token is set, the token in submitted
 		 * data must match.
 		 */
-		return (self::$authentication_token === null ||
-			self::$authentication_token === $token);
+		return (null === self::$_authenticationToken ||
+			self::$_authenticationToken === $token);
 	}
-
-	// }}}
-	// {{{ public function setSalt()
 
 	/**
 	 * Sets the salt value to use when salting signature data
@@ -581,11 +532,10 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function setSalt($salt)
 	{
-		$this->salt = (string)$salt;
-	}
+		$this->_salt = (string) $salt;
 
-	// }}}
-	// {{{ public function getSalt()
+		return $this;
+	}
 
 	/**
 	 * Gets the salt value to use when salting signature data
@@ -601,11 +551,8 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function getSalt()
 	{
-		return $this->salt;
+		return $this->_salt;
 	}
-
-	// }}}
-	// {{{ public function set8BitEncoding()
 
 	/**
 	 * Sets the encoding to assume for 8-bit content submitted from clients
@@ -620,11 +567,8 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public function set8BitEncoding($encoding)
 	{
-		$this->_8bit_encoding = $encoding;
+		$this->_8bitEncoding = $encoding;
 	}
-
-	// }}}
-	// {{{ public function setConnectionCloseUri()
 
 	/**
 	 * Sets the URI at which a Connection: close header may be sent to the
@@ -639,13 +583,10 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @see SwatForm::setDefaultConnectionCloseUri()
 	 */
-	public function setConnectionCloseUri($connection_close_uri)
+	public function setConnectionCloseUri($connectionCloseUri)
 	{
-		$this->connection_close_uri = $connection_close_uri;
+		$this->_connectionCloseUri = $connectionCloseUri;
 	}
-
-	// }}}
-	// {{{ public static function setDefault8BitEncoding()
 
 	/**
 	 * Sets the default encoding to assume for 8-bit content submitted from
@@ -661,11 +602,8 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public static function setDefault8BitEncoding($encoding)
 	{
-		self::$default_8bit_encoding = $encoding;
+		self::$_default8bitEncoding = $encoding;
 	}
-
-	// }}}
-	// {{{ public static function setDefaultConnectionCloseUri()
 
 	/**
 	 * Sets the default URI at which a Connection: close header may be sent to
@@ -681,13 +619,10 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @see SwatForm::setConnectionCloseUri()
 	 */
-	public static function setDefaultConnectionCloseUri($connection_close_uri)
+	public static function setDefaultConnectionCloseUri($connectionCloseUri)
 	{
-		self::$default_connection_close_uri = $connection_close_uri;
+		self::$_defaultConnectionCloseUri = $connectionCloseUri;
 	}
-
-	// }}}
-	// {{{ public static function setAuthenticationToken()
 
 	/**
 	 * Sets the token value used to prevent cross-site request forgeries
@@ -705,11 +640,8 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public static function setAuthenticationToken($token)
 	{
-		self::$authentication_token = (string)$token;
+		self::$_authenticationToken = (string) $token;
 	}
-
-	// }}}
-	// {{{ public static function clearAuthenticationToken()
 
 	/**
 	 * Clears the token value used to prevent cross-site request forgeries
@@ -721,11 +653,8 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	public static function clearAuthenticationToken()
 	{
-		self::$authentication_token = null;
+		self::$_authenticationToken = null;
 	}
-
-	// }}}
-	// {{{ protected function processHiddenFields()
 
 	/**
 	 * Checks submitted form data for hidden fields
@@ -739,27 +668,28 @@ class Zap_Form extends Zap_DisplayableContainer
 	 */
 	protected function processHiddenFields()
 	{
-		$raw_data = $this->getFormData();
+		$rawData = $this->getFormData();
 
-		$serialized_field_name = self::HIDDEN_FIELD;
-		if (isset($raw_data[$serialized_field_name])) {
-			$fields = SwatString::signedUnserialize(
-				$raw_data[$serialized_field_name], $this->salt);
-		} else {
+		$serializedFieldName = self::HIDDEN_FIELD;
+
+		if (! isset($raw_data[$serialized_field_name])) {
 			return;
+		} else {
+			$fields = SwatString::signedUnserialize(
+				$rawData[$serializedFieldName], 
+				$this->_salt
+			);
 		}
 
 		foreach ($fields as $name) {
-			$serialized_field_name = self::SERIALIZED_PREFIX.$name;
-			if (isset($raw_data[$serialized_field_name])) {
-				$this->hidden_fields[$name] = $this->unserializeHiddenField(
-					$raw_data[$serialized_field_name]);
+			$serializedFieldName = self::SERIALIZED_PREFIX . $name;
+
+			if (isset($rawData[$serializedFieldName])) {
+				$this->hiddenFields[$name] = $this->unserializeHiddenField(
+					$rawData[$serializedFieldName]);
 			}
 		}
 	}
-
-	// }}}
-	// {{{ protected function processEncoding()
 
 	/**
 	 * Detects 8-bit character encoding in form data and converts data to UTF-8

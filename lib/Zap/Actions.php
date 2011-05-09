@@ -109,10 +109,10 @@ class Zap_Actions extends Zap_Control implements Zap_UIParent
 		$yui = new SwatYUI(array('dom', 'event', 'animation'));
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addJavaScript('packages/swat/javascript/swat-actions.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-actions.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -182,7 +182,7 @@ class Zap_Actions extends Zap_Control implements Zap_UIParent
 
 		$label = new SwatHtmlTag('label');
 		$label->for = $flydown->getFocusableHtmlId();
-		$label->setContent(Swat::_('Action: '));
+		$label->setContent(Zap::_('Action: '));
 		$label->display();
 
 		$flydown->display();
@@ -207,12 +207,12 @@ class Zap_Actions extends Zap_Control implements Zap_UIParent
 		}
 
 		echo '<div class="swat-actions-note">';
-		echo Swat::_('Actions apply to checked items.');
+		echo Zap::_('Actions apply to checked items.');
 		echo '</div>';
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -631,11 +631,11 @@ class Zap_Actions extends Zap_Control implements Zap_UIParent
 	 */
 	protected function getInlineJavaScriptTranslations()
 	{
-		$dismiss_text  = Swat::_('Dismiss message.');
-		$select_an_action_text = Swat::_('Please select an action.');
-		$select_an_item_text = Swat::_('Please select one or more items.');
+		$dismiss_text  = Zap::_('Dismiss message.');
+		$select_an_action_text = Zap::_('Please select an action.');
+		$select_an_item_text = Zap::_('Please select one or more items.');
 		$select_an_item_and_an_action_text =
-			Swat::_('Please select an action, and one or more items.');
+			Zap::_('Please select an action, and one or more items.');
 
 		return sprintf(
 			"SwatActions.dismiss_text = '%s';\n".

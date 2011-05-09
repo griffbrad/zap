@@ -92,7 +92,7 @@ class Zap_MoneyCellRenderer extends Zap_CellRenderer
 
 		$this->addStyleSheet(
 			'packages/swat/styles/swat-money-cell-renderer.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}

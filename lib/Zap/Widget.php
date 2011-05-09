@@ -333,18 +333,18 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function hasMessage()
 	{
-		$has_message = (count($this->messages) > 0);
+		$hasMessage = (0 < count($this->_messages));
 
-		if (!$has_message) {
+		if (! $hasMessage) {
 			foreach ($this->getCompositeWidgets() as $widget) {
 				if ($widget->hasMessage()) {
-					$has_message = true;
+					$hasMessage = true;
 					break;
 				}
 			}
 		}
 
-		return $has_message;
+		return $hasMessage;
 	}
 
 	/**

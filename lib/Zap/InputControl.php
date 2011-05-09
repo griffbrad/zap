@@ -14,8 +14,6 @@ require_once 'Zap/FormField.php';
  */
 abstract class Zap_InputControl extends Zap_Control
 {
-	// {{{ public properties
-
 	/**
 	 * Whether this entry widget is required or not
 	 *
@@ -23,17 +21,14 @@ abstract class Zap_InputControl extends Zap_Control
 	 *
 	 * @var boolean
 	 */
-	public $required = false;
+	protected $_required = false;
 
 	/**
 	 * Whether to use the field title in validation messages
 	 *
 	 * @var boolean
 	 */
-	public $show_field_title_in_messages = true;
-
-	// }}}
-	// {{{ public function init()
+	protected $_showFieldTitleInMessages = true;
 
 	/**
 	 * Initializes this widget
@@ -46,12 +41,17 @@ abstract class Zap_InputControl extends Zap_Control
 	{
 		parent::init();
 
-		if ($this->required && $this->parent instanceof SwatFormField)
-			$this->parent->required = true;
+		if ($this->_required && $this->_parent instanceof Zap_FormField) {
+			$this->_parent->setRequired(true);
+		}
 	}
 
-	// }}}
-	// {{{ public function getForm()
+	public function setRequired($required)
+	{
+		$this->_required = $required;
+
+		return $this;
+	}
 
 	/**
 	 * Gets the form that this control is contained in
@@ -67,22 +67,22 @@ abstract class Zap_InputControl extends Zap_Control
 	public function getForm()
 	{
 		$form = $this->getFirstAncestor('SwatForm');
-		if ($form === null) {
-			$path = get_class($this);
-			$object = $this->parent;
-			while ($object !== null) {
-				$path = get_class($object).'/'.$path;
-				$object = $object->parent;
+
+		if (null === $form) {
+			$path   = get_class($this);
+			$object = $this->_parent;
+
+			while (null !== $object) {
+				$path   = get_class($object) . '/' . $path;
+				$object = $object->_parent;
 			}
-			throw new SwatException("Input controls must reside inside a ".
-				"SwatForm widget. UI-Object path:\n".$path);
+
+			throw new Zap_Exception("Input controls must reside inside a ".
+				"Zap_Form widget. UI-Object path:\n" . $path);
 		}
 
 		return $form;
 	}
-
-	// }}}
-	// {{{ protected function getValidationMessage()
 
 	/**
 	 * Gets a validation message for this control
@@ -98,20 +98,20 @@ abstract class Zap_InputControl extends Zap_Control
 		switch ($id) {
 		case 'required':
 			$text = $this->show_field_title_in_messages ?
-				Swat::_('The %s field is required.') :
-				Swat::_('This field is required.');
+				Zap::_('The %s field is required.') :
+				Zap::_('This field is required.');
 
 			break;
 		case 'too-long':
 			$text = $this->show_field_title_in_messages ?
-				Swat::_('The %%s field can be at most %s characters long.') :
-				Swat::_('This field can be at most %s characters long.');
+				Zap::_('The %%s field can be at most %s characters long.') :
+				Zap::_('This field can be at most %s characters long.');
 
 			break;
 		default:
 			$text = $this->show_field_title_in_messages ?
-				Swat::_('There is a problem with the %s field.') :
-				Swat::_('There is a problem with this field.');
+				Zap::_('There is a problem with the %s field.') :
+				Zap::_('There is a problem with this field.');
 
 			break;
 		}
@@ -119,8 +119,6 @@ abstract class Zap_InputControl extends Zap_Control
 		$message = new SwatMessage($text, 'error');
 		return $message;
 	}
-
-	// }}}
 }
 
 

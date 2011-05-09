@@ -28,7 +28,7 @@ class Zap_Toolbar extends Zap_DisplayableContainer
 		parent::__construct($id);
 
 		$this->addStyleSheet('packages/swat/styles/swat-toolbar.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}

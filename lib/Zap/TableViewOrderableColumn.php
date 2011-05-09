@@ -186,12 +186,12 @@ class Zap_TableViewOrderableColumn extends Zap_TableViewColumn
 			if ($this->direction == self::ORDER_BY_DIR_DESCENDING) {
 
 				$img->src = 'packages/swat/images/swat-table-view-column-desc.png';
-				$img->alt = Swat::_('Descending');
+				$img->alt = Zap::_('Descending');
 
 			} elseif ($this->direction == self::ORDER_BY_DIR_ASCENDING) {
 
 				$img->src = 'packages/swat/images/swat-table-view-column-asc.png';
-				$img->alt = Swat::_('Ascending');
+				$img->alt = Zap::_('Ascending');
 
 			}
 

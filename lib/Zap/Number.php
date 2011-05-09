@@ -124,26 +124,26 @@ class Zap_Number extends Zap_Object
 			case 11:
 			case 12:
 			case 13:
-				$ordinal_value = sprintf(Swat::_('%sth'), $ordinal_value);
+				$ordinal_value = sprintf(Zap::_('%sth'), $ordinal_value);
 				break;
 
 			default:
 				// Handle 1st, 2nd, 3rd
 				switch($value % 10) {
 				case 1:
-					$ordinal_value = sprintf(Swat::_('%sst'), $ordinal_value);
+					$ordinal_value = sprintf(Zap::_('%sst'), $ordinal_value);
 					break;
 
 				case 2:
-					$ordinal_value = sprintf(Swat::_('%snd'), $ordinal_value);
+					$ordinal_value = sprintf(Zap::_('%snd'), $ordinal_value);
 					break;
 
 				case 3:
-					$ordinal_value = sprintf(Swat::_('%srd'), $ordinal_value);
+					$ordinal_value = sprintf(Zap::_('%srd'), $ordinal_value);
 					break;
 
 				default:
-					$ordinal_value = sprintf(Swat::_('%sth'), $ordinal_value);
+					$ordinal_value = sprintf(Zap::_('%sth'), $ordinal_value);
 				}
 			}
 

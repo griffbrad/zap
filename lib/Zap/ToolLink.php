@@ -117,7 +117,7 @@ class Zap_ToolLink extends Zap_Control
 		parent::__construct($id);
 
 		$this->addStyleSheet('packages/swat/styles/swat-tool-link.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -186,52 +186,52 @@ class Zap_ToolLink extends Zap_Control
 	{
 		switch ($stock_id) {
 		case 'create':
-			$title = Swat::_('Create');
+			$title = Zap::_('Create');
 			$class = 'swat-tool-link-create';
 			break;
 
 		case 'add':
-			$title = Swat::_('Add');
+			$title = Zap::_('Add');
 			$class = 'swat-tool-link-add';
 			break;
 
 		case 'edit':
-			$title = Swat::_('Edit');
+			$title = Zap::_('Edit');
 			$class = 'swat-tool-link-edit';
 			break;
 
 		case 'delete':
-			$title = Swat::_('Delete');
+			$title = Zap::_('Delete');
 			$class = 'swat-tool-link-delete';
 			break;
 
 		case 'cancel':
-			$title = Swat::_('Cancel');
+			$title = Zap::_('Cancel');
 			$class = 'swat-tool-link-cancel';
 			break;
 
 		case 'preview':
-			$title = Swat::_('Preview');
+			$title = Zap::_('Preview');
 			$class = 'swat-tool-link-preview';
 			break;
 
 		case 'change-order':
-			$title = Swat::_('Change Order');
+			$title = Zap::_('Change Order');
 			$class = 'swat-tool-link-change-order';
 			break;
 
 		case 'help':
-			$title = Swat::_('Help');
+			$title = Zap::_('Help');
 			$class = 'swat-tool-link-help';
 			break;
 
 		case 'print':
-			$title = Swat::_('Print');
+			$title = Zap::_('Print');
 			$class = 'swat-tool-link-print';
 			break;
 
 		case 'email':
-			$title = Swat::_('Email');
+			$title = Zap::_('Email');
 			$class = 'swat-tool-link-email';
 			break;
 

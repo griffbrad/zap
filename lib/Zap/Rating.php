@@ -50,10 +50,10 @@ class Zap_Rating extends Zap_InputControl
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addJavaScript('packages/swat/javascript/swat-rating.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-rating.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -107,7 +107,7 @@ class Zap_Rating extends Zap_InputControl
 		$flydown->display();
 		$div->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

@@ -169,11 +169,11 @@ class Zap_Pagination extends Zap_Control
 		                        self::PREV | self::PAGES;
 
 		/* These strings include a non-breaking space */
-		$this->previous_label = Swat::_('« Previous');
-		$this->next_label = Swat::_('Next »');
+		$this->previous_label = Zap::_('« Previous');
+		$this->next_label = Zap::_('Next »');
 
 		$this->addStyleSheet('packages/swat/styles/swat-pagination.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -195,22 +195,22 @@ class Zap_Pagination extends Zap_Control
 	public function getResultsMessage($unit = null, $unit_plural = null)
 	{
 		if ($unit === null)
-			$unit = Swat::_('record');
+			$unit = Zap::_('record');
 
 		if ($unit_plural === null)
-			$unit_plural = Swat::_('records');
+			$unit_plural = Zap::_('records');
 
 		$message = '';
 
 		if ($this->total_records == 0) {
-			$message = sprintf(Swat::_('No %s.'), $unit_plural);
+			$message = sprintf(Zap::_('No %s.'), $unit_plural);
 
 		} elseif ($this->total_records == 1) {
-			$message = sprintf(Swat::_('One %s.'), $unit);
+			$message = sprintf(Zap::_('One %s.'), $unit);
 
 		} else {
 			$locale = SwatI18NLocale::get();
-			$message = sprintf(Swat::_('%s %s, displaying %s to %s'),
+			$message = sprintf(Zap::_('%s %s, displaying %s to %s'),
 				$locale->formatNumber($this->total_records),
 				$unit_plural,
 				$locale->formatNumber($this->current_record + 1),
@@ -326,7 +326,7 @@ class Zap_Pagination extends Zap_Control
 		$div = new SwatHtmlTag('div');
 		$div->class = 'swat-pagination-position';
 
-		$div->setContent(sprintf(Swat::_('Page %d of %d'),
+		$div->setContent(sprintf(Zap::_('Page %d of %d'),
 			$this->current_page, $this->total_pages));
 
 		$div->display();
@@ -408,7 +408,7 @@ class Zap_Pagination extends Zap_Control
 				} else {
 					$anchor->href = sprintf($link, (string)$i);
 					$anchor->title =
-						sprintf(Swat::_('Go to page %d'), ($i));
+						sprintf(Zap::_('Go to page %d'), ($i));
 
 					$anchor->setContent((string)($i));
 					$anchor->display();

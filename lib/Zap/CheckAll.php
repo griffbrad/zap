@@ -76,11 +76,11 @@ class Zap_CheckAll extends Zap_Checkbox
 	public function __construct($id = null)
 	{
 		parent::__construct($id);
-		$this->title = Swat::_('Check All');
+		$this->title = Zap::_('Check All');
 		$yui = new SwatYUI(array('event'));
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addJavaScript('packages/swat/javascript/swat-check-all.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -136,7 +136,7 @@ class Zap_CheckAll extends Zap_Checkbox
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -145,14 +145,14 @@ class Zap_CheckAll extends Zap_Checkbox
 	protected function getExtendedTitle()
 	{
 		$locale = SwatI18NLocale::get();
-		$entity = ($this->unit === null) ? Swat::_('items') : $this->unit;
+		$entity = ($this->unit === null) ? Zap::_('items') : $this->unit;
 
 		$checkbox = $this->getCompositeWidget('extended_checkbox');
 
 		ob_start();
 		$label_tag = new SwatHtmlTag('label');
 		$label_tag->for = $checkbox->id;
-		$label_tag->setContent(sprintf(Swat::_('select all %s %s'),
+		$label_tag->setContent(sprintf(Zap::_('select all %s %s'),
 			$locale->formatNumber($this->extended_count), $entity));
 
 		$label_tag->open();
@@ -161,7 +161,7 @@ class Zap_CheckAll extends Zap_Checkbox
 		$label_tag->close();
 		$checkbox_display = ob_get_clean();
 
-		$title = Swat::_('All %s %s on this page are selected. (%s)');
+		$title = Zap::_('All %s %s on this page are selected. (%s)');
 
 		return sprintf($title,
 			$locale->formatNumber($this->visible_count),

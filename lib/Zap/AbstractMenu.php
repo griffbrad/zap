@@ -63,7 +63,7 @@ abstract class Zap_AbstractMenu extends Zap_Control
 		$yui = new SwatYUI(array('menu'));
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addStyleSheet('packages/swat/styles/swat-menu.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}

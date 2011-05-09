@@ -62,7 +62,7 @@ class Zap_DetailsViewVerticalField extends Zap_DetailsViewField
 		if ($this->title != '') {
 			$div_tag = new SwatHtmlTag('div');
 			$div_tag->class = 'swat-details-view-field-header';
-			$div_tag->setContent(sprintf(Swat::_('%s:'), $this->title),
+			$div_tag->setContent(sprintf(Zap::_('%s:'), $this->title),
 				$this->title_content_type);
 
 			$div_tag->display();

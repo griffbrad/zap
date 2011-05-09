@@ -50,10 +50,10 @@ class Zap_Disclosure extends Zap_DisplayableContainer
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addJavaScript('packages/swat/javascript/swat-disclosure.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-disclosure.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -95,7 +95,7 @@ class Zap_Disclosure extends Zap_DisplayableContainer
 		$animate_div->close();
 		$container_div->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 
 		$control_div->close();
 	}

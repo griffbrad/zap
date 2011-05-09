@@ -133,7 +133,7 @@ class Zap_Menu extends Zap_AbstractMenu implements Zap_UIParent
 		$div_tag->close();
 
 		if ($this->parent === null || !($this->parent instanceof SwatMenuItem))
-			Swat::displayInlineJavaScript($this->getInlineJavaScript());
+			Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

@@ -136,7 +136,7 @@ class Zap_TextareaEditor extends Zap_Textarea
 
 		$this->addJavaScript(
 			'packages/swat/javascript/tiny_mce/tiny_mce.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -199,7 +199,7 @@ class Zap_TextareaEditor extends Zap_Textarea
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

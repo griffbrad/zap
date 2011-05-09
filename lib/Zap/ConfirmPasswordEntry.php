@@ -47,7 +47,7 @@ class Zap_ConfirmPasswordEntry extends Zap_PasswordEntry
 
 		if ($this->password_widget->value !== null) {
 			if (strcmp($this->password_widget->value, $this->value) != 0) {
-				$message = Swat::_('Password and confirmation password do not '.
+				$message = Zap::_('Password and confirmation password do not '.
 					'match.');
 
 				$this->addMessage(new SwatMessage($message, 'error'));

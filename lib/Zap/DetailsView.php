@@ -72,7 +72,7 @@ class Zap_DetailsView extends Zap_Control implements Zap_UIParent
 		parent::__construct($id);
 
 		$this->addStyleSheet('packages/swat/styles/swat-details-view.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -130,7 +130,7 @@ class Zap_DetailsView extends Zap_Control implements Zap_UIParent
 		$this->displayContent();
 		$table_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

@@ -79,13 +79,13 @@ class Zap_MessageDisplay extends Zap_Control
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addJavaScript('packages/swat/javascript/swat-message-display.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-message.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-message-display.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -177,7 +177,7 @@ class Zap_MessageDisplay extends Zap_Control
 		$wrapper_div->close();
 
 		if ($has_dismiss_link)
-			Swat::displayInlineJavaScript($this->getInlineJavaScript());
+			Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -357,7 +357,7 @@ class Zap_MessageDisplay extends Zap_Control
 	 */
 	protected function getInlineJavaScriptTranslations()
 	{
-		$close_text  = Swat::_('Dismiss message.');
+		$close_text  = Zap::_('Dismiss message.');
 		return "SwatMessageDisplayMessage.close_text = '{$close_text}';\n";
 	}
 

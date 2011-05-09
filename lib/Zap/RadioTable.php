@@ -28,7 +28,7 @@ class Zap_RadioTable extends Zap_RadioList
 		parent::__construct($id);
 
 		$this->addStyleSheet('packages/swat/styles/swat-radio-table.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}

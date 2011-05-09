@@ -142,13 +142,13 @@ class Zap_TimeZoneEntry extends Zap_InputControl implements Zap_State
 		if (!$this->required && $this->value === null && $this->isSensitive()) {
 			return;
 		} elseif ($this->value === null) {
-			$message = Swat::_('The %s field is required.');
+			$message = Zap::_('The %s field is required.');
 			$this->addMessage(new SwatMessage($message, 'error'));
 		} else {
 			try {
 				$time_zone = new HotDateTimeZone($this->value);
 			} catch (Exception $e) {
-				$message = Swat::_('The %s field is an invalid time zone.');
+				$message = Zap::_('The %s field is an invalid time zone.');
 				$this->addMessage(new SwatMessage($message, 'error'));
 			}
 		}
@@ -212,7 +212,7 @@ class Zap_TimeZoneEntry extends Zap_InputControl implements Zap_State
 		$areas_flydown = new SwatFlydown($this->id.'_areas');
 		$areas_flydown->addOptionsByArray($this->areas);
 		$areas_flydown->show_blank = true;
-		$areas_flydown->blank_title = Swat::_('choose region …');
+		$areas_flydown->blank_title = Zap::_('choose region …');
 		$this->addCompositeWidget($areas_flydown, 'areas_flydown');
 
 		$regions_flydown = new SwatCascadeFlydown($this->id.'_regions');

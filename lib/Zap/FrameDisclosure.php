@@ -28,7 +28,7 @@ class Zap_FrameDisclosure extends Zap_Disclosure
 		parent::__construct($id);
 
 		$this->addStyleSheet('packages/swat/styles/swat-frame-disclosure.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -86,7 +86,7 @@ class Zap_FrameDisclosure extends Zap_Disclosure
 		$animate_div->close();
 		$container_div->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavascript());
+		Zap::displayInlineJavaScript($this->getInlineJavascript());
 
 		$control_div->close();
 	}

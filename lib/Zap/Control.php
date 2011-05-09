@@ -15,8 +15,6 @@ require_once 'Zap/String.php';
  */
 abstract class Zap_Control extends Zap_Widget
 {
-	// {{{ public function addMessage()
-
 	/**
 	 * Adds a message to this control
 	 *
@@ -28,14 +26,14 @@ abstract class Zap_Control extends Zap_Widget
 	 *
 	 * @see SwatWidget::addMessage()
 	 */
-	public function addMessage(SwatMessage $message)
+	public function addMessage(Zap_Message $message)
 	{
-		if ($this->parent instanceof SwatTitleable) {
-			$title = $this->parent->getTitle();
+		if ($this->_parent instanceof SwatTitleable) {
+			$title = $this->_parent->getTitle();
 			if ($title === null)
 				$field_title = '';
 			else
-				if ($this->parent->getTitleContentType() === 'text/xml') {
+				if ($this->_parent->getTitleContentType() === 'text/xml') {
 					$field_title =
 						'<strong>'.$this->parent->getTitle().'</strong>';
 				} else {
@@ -48,27 +46,22 @@ abstract class Zap_Control extends Zap_Widget
 			$field_title = '';
 		}
 
-		if ($message->content_type === 'text/plain')
-			$content = SwatString::minimizeEntities($message->primary_content);
-		else
-			$content = $message->primary_content;
+		if ('text/plain' === $message->getContentType()) {
+			$content = Zap_String::minimizeEntities($message->getPrimaryContent());
+		} else {
+			$content = $message->getPrimaryContent();
+		}
 
-		$message->primary_content = sprintf($content, $field_title);
-		$message->content_type = 'text/xml';
+		$message->setPrimaryContent(sprintf($content, $field_title))
+			    ->setContentType('text/xml');
 
 		parent::addMessage($message);
 	}
-
-	// }}}
-	// {{{ public function printWidgetTree()
 
 	public function printWidgetTree()
 	{
 		echo get_class($this), ' ', $this->id;
 	}
-
-	// }}}
-	// {{{ public function getNote()
 
 	/**
 	 * Gets an informative note of how to use this control
@@ -82,8 +75,6 @@ abstract class Zap_Control extends Zap_Widget
 	{
 		return null;
 	}
-
-	// }}}
 }
 
 

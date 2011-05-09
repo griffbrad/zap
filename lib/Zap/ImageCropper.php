@@ -155,7 +155,7 @@ class Zap_ImageCropper extends Zap_InputControl
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addJavaScript('packages/swat/javascript/swat-image-cropper.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -204,7 +204,7 @@ class Zap_ImageCropper extends Zap_InputControl
 		$image_tag->src = $this->image_uri;
 		$image_tag->width = $this->image_width;
 		$image_tag->height = $this->image_height;
-		$image_tag->alt = Swat::_('Crop Image');
+		$image_tag->alt = Zap::_('Crop Image');
 		$image_tag->display();
 
 		$input_tag = new SwatHtmlTag('input');
@@ -232,7 +232,7 @@ class Zap_ImageCropper extends Zap_InputControl
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

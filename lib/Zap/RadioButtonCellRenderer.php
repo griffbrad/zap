@@ -92,7 +92,7 @@ class Zap_RadioButtonCellRenderer extends Zap_CellRenderer
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addJavaScript(
 			'packages/swat/javascript/swat-radio-button-cell-renderer.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		// auto-generate an id to use if no id is set
 		$this->id = $this->getUniqueId();

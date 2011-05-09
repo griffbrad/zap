@@ -97,7 +97,7 @@ class Zap_ExpandableCheckboxTree extends Zap_CheckboxTree
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addJavaScript(
 			'packages/swat/javascript/swat-expandable-checkbox-tree.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -136,7 +136,7 @@ class Zap_ExpandableCheckboxTree extends Zap_CheckboxTree
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

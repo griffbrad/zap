@@ -76,7 +76,7 @@ class Zap_SelectList extends Zap_CheckboxList
 	 */
 	public function getNote()
 	{
-		$message = Swat::_(
+		$message = Zap::_(
 			'Multiple items can be selected by holding down the Ctrl key.');
 
 		return new SwatMessage($message);

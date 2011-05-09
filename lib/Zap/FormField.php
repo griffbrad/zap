@@ -31,7 +31,7 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
      */
     protected $_titleContentType = 'text/plain';
 
-    /*
+    /**
      * Display a visible indication that this field is required
      *
      * @var boolean
@@ -150,6 +150,20 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
         );
     }
 
+    public function setRequired($required)
+    {
+        $this->_required = true;
+
+        return $this;
+    }
+
+    public function setTitle($title)
+    {
+        $this->_title = $title;
+
+        return $this;
+    }
+
     /**
      * Gets the title of this form field
      *
@@ -159,7 +173,50 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->_title;
+    }
+
+    public function setNote($note)
+    {
+        $this->_note = $note;
+
+        return $this;
+    }
+
+    public function getNote()
+    {
+        return $this->_note;
+    }
+
+    public function setTitleReversed($titleReversed)
+    {
+        $this->_titleReversed = $titleReversed;
+
+        return $this;
+    }
+
+    public function getTitleReversed()
+    {
+        return $this->_titleReversed;
+    }
+
+    public function setRequiredStatusDisplay($status)
+    {
+        $this->_requiredStatusDisplay = $status;
+
+        return $this;
+    }
+
+    public function setShowColon($showColon)
+    {
+        $this->_showColon = $showColon;
+
+        return $this;
+    }
+
+    public function getShowColon()
+    {
+        return $this->_showColon;
     }
 
     /**
@@ -195,7 +252,7 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
 
         $containerTag = new Zap_HtmlTag($this->_containerTag);
         $containerTag->id = $this->_id;
-        $containerTag->class = $this->getCSSClassString();
+        $containerTag->class = $this->_getCSSClassString();
 
         $containerTag->open();
 
@@ -220,11 +277,11 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
      */
     protected function _displayTitle()
     {
-        if (null === $this->title && null === $this->accessKey) {
+        if (null === $this->_title && null === $this->_accessKey) {
             return;
         }
 
-        $titleTag = $this->getTitleTag();
+        $titleTag = $this->_getTitleTag();
         $titleTag->open();
         $titleTag->displayContent();
         $this->_displayRequiredStatus();
@@ -248,7 +305,7 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
             $spanTag->display();
         } elseif (
             ! $this->_required &&
-            $this->requiredStatusDisplay & self::DISPLAY_OPTIONAL
+            $this->_requiredStatusDisplay & self::DISPLAY_OPTIONAL
         ) {
             $spanTag = new Zap_HtmlTag('span');
             $spanTag->class = 'swat-optional';
@@ -267,9 +324,9 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
         $contentsTag = new Zap_HtmlTag($this->_contentsTag);
         $contentsTag->class = 'swat-form-field-contents';
 
-        $contents_tag->open();
+        $contentsTag->open();
         $this->_displayChildren();
-        $contents_tag->close();
+        $contentsTag->close();
     }
 
     /**
@@ -392,7 +449,7 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
             $classes[] = 'swat-form-field-with-messages';
         }
 
-        if ($this->required) {
+        if ($this->_required) {
             $classes[] = 'swat-required';
         }
 
@@ -412,9 +469,9 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
     {
         $labelTag = new Zap_HtmlTag('label');
 
-        if (null !== $this->title) {
-            if (! $this->_showcolon) {
-                $labelTag->setContent($this->title, $this->title_content_type);
+        if (null !== $this->_title) {
+            if (! $this->_showColon) {
+                $labelTag->setContent($this->_title, $this->_titleContentType);
             } else {
                 $labelTag->setContent(
                     sprintf(Zap::_('%s: '), $this->_title),

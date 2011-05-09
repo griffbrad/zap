@@ -49,7 +49,7 @@ class Zap_RadioList extends Zap_Flydown
 		$this->requires_id = true;
 
 		$this->addStyleSheet('packages/swat/styles/swat-radio-list.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}

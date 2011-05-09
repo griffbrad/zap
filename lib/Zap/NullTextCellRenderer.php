@@ -45,7 +45,7 @@ class Zap_NullTextCellRenderer extends Zap_TextCellRenderer
 
 		$this->addStyleSheet(
 			'packages/swat/styles/swat-null-text-cell-renderer.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}

@@ -135,7 +135,7 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 		$yui = new SwatYUI(array('event'));
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addJavaScript('packages/swat/javascript/swat-date-entry.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -259,7 +259,7 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 			$time_entry->display();
 		}
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 
 		$div_tag->close();
 	}
@@ -355,12 +355,12 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 
 		if ($all_empty) {
 			if ($this->required && $this->isSensitive()) {
-				$message = Swat::_('The %s field is required.');
+				$message = Zap::_('The %s field is required.');
 				$this->addMessage(new SwatMessage($message, 'error'));
 			}
 			$this->value = null;
 		} elseif ($any_empty) {
-			$message = Swat::_('The %s field is not a valid date.');
+			$message = Zap::_('The %s field is not a valid date.');
 			$this->addMessage(new SwatMessage($message, 'error'));
 			$this->value = null;
 		} else {
@@ -379,7 +379,7 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 				$this->value = $date;
 				$this->validateRanges();
 			} catch (SwatException $e) {
-				$message = Swat::_('The %s field is not a valid date.');
+				$message = Zap::_('The %s field is not a valid date.');
 				$this->addMessage(new SwatMessage($message, 'error'));
 				$this->value = null;
 			}
@@ -561,14 +561,14 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	protected function validateRanges()
 	{
 		if (!$this->isStartDateValid()) {
-			$message = sprintf(Swat::_('The date you have entered is invalid. '.
+			$message = sprintf(Zap::_('The date you have entered is invalid. '.
 				'It must be on or after %s.'),
 				$this->getFormattedDate($this->valid_range_start));
 
 			$this->addMessage(new SwatMessage($message, 'error'));
 
 		} elseif (!$this->isEndDateValid()) {
-			$message = sprintf(Swat::_('The date you have entered is invalid. '.
+			$message = sprintf(Zap::_('The date you have entered is invalid. '.
 				'It must be before %s.'),
 				$this->getFormattedDate($this->valid_range_end));
 

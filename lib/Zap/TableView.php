@@ -223,10 +223,10 @@ class Zap_TableView extends Zap_View implements Zap_UIParent
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addJavaScript('packages/swat/javascript/swat-table-view.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-table-view.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -331,7 +331,7 @@ class Zap_TableView extends Zap_View implements Zap_UIParent
 
 		$table_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

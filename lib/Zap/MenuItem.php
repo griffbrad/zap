@@ -230,47 +230,47 @@ class Zap_MenuItem extends Zap_Control implements Zap_UIParent
 	{
 		switch ($stock_id) {
 		case 'create':
-			$title = Swat::_('Create');
+			$title = Zap::_('Create');
 			$class = 'swat-menu-item-create';
 			break;
 
 		case 'add':
-			$title = Swat::_('Add');
+			$title = Zap::_('Add');
 			$class = 'swat-menu-item-add';
 			break;
 
 		case 'edit':
-			$title = Swat::_('Edit');
+			$title = Zap::_('Edit');
 			$class = 'swat-menu-item-edit';
 			break;
 
 		case 'delete':
-			$title = Swat::_('Delete');
+			$title = Zap::_('Delete');
 			$class = 'swat-menu-item-delete';
 			break;
 
 		case 'preview':
-			$title = Swat::_('Preview');
+			$title = Zap::_('Preview');
 			$class = 'swat-menu-item-preview';
 			break;
 
 		case 'change-order':
-			$title = Swat::_('Change Order');
+			$title = Zap::_('Change Order');
 			$class = 'swat-menu-item-change-order';
 			break;
 
 		case 'help':
-			$title = Swat::_('Help');
+			$title = Zap::_('Help');
 			$class = 'swat-menu-item-help';
 			break;
 
 		case 'print':
-			$title = Swat::_('Print');
+			$title = Zap::_('Print');
 			$class = 'swat-menu-item-print';
 			break;
 
 		case 'email':
-			$title = Swat::_('Email');
+			$title = Zap::_('Email');
 			$class = 'swat-menu-item-email';
 			break;
 

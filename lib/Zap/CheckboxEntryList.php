@@ -82,11 +82,11 @@ class Zap_CheckboxEntryList extends Zap_CheckboxList
 
 		$this->addJavaScript(
 			'packages/swat/javascript/swat-checkbox-entry-list.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet(
 			'packages/swat/styles/swat-checkbox-entry-list.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -167,7 +167,7 @@ class Zap_CheckboxEntryList extends Zap_CheckboxList
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

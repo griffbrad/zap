@@ -173,7 +173,7 @@ abstract class Zap_UIObject extends Zap_Object
 	 * @deprecated The Tango icons are now public domain and no attribution is
 	 *             needed. This method remains for backwards compatibility.
 	 */
-	public function addTangoAttribution($package_id = Swat::PACKAGE_ID)
+	public function addTangoAttribution($package_id = Zap::PACKAGE_ID)
 	{
 	}
 
@@ -373,7 +373,7 @@ abstract class Zap_UIObject extends Zap_Object
 	 *
 	 * @return string a unique identifier for this UI object.
 	 */
-	protected final function getUniqueId()
+	protected final function _getUniqueId()
 	{
 		// Because this method is not static, this counter will start at zero
 		// for each class.

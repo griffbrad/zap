@@ -119,7 +119,7 @@ class Zap_ImageButton extends Zap_Button
 
 		if ($this->show_processing_throbber ||
 			$this->confirmation_message !== null) {
-			Swat::displayInlineJavaScript($this->getInlineJavaScript());
+			Zap::displayInlineJavaScript($this->getInlineJavaScript());
 		}
 	}
 

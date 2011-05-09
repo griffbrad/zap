@@ -68,19 +68,19 @@ class Zap_SimpleColorEntry extends Zap_AbstractOverlay
 		parent::__construct($id);
 
 		if ($this->none_option_title === null) {
-			$this->none_option_title = Swat::_('None');
+			$this->none_option_title = Zap::_('None');
 		}
 
 		$this->addJavaScript(
 			'packages/swat/javascript/swat-simple-color-entry.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addJavaScript(
 			'packages/swat/javascript/swat-abstract-overlay.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-color-entry.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -113,7 +113,7 @@ class Zap_SimpleColorEntry extends Zap_AbstractOverlay
 
 		} elseif ($this->value !== null &&
 			!$this->validateColor($this->value)) {
-			$message = sprintf(Swat::_('“%s” is not a valid color.'),
+			$message = sprintf(Zap::_('“%s” is not a valid color.'),
 				$this->value);
 
 			$this->addMessage(new SwatMessage($message, 'error'));

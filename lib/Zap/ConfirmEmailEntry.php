@@ -50,7 +50,7 @@ class Zap_ConfirmEmailEntry extends Zap_EmailEntry
 
 		if ($this->email_widget->value !== null) {
 			if (strcmp($this->email_widget->value, $this->value) != 0) {
-				$message = Swat::_('Email address and confirmation email '.
+				$message = Zap::_('Email address and confirmation email '.
 					'address do not match.');
 
 				$this->addMessage(new SwatMessage($message, 'error'));

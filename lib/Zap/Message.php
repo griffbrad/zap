@@ -30,8 +30,6 @@ require_once 'Zap/Object.php';
  */
 class Zap_Message extends Zap_Object
 {
-	// {{{ constants
-
 	/**
 	 * Notification message type
 	 *
@@ -72,15 +70,12 @@ class Zap_Message extends Zap_Object
 	 */
 	const SYSTEM_ERROR = 'system-error';
 
-	// }}}
-	// {{{ public properties
-
 	/**
 	 * Type of message
 	 *
 	 * @var string
 	 */
-	public $type;
+	protected $_type;
 
 	/**
 	 * Primary message content
@@ -90,7 +85,7 @@ class Zap_Message extends Zap_Object
 	 *
 	 * @var string
 	 */
-	public $primary_content = null;
+	protected $_primaryContent = null;
 
 	/**
 	 * Secondary message text
@@ -100,7 +95,7 @@ class Zap_Message extends Zap_Object
 	 *
 	 * @var string
 	 */
-	public $secondary_content = null;
+	protected $_secondaryContent = null;
 
 	/**
 	 * Optional content type for both primary and secondary content
@@ -109,26 +104,44 @@ class Zap_Message extends Zap_Object
 	 *
 	 * @var string
 	 */
-	public $content_type = 'text/plain';
-
-	// }}}
-	// {{{ public function __construct()
+	protected $_contentType = 'text/plain';
 
 	/**
 	 * Creates a new SwatMessage
 	 *
-	 * @param string $primary_content the primary text of the message.
+	 * @param string $primaryContent the primary text of the message.
 	 * @param string $type optional. The type of message. If not specified,
 	 *                      'notice' is used.
 	 */
-	public function __construct($primary_content, $type = 'notice')
+	public function __construct($primaryContent, $type = 'notice')
 	{
-		$this->primary_content = $primary_content;
-		$this->type = $type;
+		$this->_primaryContent = $primaryContent;
+		$this->_type           = $type;
 	}
 
-	// }}}
-	// {{{ public function getCSSClassString()
+	public function setPrimaryContent($primaryContent)
+	{
+		$this->_primaryContent = $primaryContent;
+
+		return $this;
+	}
+
+	public function getPrimaryContent()
+	{
+		return $this->_primaryContent;
+	}
+
+	public function setContentType($contentType)
+	{
+		$this->_contentType = $contentType;
+
+		return $this;
+	}
+
+	public function getContentType()
+	{
+		return $this->_contentType;
+	}
 
 	/**
 	 * Gets the CSS class names of this message as a string
@@ -140,24 +153,21 @@ class Zap_Message extends Zap_Object
 		$classes = array('swat-message');
 
 		// legacy style for backwards compatibility
-		if ($this->type === 'notice') {
+		if ('notice' === $this->_type) {
 			$classes[] = 'swat-message-notification';
 		}
 
 		// type-specific style
-		if ($this->type != '') {
-			$classes[] = 'swat-message-'.$this->type;
+		if ('' != $this->_type) {
+			$classes[] = 'swat-message-' . $this->_type;
 		}
 
-		if ($this->secondary_content !== null) {
+		if (null !== $this->_secondaryContent) {
 			$classes[] = 'swat-message-with-secondary';
 		}
 
 		return implode(' ', $classes);
 	}
-
-	// }}}
-	// {{{ public function getCssClass()
 
 	/**
 	 * An alias for SwatMessage::getCSSClassString()
@@ -170,8 +180,6 @@ class Zap_Message extends Zap_Object
 	{
 		return $this->getCSSClassString();
 	}
-
-	// }}}
 }
 
 

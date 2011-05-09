@@ -33,8 +33,8 @@ class Zap_YesNoFlydown extends Zap_Flydown
 	public function __construct($id = null)
 	{
 		parent::__construct($id);
-		$this->addOption(self::NO,  Swat::_('No'));
-		$this->addOption(self::YES, Swat::_('Yes'));
+		$this->addOption(self::NO,  Zap::_('No'));
+		$this->addOption(self::YES, Zap::_('Yes'));
 	}
 
 	// }}}

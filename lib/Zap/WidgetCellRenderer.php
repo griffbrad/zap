@@ -695,7 +695,7 @@ class Zap_WidgetCellRenderer extends Zap_CellRenderer implements Zap_UIParent,
 
 	protected function getReplicatorFieldName()
 	{
-		$name = 'replicators';
+		$name = $tihs->id . '_replicators';
 
 		$widget = $this->getFirstAncestor('SwatWidget');
 		if ($widget->id) {

@@ -100,7 +100,7 @@ class Zap_CheckboxTree extends Zap_CheckboxList implements Zap_State
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

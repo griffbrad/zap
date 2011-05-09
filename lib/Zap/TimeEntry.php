@@ -171,7 +171,7 @@ class Zap_TimeEntry extends Zap_InputControl implements Zap_State
 		$yui = new SwatYUI(array('event'));
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addJavaScript('packages/swat/javascript/swat-time-entry.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		// guess twelve-hour or twenty-four hour default based on locale
 		$locale_format = nl_langinfo(T_FMT);
@@ -268,7 +268,7 @@ class Zap_TimeEntry extends Zap_InputControl implements Zap_State
 
 		echo '</span>';
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 
 		$div_tag->close();
 	}
@@ -360,12 +360,12 @@ class Zap_TimeEntry extends Zap_InputControl implements Zap_State
 
 		if ($all_empty) {
 			if ($this->required && $this->isSensitive()) {
-				$message = Swat::_('The %s field is required.');
+				$message = Zap::_('The %s field is required.');
 				$this->addMessage(new SwatMessage($message, 'error'));
 			}
 			$this->value = null;
 		} elseif ($any_empty) {
-			$message = Swat::_('The %s field is not a valid time.');
+			$message = Zap::_('The %s field is not a valid time.');
 			$this->addMessage(new SwatMessage($message, 'error'));
 			$this->value = null;
 		} else {
@@ -385,7 +385,7 @@ class Zap_TimeEntry extends Zap_InputControl implements Zap_State
 				$this->value = $date;
 				$this->validateRanges();
 			} catch (SwatException $e) {
-				$message = Swat::_('The %s field is not a valid time.');
+				$message = Zap::_('The %s field is not a valid time.');
 				$this->addMessage(new SwatMessage($message, 'error'));
 				$this->value = null;
 			}
@@ -510,14 +510,14 @@ class Zap_TimeEntry extends Zap_InputControl implements Zap_State
 	protected function validateRanges()
 	{
 		if (!$this->isStartTimeValid()) {
-			$message = sprintf(Swat::_('The time you have entered is invalid. '.
+			$message = sprintf(Zap::_('The time you have entered is invalid. '.
 				'It must be on or after %s.'),
 				$this->getFormattedTime($this->valid_range_start));
 
 			$this->addMessage(new SwatMessage($message, 'error'));
 
 		} elseif (!$this->isEndTimeValid()) {
-			$message = sprintf(Swat::_('The time you have entered is invalid. '.
+			$message = sprintf(Zap::_('The time you have entered is invalid. '.
 				'It must be on or before %s.'),
 				$this->getFormattedTime($this->valid_range_end));
 
@@ -667,8 +667,8 @@ class Zap_TimeEntry extends Zap_InputControl implements Zap_State
 	{
 		$flydown = new SwatFlydown($this->id.'_am_pm');
 		$flydown->addOptionsByArray(array(
-			'am' => Swat::_('am'),
-			'pm' => Swat::_('pm'),
+			'am' => Zap::_('am'),
+			'pm' => Zap::_('pm'),
 		));
 
 		return $flydown;

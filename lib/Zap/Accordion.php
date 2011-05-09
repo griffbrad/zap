@@ -35,10 +35,10 @@ class Zap_Accordion extends Zap_NoteBook
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addStyleSheet('packages/swat/styles/swat-accordion.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addJavaScript('packages/swat/javascript/swat-accordion.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -98,7 +98,7 @@ class Zap_Accordion extends Zap_NoteBook
 		}
 
 		$ul_tag->close();
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

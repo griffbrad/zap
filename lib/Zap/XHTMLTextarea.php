@@ -143,7 +143,7 @@ XHTML;
 
 			// further humanize
 			$error = str_replace('tag mismatch:',
-				Swat::_('tag mismatch between'),
+				Zap::_('tag mismatch between'),
 				$error);
 
 			// remove some stuff that only makes sense in document context
@@ -152,24 +152,24 @@ XHTML;
 			$error = strtolower($error);
 
 			$error = str_replace('xmlparseentityref: no name',
-				Swat::_('unescaped ampersand. Use &amp;amp; instead of &amp;'),
+				Zap::_('unescaped ampersand. Use &amp;amp; instead of &amp;'),
 				$error);
 
 			$error = str_replace('starttag: invalid element name',
-				Swat::_('unescaped less-than. Use &amp;lt; instead of &lt;'),
+				Zap::_('unescaped less-than. Use &amp;lt; instead of &lt;'),
 				$error);
 
 			$error = str_replace('specification mandate value for attribute',
-				Swat::_('a value is required for the attribute'),
+				Zap::_('a value is required for the attribute'),
 				$error);
 
 			$error = preg_replace(
 				'/^no declaration for attribute (.*?) of element (.*?)$/',
-				Swat::_('the attribute \1 is not valid for the element \2'),
+				Zap::_('the attribute \1 is not valid for the element \2'),
 				$error);
 
 			$error = str_replace('attvalue: " or \' expected',
-				Swat::_('attribute values must be contained within quotation '.
+				Zap::_('attribute values must be contained within quotation '.
 					'marks'),
 				$error);
 
@@ -179,7 +179,7 @@ XHTML;
 				$errors[] = $error;
 		}
 
-		$content = Swat::_('%s must be valid XHTML markup: ');
+		$content = Zap::_('%s must be valid XHTML markup: ');
 		$content.= '<ul><li>'.implode(',</li><li>', $errors).'.</li></ul>';
 		$message = new SwatMessage($content, 'error');
 		$message->content_type = 'text/xml';
@@ -201,7 +201,7 @@ XHTML;
 			new SwatCheckbox($this->id.'_ignore_checkbox');
 
 		$ignore_field = new SwatFormField($this->id.'_ignore_field');
-		$ignore_field->title = Swat::_('Ignore XHTML validation errors');
+		$ignore_field->title = Zap::_('Ignore XHTML validation errors');
 		$ignore_field->add($this->ignore_errors_checkbox);
 
 		$this->addCompositeWidget($ignore_field, 'ignore_field');

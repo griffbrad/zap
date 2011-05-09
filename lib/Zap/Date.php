@@ -677,37 +677,37 @@ class Zap_Date extends HotDateTime
 	{
 		switch ($id) {
 		case self::DF_MDY:
-			return Swat::_('%m/%d/%y');
+			return Zap::_('%m/%d/%y');
 		case self::DF_MDY_SHORT:
-			return Swat::_('%m%d%y');
+			return Zap::_('%m%d%y');
 		case self::DF_DATE:
-			return Swat::_('%B %e, %Y');
+			return Zap::_('%B %e, %Y');
 		case self::DF_DATE_LONG:
-			return Swat::_('%A, %B %e, %Y');
+			return Zap::_('%A, %B %e, %Y');
 		case self::DF_DATE_TIME:
-			return Swat::_('%B %e, %Y %i:%M %p');
+			return Zap::_('%B %e, %Y %i:%M %p');
 		case self::DF_DATE_TIME_LONG:
-			return Swat::_('%A, %B %e, %Y %i:%M %p');
+			return Zap::_('%A, %B %e, %Y %i:%M %p');
 		case self::DF_TIME:
-			return Swat::_('%i:%M %p');
+			return Zap::_('%i:%M %p');
 		case self::DF_DATE_SHORT:
-			return Swat::_('%b %e %Y');
+			return Zap::_('%b %e %Y');
 		case self::DF_DATE_SHORT_NOYEAR:
-			return Swat::_('%b %e');
+			return Zap::_('%b %e');
 		case self::DF_DATE_TIME_SHORT:
-			return Swat::_('%b %e, %Y %i:%M %p');
+			return Zap::_('%b %e, %Y %i:%M %p');
 		case self::DF_DATE_TIME_SHORT_NOYEAR:
-			return Swat::_('%b %e, %i:%M %p');
+			return Zap::_('%b %e, %i:%M %p');
 		case self::DF_MY:
-			return Swat::_('%B %Y');
+			return Zap::_('%B %Y');
 		case self::DF_CC_MY:
-			return Swat::_('%m / %Y');
+			return Zap::_('%m / %Y');
 		case self::DF_Y:
-			return Swat::_('%Y');
+			return Zap::_('%Y');
 		case self::DF_ISO_8601_BASIC:
-			return Swat::_('%Y%m%dT%H%M%S');
+			return Zap::_('%Y%m%dT%H%M%S');
 		case self::DF_ISO_8601_EXTENDED:
-			return Swat::_('%Y-%m-%dT%H:%M:%S');
+			return Zap::_('%Y-%m-%dT%H:%M:%S');
 		default:
 			throw new Exception("Unknown date format id '$id'.");
 		}
@@ -729,37 +729,37 @@ class Zap_Date extends HotDateTime
 	{
 		switch ($id) {
 		case self::DF_MDY:
-			return Swat::_('MM/dd/yy');
+			return Zap::_('MM/dd/yy');
 		case self::DF_MDY_SHORT:
-			return Swat::_('MMddyy');
+			return Zap::_('MMddyy');
 		case self::DF_DATE:
-			return Swat::_('MMMM d, yyyy');
+			return Zap::_('MMMM d, yyyy');
 		case self::DF_DATE_LONG:
-			return Swat::_('EEEE, MMMM d, yyyy');
+			return Zap::_('EEEE, MMMM d, yyyy');
 		case self::DF_DATE_TIME:
-			return Swat::_('MMMM d, yyyy h:mm a');
+			return Zap::_('MMMM d, yyyy h:mm a');
 		case self::DF_DATE_TIME_LONG:
-			return Swat::_('EEEE, MMMM d, yyyy h:mm a');
+			return Zap::_('EEEE, MMMM d, yyyy h:mm a');
 		case self::DF_TIME:
-			return Swat::_('h:mm a');
+			return Zap::_('h:mm a');
 		case self::DF_DATE_SHORT:
-			return Swat::_('MMM d yyyy');
+			return Zap::_('MMM d yyyy');
 		case self::DF_DATE_SHORT_NOYEAR:
-			return Swat::_('MMM d');
+			return Zap::_('MMM d');
 		case self::DF_DATE_TIME_SHORT:
-			return Swat::_('MMM d, yyyy h:mm a');
+			return Zap::_('MMM d, yyyy h:mm a');
 		case self::DF_DATE_TIME_SHORT_NOYEAR:
-			return Swat::_('MMM d, h:mm a');
+			return Zap::_('MMM d, h:mm a');
 		case self::DF_MY:
-			return Swat::_('MMMM yyyy');
+			return Zap::_('MMMM yyyy');
 		case self::DF_CC_MY:
-			return Swat::_('MM / yyyy');
+			return Zap::_('MM / yyyy');
 		case self::DF_Y:
-			return Swat::_('yyyy');
+			return Zap::_('yyyy');
 		case self::DF_ISO_8601_BASIC:
-			return Swat::_('yyyyMMdd\'T\'HHmmss');
+			return Zap::_('yyyyMMdd\'T\'HHmmss');
 		case self::DF_ISO_8601_EXTENDED:
-			return Swat::_('yyyy-MM-dd\'T\'HH:mm:ss');
+			return Zap::_('yyyy-MM-dd\'T\'HH:mm:ss');
 		default:
 			throw new Exception("Unknown date format id '$id'.");
 		}

@@ -69,10 +69,10 @@ class Zap_CheckboxList extends Zap_OptionControl implements Zap_State
 		$yui = new SwatYUI(array('event'));
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addJavaScript('packages/swat/javascript/swat-checkbox-list.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -174,7 +174,7 @@ class Zap_CheckboxList extends Zap_OptionControl implements Zap_State
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -195,7 +195,7 @@ class Zap_CheckboxList extends Zap_OptionControl implements Zap_State
 		if ($this->required && count($this->values) == 0
 			&& $this->isSensitive()) {
 
-			$message = Swat::_('The %s field is required.');
+			$message = Zap::_('The %s field is required.');
 			$this->addMessage(new SwatMessage($message, 'error'));
 		}
 	}

@@ -66,7 +66,7 @@ class Zap_Fieldset extends Zap_DisplayableContainer implements Zap_Titleable
 		$yui = new SwatYUI(array('event'));
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 		$this->addJavaScript('packages/swat/javascript/swat-fieldset.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -126,7 +126,7 @@ class Zap_Fieldset extends Zap_DisplayableContainer implements Zap_Titleable
 
 		$this->displayChildren();
 
-		Swat::displayInlineJavaScript($this->getInlineJavascript());
+		Zap::displayInlineJavaScript($this->getInlineJavascript());
 
 		$fieldset_tag->close();
 	}

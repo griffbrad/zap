@@ -1382,7 +1382,7 @@ class Zap_String extends Zap_Object
 			$years = floor($seconds / $year);
 			$seconds -= $year * $years;
 			$periods[] = sprintf(
-				Swat::ngettext('%s year', '%s years', $years),
+				Zap::ngettext('%s year', '%s years', $years),
 				$years);
 		}
 
@@ -1390,7 +1390,7 @@ class Zap_String extends Zap_Object
 			$months = floor($seconds / $month);
 			$seconds -= $month * $months;
 			$periods[] = sprintf(
-				Swat::ngettext('%s month', '%s months', $months),
+				Zap::ngettext('%s month', '%s months', $months),
 				$months);
 		}
 
@@ -1398,7 +1398,7 @@ class Zap_String extends Zap_Object
 			$days = floor($seconds / $day);
 			$seconds -= $day * $days;
 			$periods[] = sprintf(
-				Swat::ngettext('%s day', '%s days', $days),
+				Zap::ngettext('%s day', '%s days', $days),
 				$days);
 		}
 
@@ -1406,7 +1406,7 @@ class Zap_String extends Zap_Object
 			$hours = floor($seconds / $hour);
 			$seconds -= $hour * $hours;
 			$periods[] = sprintf(
-				Swat::ngettext('%s hour', '%s hours', $hours),
+				Zap::ngettext('%s hour', '%s hours', $hours),
 				$hours);
 		}
 
@@ -1414,13 +1414,13 @@ class Zap_String extends Zap_Object
 			$minutes = floor($seconds / $minute);
 			$seconds -= $minute * $minutes;
 			$periods[] = sprintf(
-				Swat::ngettext('%s minute', '%s minutes', $minutes),
+				Zap::ngettext('%s minute', '%s minutes', $minutes),
 				$minutes);
 		}
 
 		if ($seconds > 0 || count($periods) == 0) {
 			$periods[] = sprintf(
-				Swat::ngettext('%s second', '%s seconds', $seconds),
+				Zap::ngettext('%s second', '%s seconds', $seconds),
 				$seconds);
 		}
 

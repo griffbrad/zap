@@ -67,7 +67,7 @@ class Zap_CascadeFlydown extends Zap_Flydown
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addJavaScript('packages/swat/javascript/swat-cascade.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -84,7 +84,7 @@ class Zap_CascadeFlydown extends Zap_Flydown
 			return;
 
 		parent::display();
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -191,7 +191,7 @@ class Zap_CascadeFlydown extends Zap_Flydown
 	protected function getBlankOption()
 	{
 		$blank_title = ($this->blank_title === null) ?
-			Swat::_('choose one ...') : $this->blank_title;
+			Zap::_('choose one ...') : $this->blank_title;
 
 		return new SwatFlydownBlankOption(null, $blank_title);
 	}
@@ -227,7 +227,7 @@ class Zap_CascadeFlydown extends Zap_Flydown
 					$value = '';
 
 				$blank_title = ($this->blank_title === null) ?
-					Swat::_('choose one ...') : $this->blank_title;
+					Zap::_('choose one ...') : $this->blank_title;
 
 				$javascript.= sprintf(
 					"\n%s_cascade.addChild(%s, %s, %s);",

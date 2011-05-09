@@ -55,13 +55,13 @@ class Zap_Calendar extends Zap_Control
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addJavaScript('packages/swat/javascript/swat-calendar.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addJavaScript('packages/swat/javascript/swat-z-index-manager.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-calendar.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -100,7 +100,7 @@ class Zap_Calendar extends Zap_Control
 
 		$container_div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -198,14 +198,14 @@ class Zap_Calendar extends Zap_Control
 		}
 		$month_names = "['".implode("', '", $month_names)."']";
 
-		$prev_alt_text     = Swat::_('Previous Month');
-		$next_alt_text     = Swat::_('Next Month');
-		$close_text        = Swat::_('Close');
-		$nodate_text       = Swat::_('No Date');
-		$today_text        = Swat::_('Today');
+		$prev_alt_text     = Zap::_('Previous Month');
+		$next_alt_text     = Zap::_('Next Month');
+		$close_text        = Zap::_('Close');
+		$nodate_text       = Zap::_('No Date');
+		$today_text        = Zap::_('Today');
 
-		$open_toggle_text  = Swat::_('open calendar');
-		$close_toggle_text = Swat::_('close calendar');
+		$open_toggle_text  = Zap::_('open calendar');
+		$close_toggle_text = Zap::_('close calendar');
 
 		return
 			"SwatCalendar.week_names = {$week_names};\n".

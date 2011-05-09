@@ -15,8 +15,6 @@ require_once 'Zap/State.php';
  */
 class Zap_Checkbox extends Zap_InputControl implements Zap_State
 {
-	// {{{ public properties
-
 	/**
 	 * Checkbox value
 	 *
@@ -24,7 +22,7 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	 *
 	 * @var boolean
 	 */
-	public $value = false;
+	protected $_value = false;
 
 	/**
 	 * Access key
@@ -33,10 +31,7 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	 *
 	 * @var string
 	 */
-	public $access_key = null;
-
-	// }}}
-	// {{{ public function __construct()
+	protected $_accessKey = null;
 
 	/**
 	 * Creates a new checkbox
@@ -48,11 +43,8 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	public function __construct($id = null)
 	{
 		parent::__construct($id);
-		$this->requires_id = true;
+		$this->_requiresId = true;
 	}
-
-	// }}}
-	// {{{ public function display()
 
 	/**
 	 * Displays this checkbox
@@ -61,32 +53,32 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	 */
 	public function display()
 	{
-		if (!$this->visible)
+		if (! $this->_visible) {
 			return;
+		}
 
 		parent::display();
 
 		$this->getForm()->addHiddenField($this->id.'_submitted', 1);
 
-		$input_tag = new SwatHtmlTag('input');
-		$input_tag->type = 'checkbox';
-		$input_tag->class = $this->getCSSClassString();
-		$input_tag->name = $this->id;
-		$input_tag->id = $this->id;
-		$input_tag->value = '1';
-		$input_tag->accesskey = $this->access_key;
+		$inputTag = new Zap_HtmlTag('input');
+		$inputTag->type      = 'checkbox';
+		$inputTag->class     = $this->_getCSSClassString();
+		$inputTag->name      = $this->_id;
+		$inputTag->id        = $this->_id;
+		$inputTag->value     = '1';
+		$inputTag->accesskey = $this->_accessKey;
 
-		if ($this->value)
-			$input_tag->checked = 'checked';
+		if ($this->_value) {
+			$inputTag->checked = 'checked';
+		}
 
-		if (!$this->isSensitive())
-			$input_tag->disabled = 'disabled';
+		if (! $this->isSensitive()) {
+			$inputTag->disabled = 'disabled';
+		}
 
-		$input_tag->display();
+		$inputTag->display();
 	}
-
-	// }}}
-	// {{{ public function process()
 
 	/**
 	 * Processes this checkbox
@@ -97,15 +89,15 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	{
 		parent::process();
 
-		if ($this->getForm()->getHiddenField($this->id.'_submitted') === null)
+		$id = $this->_id . '_submitted';
+
+		if (null === $this->getForm()->getHiddenField($id)) {
 			return;
+		}
 
 		$data = &$this->getForm()->getFormData();
-		$this->value = array_key_exists($this->id, $data);
+		$this->_value = array_key_exists($this->_id, $data);
 	}
-
-	// }}}
-	// {{{ public function getState()
 
 	/**
 	 * Gets the current state of this checkbox
@@ -116,11 +108,8 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	 */
 	public function getState()
 	{
-		return $this->value;
+		return $this->_value;
 	}
-
-	// }}}
-	// {{{ public function setState()
 
 	/**
 	 * Sets the current state of this checkbox
@@ -131,11 +120,8 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	 */
 	public function setState($state)
 	{
-		$this->value = $state;
+		$this->_value = $state;
 	}
-
-	// }}}
-	// {{{ public function getFocusableHtmlId()
 
 	/**
 	 * Gets the id attribute of the XHTML element displayed by this widget
@@ -149,11 +135,8 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	 */
 	public function getFocusableHtmlId()
 	{
-		return ($this->visible) ? $this->id : null;
+		return ($this->_visible) ? $this->_id : null;
 	}
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
 
 	/**
 	 * Gets the array of CSS classes that are applied to this checkbox
@@ -161,14 +144,12 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 	 * @return array the array of CSS classes that are applied to this
 	 *                checkbox.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-checkbox');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
-
-	// }}}
 }
 
 

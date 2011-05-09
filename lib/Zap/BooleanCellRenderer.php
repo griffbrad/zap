@@ -86,8 +86,8 @@ class Zap_BooleanCellRenderer extends Zap_CellRenderer
 
 		switch ($stock_id) {
 		case 'yes-no':
-			$false_content = Swat::_('No');
-			$true_content = Swat::_('Yes');
+			$false_content = Zap::_('No');
+			$true_content = Zap::_('Yes');
 			break;
 
 		case 'check-only':
@@ -205,7 +205,7 @@ class Zap_BooleanCellRenderer extends Zap_CellRenderer
 	{
 		$image_tag = new SwatHtmlTag('img');
 		$image_tag->src = 'packages/swat/images/check.png';
-		$image_tag->alt = Swat::_('Yes');
+		$image_tag->alt = Zap::_('Yes');
 		$image_tag->height = '14';
 		$image_tag->width = '14';
 		$image_tag->display();

@@ -146,10 +146,10 @@ class Zap_ProgressBar extends Zap_Control
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addStyleSheet('packages/swat/styles/swat-progress-bar.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addJavaScript('packages/swat/javascript/swat-progress-bar.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -179,7 +179,7 @@ class Zap_ProgressBar extends Zap_Control
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}

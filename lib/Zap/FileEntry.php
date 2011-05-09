@@ -202,7 +202,7 @@ class Zap_FileEntry extends Zap_InputControl
 		$message = null;
 
 		if ($this->accept_mime_types !== null && $this->display_mime_types) {
-			$message = new SwatMessage(sprintf(Swat::ngettext(
+			$message = new SwatMessage(sprintf(Zap::ngettext(
 				'File type must be %s.',
 				'Valid file types are: %s.',
 				count($this->accept_mime_types)),
@@ -433,32 +433,32 @@ class Zap_FileEntry extends Zap_InputControl
 		switch ($id) {
 		case 'required':
 			$text = $this->show_field_title_in_messages ?
-				Swat::_('The %s field is required.') :
-				Swat::_('This field is required.');
+				Zap::_('The %s field is required.') :
+				Zap::_('This field is required.');
 
 			$message = new SwatMessage($text, 'error');
 			break;
 		case 'mime-type':
 			$text = sprintf($this->show_field_title_in_messages ?
-				Swat::_('The %%s field must be of the following type(s): %s.') :
-				Swat::_('This field must be of the following type(s): %s.'),
+				Zap::_('The %%s field must be of the following type(s): %s.') :
+				Zap::_('This field must be of the following type(s): %s.'),
 				implode(', ', $this->accept_mime_types));
 
 			$message = new SwatMessage($text, 'error');
 			break;
 		case 'too-large':
 			$text = $this->show_field_title_in_messages ?
-				Swat::_('The %s field exceeds the maximum allowable file '.
+				Zap::_('The %s field exceeds the maximum allowable file '.
 					'size.') :
-				Swat::_('This field exceeds the maximum allowable file size.');
+				Zap::_('This field exceeds the maximum allowable file size.');
 
 			$message = new SwatMessage($text, 'error');
 			break;
 		case 'upload-error':
 			$text = $this->show_field_title_in_messages ?
-				Swat::_('The %s field encounted an error when trying to '.
+				Zap::_('The %s field encounted an error when trying to '.
 					'upload the file. Please try again.') :
-				Swat::_('This field encounted an error when trying to '.
+				Zap::_('This field encounted an error when trying to '.
 					'upload the file. Please try again.');
 
 			$message = new SwatMessage($text, 'error');
@@ -532,7 +532,7 @@ class Zap_FileEntry extends Zap_InputControl
 
 	protected function getMaximumUploadSizeText()
 	{
-		return sprintf(Swat::_('Maximum file size %s.'),
+		return sprintf(Zap::_('Maximum file size %s.'),
 			SwatString::byteFormat(self::getMaximumFileUploadSize()));
 	}
 

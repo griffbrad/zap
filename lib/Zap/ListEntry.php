@@ -146,7 +146,7 @@ class Zap_ListEntry extends Zap_Entry
 			count($this->values) > $this->max_entries) {
 
 			$message = sprintf(
-				Swat::_('The %%s field cannot have more than %s entries.'),
+				Zap::_('The %%s field cannot have more than %s entries.'),
 				$locale->formatNumber($this->max_entries));
 
 			$this->addMessage(new SwatMessage($message, 'error'));
@@ -154,7 +154,7 @@ class Zap_ListEntry extends Zap_Entry
 		} elseif ($this->required &&
 			count($this->values) < $this->min_entries) {
 
-			$message = sprintf(Swat::ngettext(
+			$message = sprintf(Zap::ngettext(
 				'The %%s field must have at least %s entry.',
 				'The %%s field must have at least %s entries.',
 				$this->min_entries),
@@ -173,7 +173,7 @@ class Zap_ListEntry extends Zap_Entry
 		foreach ($this->values as $value) {
 			$len = strlen($value);
 			if ($this->maxlength !== null && $len > $this->maxlength) {
-				$max_length_msg = sprintf(Swat::ngettext(
+				$max_length_msg = sprintf(Zap::ngettext(
 					'Entries in the %%s field must be less than %s '.
 					'character long.',
 					'Entries in the %%s field must be less than %s '.
@@ -184,7 +184,7 @@ class Zap_ListEntry extends Zap_Entry
 				$max_length_error_values[] = $value;
 
 			} elseif ($this->minlength !== null && $len < $this->minlength) {
-				$min_length_msg = sprintf(Swat::ngettext(
+				$min_length_msg = sprintf(Zap::ngettext(
 					'Entries in the %%s field must be at least %s '.
 					'character long.',
 					'Entries in the %%s field must be at least %s '.
@@ -197,7 +197,7 @@ class Zap_ListEntry extends Zap_Entry
 		}
 
 		if ($min_length_msg !== null) {
-			$min_length_msg.= sprintf(Swat::ngettext(
+			$min_length_msg.= sprintf(Zap::ngettext(
 				'The following entry is too short: %s.',
 				'The following entries are too short: %s.',
 				count($min_length_error_values)),
@@ -208,7 +208,7 @@ class Zap_ListEntry extends Zap_Entry
 		}
 
 		if ($max_length_msg !== null) {
-			$max_length_msg.= sprintf(Swat::ngettext(
+			$max_length_msg.= sprintf(Zap::ngettext(
 				'The following entry is too long: %s.',
 				'The following entries are too long: %s.',
 				count($max_length_error_values)),
@@ -296,7 +296,7 @@ class Zap_ListEntry extends Zap_Entry
 		if ($this->max_entries !== null && $this->max_entries > 0 &&
 			$this->min_entries === null) {
 
-			$message = new SwatMessage(sprintf(Swat::ngettext(
+			$message = new SwatMessage(sprintf(Zap::ngettext(
 				'List can contain at most %s entry',
 				'List can contain at most %s entries',
 				$this->max_entries),
@@ -306,7 +306,7 @@ class Zap_ListEntry extends Zap_Entry
 			$this->max_entries == 0) &&
 			$this->min_entries > 1 && $this->required == true) {
 
-			$message = new SwatMessage(sprintf(Swat::ngettext(
+			$message = new SwatMessage(sprintf(Zap::ngettext(
 				'List must contain at least %s entry',
 				'List must contain at least %s entries',
 				$this->min_entries),

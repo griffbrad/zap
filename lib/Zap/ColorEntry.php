@@ -56,13 +56,13 @@ class Zap_ColorEntry extends Zap_InputControl implements Zap_State
 		$this->requires_id = true;
 
 		$this->addJavaScript('packages/swat/javascript/swat-color-entry.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addJavaScript('packages/swat/javascript/swat-z-index-manager.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-color-entry.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -103,7 +103,7 @@ class Zap_ColorEntry extends Zap_InputControl implements Zap_State
 
 		$img_tag = new SwatHtmlTag('img');
 		$img_tag->src = 'packages/swat/images/color-palette.png';
-		$img_tag->alt = Swat::_('Color entry toggle graphic.');
+		$img_tag->alt = Zap::_('Color entry toggle graphic.');
 		$img_tag->id = $this->id.'_toggle';
 		$img_tag->class = 'swat-color-entry-toggle';
 		$img_tag->display();
@@ -114,7 +114,7 @@ class Zap_ColorEntry extends Zap_InputControl implements Zap_State
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -145,7 +145,7 @@ class Zap_ColorEntry extends Zap_InputControl implements Zap_State
 			return;
 
 		} elseif ($this->value === null) {
-			$message = Swat::_('The %s field is required.');
+			$message = Zap::_('The %s field is required.');
 			$this->addMessage(new SwatMessage($message, 'error'));
 		}
 	}
@@ -296,16 +296,16 @@ class Zap_ColorEntry extends Zap_InputControl implements Zap_State
 
 		$input_tag->class = 'button-set';
 		$input_tag->onclick = $this->id.'_obj.apply();';
-		$input_tag->value = Swat::_('Set Color');
+		$input_tag->value = Zap::_('Set Color');
 		$input_tag->display();
 
 		$input_tag->class = 'button-cancel';
 		$input_tag->onclick = $this->id.'_obj.none();';
-		$input_tag->value = Swat::_('Set None');
+		$input_tag->value = Zap::_('Set None');
 		$input_tag->display();
 
 		$input_tag->onclick = $this->id.'_obj.toggle();';
-		$input_tag->value = Swat::_('Cancel');
+		$input_tag->value = Zap::_('Cancel');
 		$input_tag->display();
 
 		echo '</div>';

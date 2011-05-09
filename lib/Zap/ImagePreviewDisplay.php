@@ -151,17 +151,17 @@ class Zap_ImagePreviewDisplay extends Zap_ImageDisplay
 
 		$this->addJavaScript(
 			'packages/swat/javascript/swat-z-index-manager.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addJavaScript(
 			'packages/swat/javascript/swat-image-preview-display.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet(
 			'packages/swat/styles/swat-image-preview-display.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
-		$this->title = Swat::_('View Larger Image');
+		$this->title = Zap::_('View Larger Image');
 	}
 
 	// }}}
@@ -204,7 +204,7 @@ class Zap_ImagePreviewDisplay extends Zap_ImageDisplay
 			parent::display();
 			$tag->close();
 
-			Swat::displayInlineJavaScript($this->getInlineJavaScript());
+			Zap::displayInlineJavaScript($this->getInlineJavaScript());
 		}
 	}
 
@@ -282,7 +282,7 @@ class Zap_ImagePreviewDisplay extends Zap_ImageDisplay
 	 */
 	protected function getInlineJavaScriptTranslations()
 	{
-		$close_text  = Swat::_('Close');
+		$close_text  = Zap::_('Close');
 
 		return sprintf(
 			"SwatImagePreviewDisplay.close_text = '%s';\n",

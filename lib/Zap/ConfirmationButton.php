@@ -30,7 +30,7 @@ class Zap_ConfirmationButton extends Zap_Button
 		parent::__construct($id);
 
 		$this->confirmation_message =
-			Swat::_('Are you sure you wish to continue?');
+			Zap::_('Are you sure you wish to continue?');
 	}
 
 	// }}}

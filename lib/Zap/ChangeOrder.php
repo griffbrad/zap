@@ -67,13 +67,13 @@ class Zap_ChangeOrder extends Zap_OptionControl implements Zap_State
 		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
 
 		$this->addJavaScript('packages/swat/javascript/swat-change-order.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addJavaScript('packages/swat/javascript/swat-z-index-manager.js',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 
 		$this->addStyleSheet('packages/swat/styles/swat-change-order.css',
-			Swat::PACKAGE_ID);
+			Zap::PACKAGE_ID);
 	}
 
 	// }}}
@@ -138,7 +138,7 @@ class Zap_ChangeOrder extends Zap_OptionControl implements Zap_State
 
 		$div_tag->close();
 
-		Swat::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->getInlineJavaScript());
 	}
 
 	// }}}
@@ -176,7 +176,7 @@ class Zap_ChangeOrder extends Zap_OptionControl implements Zap_State
 	 */
 	public function getNote()
 	{
-		$message = Swat::_('Items can be ordered by dragging-and-dropping '.
+		$message = Zap::_('Items can be ordered by dragging-and-dropping '.
 			'with the mouse.');
 
 		return new SwatMessage($message);
@@ -289,7 +289,7 @@ class Zap_ChangeOrder extends Zap_OptionControl implements Zap_State
 		if (!$this->isSensitive())
 			$btn_tag->disabled = 'disabled';
 
-		$btn_tag->value = Swat::_('Move to Top');
+		$btn_tag->value = Zap::_('Move to Top');
 		$btn_tag->onclick = "{$this->id}_obj.moveToTop();";
 		$btn_tag->name = "{$this->id}_buttons";
 		$btn_tag->class = 'swat-change-order-top';
@@ -297,7 +297,7 @@ class Zap_ChangeOrder extends Zap_OptionControl implements Zap_State
 
 		echo '<br />';
 
-		$btn_tag->value = Swat::_('Move Up');
+		$btn_tag->value = Zap::_('Move Up');
 		$btn_tag->onclick = "{$this->id}_obj.moveUp();";
 		$btn_tag->name = "{$this->id}_buttons";
 		$btn_tag->class = 'swat-change-order-up';
@@ -305,7 +305,7 @@ class Zap_ChangeOrder extends Zap_OptionControl implements Zap_State
 
 		echo '<br />';
 
-		$btn_tag->value = Swat::_('Move Down');
+		$btn_tag->value = Zap::_('Move Down');
 		$btn_tag->onclick = "{$this->id}_obj.moveDown();";
 		$btn_tag->name = "{$this->id}_buttons";
 		$btn_tag->class = 'swat-change-order-down';
@@ -313,7 +313,7 @@ class Zap_ChangeOrder extends Zap_OptionControl implements Zap_State
 
 		echo '<br />';
 
-		$btn_tag->value = Swat::_('Move to Bottom');
+		$btn_tag->value = Zap::_('Move to Bottom');
 		$btn_tag->onclick = "{$this->id}_obj.moveToBottom();";
 		$btn_tag->name = "{$this->id}_buttons";
 		$btn_tag->class = 'swat-change-order-bottom';
