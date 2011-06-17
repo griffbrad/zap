@@ -21,17 +21,12 @@ require_once 'Zap/HtmlTag.php';
  */
 class Zap_TableViewGroup extends Zap_TableViewColumn
 {
-	// {{{ public properties
-
 	/**
 	 * The field of the table store to group rows by
 	 *
 	 * @var string
 	 */
 	public $group_by = null;
-
-	// }}}
-	// {{{ private properties
 
 	/**
 	 * The current value of the group_by field of the table model for the
@@ -136,7 +131,7 @@ class Zap_TableViewGroup extends Zap_TableViewColumn
 	/**
 	 * Displays the renderers for this column
 	 *
-	 * The renderes are only displayed once for every time the value of the
+	 * The renderers are only displayed once for every time the value of the
 	 * group_by field changes and the renderers are displayed on their own
 	 * separate table row.
 	 *
