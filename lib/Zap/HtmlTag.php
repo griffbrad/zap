@@ -1,7 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
 require_once 'Zap/Object.php';
 require_once 'Zap/String.php';
 
@@ -14,317 +12,296 @@ require_once 'Zap/String.php';
  */
 class Zap_HtmlTag extends Zap_Object
 {
-	// {{{ private properties
 
-	/**
-	 * The name of the HTML tag
-	 *
-	 * @var string
-	 */
-	private $tag_name;
+    /**
+     * The name of the HTML tag
+     *
+     * @var string
+     */
+    private $_tagName;
 
-	/**
-	 * Atribute array
-	 *
-	 * Array containing attributes of the HTML tag in the form:
-	 *    attribute_name => value
-	 *
-	 * @var array
-	 */
-	private $attributes = array();
+    /**
+     * Atribute array
+     *
+     * Array containing attributes of the HTML tag in the form:
+     *     attribute_name => value
+     *
+     * @var array
+     */
+    private $_attributes = array();
 
-	/**
-	 * Optional content for the body of the XHTML tag
-	 *
-	 * @var string
-	 */
-	private $content = null;
+    /**
+     * Optional content for the body of the XHTML tag
+     *
+     * @var string
+     */
+    private $_content = null;
 
-	/**
-	 * Optional content type for the body of the XHTML tag
-	 *     default text/plain
-	 *     use text/xml for XHTML fragments
-	 *
-	 * @var string
-	 */
-	private $content_type = 'text/plain';
+    /**
+     * Optional content type for the body of the XHTML tag
+     *     default text/plain
+     *     use text/xml for XHTML fragments
+     *
+     * @var string
+     */
+    private $_content_type = 'text/plain';
 
-	// }}}
-	// {{{ public function __construct()
+    /**
+     * Creates a new HTML tag
+     *
+     * @param string $tagName    The name of the HTML tag.
+     * @param array  $attributes An optional array of attributes in the form:
+     *                           attribute => value
+     */
+    public function __construct($tagName, $attributes = null)
+    {
+        $this->_tagName = $tagName;
 
-	/**
-	 * Creates a new HTML tag
-	 *
-	 * @param string $tag_name the name of the HTML tag.
-	 * @param array $attributes an optional array of attributes in the form:
-	 *                           attribute => value
-	 */
-	public function __construct($tag_name, $attributes = null)
-	{
-		$this->tag_name = $tag_name;
+        if (is_array($attributes)) {
+            $this->_attributes = $attributes;
+        }
+    }
 
-		if (is_array($attributes))
-			$this->attributes = $attributes;
-	}
+    /**
+     * Set content for the body of the XHTML tag
+     *
+     * This property is a UTF-8 encoded XHTML fragment. It is not escaped
+     * before display so the user of Zap_HtmlTag is responsible for any
+     * escaping that must occur.
+     *
+     * When this value is set {@link Zap_HtmlTag::display()} displays this
+     * content after displaying the opening tag. Then it displays an explicit
+     * closing tag.
+     *
+     * @param string $content Content for the body of the XHTML tag
+     * @param string $type    Mime type of the content.  Default is 'text/plain',
+     *                        use 'text/xml' for XHTML fragments.
+     * 
+     * @return void
+     */
+    public function setContent($content, $type = 'text/plain')
+    {
+        $this->_content = $content;
+        $this->_content_type = $type;
+    }
 
-	// }}}
-	// {{{ public function setContent()
+    /**
+     * Adds an array of attributes to this XHTML tag
+     *
+     * If entries in the attributes array coincide with existing attributes of
+     * this XHTML tag, the attributes in the array overwrite the existing
+     * attributes.
+     *
+     * @param array $attributes An array of attribute-value pairs of the form
+     *                          'attribute' => 'value'.
+     * 
+     * @return void
+     */
+    public function addAttributes($attributes)
+    {
+        if (is_array($attributes)) {
+            $this->_attributes = array_merge($this->_attributes, $attributes);
+        }
+    }
 
-	/**
-	 * Set content for the body of the XHTML tag
-	 *
-	 * This property is a UTF-8 encoded XHTML fragment. It is not escaped
-	 * before display so the user of Zap_HtmlTag is responsible for any
-	 * escaping that must occur.
-	 *
-	 * When this value is set {@link Zap_HtmlTag::display()} displays this
-	 * content after displaying the opening tag. Then it displays an explicit
-	 * closing tag.
-	 *
-	 * @param string $content content for the body of the XHTML tag
-	 * @param string $type mime type of the content.  Default is 'text/plain',
-	 *                      use 'text/xml' for XHTML fragments.
-	 */
-	public function setContent($content, $type = 'text/plain')
-	{
-		$this->content = $content;
-		$this->content_type = $type;
-	}
+    /**
+     * Removes an attribute
+     *
+     * Removes a previously assigned attribute. Useful when one tag object is
+     * displayed multiple times with different attributes.
+     *
+     * @param string $attribute The name of attribute to remove.
+     *
+     * @return void
+     */
+    public function removeAttribute($attribute)
+    {
+        unset($this->_attributes[$attribute]);
+    }
 
-	// }}}
-	// {{{ public function addAtributes()
+    /**
+     * Displays this tag
+     *
+     * Output the opening tag including all its attributes and implicitly
+     * close the tag. If explicit closing is desired, use
+     * {@link Zap_HtmlTag::open()} and {@link Zap_HtmlTag::close()} instead.
+     * If {@link Zap_HtmlTag::content} is set then the content is displayed
+     * between an opening and closing tag, otherwise a self-closing tag is
+     * displayed.
+     *
+     * @see Zap_HtmlTag::open()
+     *
+     * @return void
+     */
+    public function display()
+    {
+        if ($this->_content === null) {
+            $this->_openInternal(true);
+        } else {
+            $this->_openInternal(false);
+            $this->displayContent();
+            $this->close();
+        }
+    }
 
-	/**
-	 * Adds an array of attributes to this XHTML tag
-	 *
-	 * If entries in the attributes array coincide with existing attributes of
-	 * this XHTML tag, the attributes in the array overwrite the existing
-	 * attributes.
-	 *
-	 * @param array an array of attribute-value pairs of the form
-	 *               'attribute' => 'value'.
-	 */
-	public function addAttributes($attributes)
-	{
-		if (is_array($attributes))
-			$this->attributes = array_merge($this->attributes, $attributes);
-	}
+    /**
+     * Displays the content of this tag
+     *
+     * If {@link Zap_HtmlTag::content} is set then the content is displayed.
+     *
+     * @see Zap_HtmlTag::display()
+     *
+     * @return void
+     */
+    public function displayContent()
+    {
+        if ($this->_content !== null) {
+            if ($this->_content_type === 'text/plain') {
+                echo Zap_String::minimizeEntities($this->_content);
+            } else {
+                echo $this->_content;
+            }
+        }
+    }
 
-	// }}}
-	// {{{ public function removeAttribute()
+    /**
+     * Opens this tag
+     *
+     * Outputs the opening tag including all its attributes. Should be paired
+     * with a call to {@link Zap_HtmlTag::close()}. If implicit closing
+     * is desired, use {@link Zap_HtmlTag::display()} instead.
+     *
+     * @see Zap_HtmlTag::close()
+     *
+     * @return void
+     */
+    public function open()
+    {
+        $this->_openInternal(false);
+    }
 
-	/**
-	 * Removes an attribute
-	 *
-	 * Removes a previously assigned attribute. Useful when one tag object is
-	 * displayed multiple times with different attributes.
-	 *
-	 * @param string $attribute The name of attribute to remove.
-	 */
-	public function removeAttribute($attribute)
-	{
-		unset($this->attributes[$attribute]);
-	}
+    /**
+     * Closes this tag
+     *
+     * Outputs the closing tag. Should be paired with a call to
+     * {@link Zap_HtmlTag::open()}.
+     *
+     * @see Zap_HtmlTag::open()
+     *
+     * @return void
+     */
+    public function close()
+    {
+        echo '</', $this->_tagName, '>';
+    }
 
-	// }}}
-	// {{{ public function display()
+    /**
+     * Gets this tag as a string
+     *
+     * The string is the same as the displayed content of
+     * {@link Zap_HtmlString::display()}. It is not possible to get paired tags
+     * as strings as this object has no knowledge of what is displayed between
+     * the opening and closing tags.
+     *
+     * @see Zap_HtmlTag::display()
+     *
+     * @return string this tag as a string.
+     */
+    public function toString()
+    {
+        ob_start();
+        $this->display();
+        return ob_get_clean();
+    }
 
-	/**
-	 * Displays this tag
-	 *
-	 * Output the opening tag including all its attributes and implicitly
-	 * close the tag. If explicit closing is desired, use
-	 * {@link Zap_HtmlTag::open()} and {@link Zap_HtmlTag::close()} instead.
-	 * If {@link Zap_HtmlTag::content} is set then the content is displayed
-	 * between an opening and closing tag, otherwise a self-closing tag is
-	 * displayed.
-	 *
-	 * @see Zap_HtmlTag::open()
-	 */
-	public function display()
-	{
-		if ($this->content === null) {
-			$this->openInternal(true);
-		} else {
-			$this->openInternal(false);
-			$this->displayContent();
-			$this->close();
-		}
-	}
+    /**
+     * Magic __get method
+     *
+     * This should never be called directly, but is invoked indirectly when
+     * accessing properties of a tag object.
+     *
+     * @param string $attribute the name of attribute to get.
+     *
+     * @return mixed The value of the attribute. Null is returned if the
+     *               attribute is not set.
+     */
+    public function __get($attribute)
+    {
+        if (isset($this->_attributes[$attribute])) {
+            return $this->_attributes[$attribute];
+        } else {
+            return null;
+        }
+    }
 
-	// }}}
-	// {{{ public function displayContent()
+    /**
+     * Magic __set method
+     *
+     * This should never be called directly, but is invoked indirectly when
+     * setting properties of a tag object.
+     *
+     * @param string $attribute The name of attribute.
+     * @param mixed  $value     The value of attribute.
+     *
+     * @return void
+     */
+    public function __set($attribute, $value)
+    {
+        $this->_attributes[$attribute]
+            = ($value === null) ? null : (string)$value;
+    }
 
-	/**
-	 * Displays the content of this tag
-	 *
-	 * If {@link Zap_HtmlTag::content} is set then the content is displayed.
-	 *
-	 * @see Zap_HtmlTag::display()
-	 */
-	public function displayContent()
-	{
-		if ($this->content !== null) {
-			if ($this->content_type === 'text/plain')
-				echo Zap_String::minimizeEntities($this->content);
-			else
-				echo $this->content;
-		}
-	}
+    /**
+     * Gets this tag as a string
+     *
+     * This is a magic method that is called by PHP when this object is used
+     * in string context. For example:
+     *
+     * <code>
+     * $img = new Zap_HtmlTag('img');
+     * $img->alt = 'example image';
+     * $img->src = 'http://example.com/example.png';
+     * echo $img;
+     * </code>
+     *
+     * Note: It is more efficient to simply call {@link Zap_HtmlTag::display()}
+     * instead of using <code>echo $tag;</code>.
+     *
+     * @return string This tag as a string.
+     *
+     * @see Zap_HtmlTag::toString()
+     */
+    public function __toString()
+    {
+        return $this->toString();
+    }
 
-	// }}}
-	// {{{ public function open()
+    /**
+     * Outputs opening tag and all attributes
+     *
+     * This is a helper method that does the attribute displaying when opening
+     * this tag. This method can also display self-closing XHTML tags.
+     *
+     * @param boolean $self_closing Whether this tag should be displayed as a
+     *                              self-closing tag.
+     *
+     * @return void
+     */
+    private function _openInternal($self_closing = false)
+    {
+        echo '<', $this->_tagName;
 
-	/**
-	 * Opens this tag
-	 *
-	 * Outputs the opening tag including all its attributes. Should be paired
-	 * with a call to {@link Zap_HtmlTag::close()}. If implicit closing
-	 * is desired, use {@link Zap_HtmlTag::display()} instead.
-	 *
-	 * @see Zap_HtmlTag::close()
-	 */
-	public function open()
-	{
-		$this->openInternal(false);
-	}
+        foreach ($this->_attributes as $attribute => $value) {
+            if ($value !== null) {
+                echo ' ', $attribute, '="',
+                    Zap_String::minimizeEntities($value), '"';
+            }
+        }
 
-	// }}}
-	// {{{ public function close()
-
-	/**
-	 * Closes this tag
-	 *
-	 * Outputs the closing tag. Should be paired with a call to
-	 * {@link Zap_HtmlTag::open()}.
-	 *
-	 * @see Zap_HtmlTag::open()
-	 */
-	public function close()
-	{
-		echo '</', $this->tag_name, '>';
-	}
-
-	// }}}
-	// {{{ public function toString()
-
-	/**
-	 * Gets this tag as a string
-	 *
-	 * The string is the same as the displayed content of
-	 * {@link Zap_HtmlString::display()}. It is not possible to get paired tags
-	 * as strings as this object has no knowledge of what is displayed between
-	 * the opening and closing tags.
-	 *
-	 * @see Zap_HtmlTag::display()
-	 *
-	 * @return string this tag as a string.
-	 */
-	public function toString()
-	{
-		ob_start();
-		$this->display();
-		return ob_get_clean();
-	}
-
-	// }}}
-	// {{{ public function __get()
-
-	/**
-	 * Magic __get method
-	 *
-	 * This should never be called directly, but is invoked indirectly when
-	 * accessing properties of a tag object.
-	 *
-	 * @param string $attr the name of attribute to get.
-	 *
-	 * @return mixed the value of the attribute. If the attribute is not set,
-	 *                null is returned.
-	 */
-	public function __get($attribute)
-	{
-		if (isset($this->attributes[$attribute]))
-			return $this->attributes[$attribute];
-		else
-			return null;
-	}
-
-	// }}}
-	// {{{ public function __set()
-
-	/**
-	 * Magic __set method
-	 *
-	 * This should never be called directly, but is invoked indirectly when
-	 * setting properties of a tag object.
-	 *
-	 * @param string $attribute the name of attribute.
-	 * @param mixed $value the value of attribute.
-	 */
-	public function __set($attribute, $value)
-	{
-		$this->attributes[$attribute] =
-			($value === null) ? null : (string)$value;
-	}
-
-	// }}}
-	// {{{ public function __toString()
-
-	/**
-	 * Gets this tag as a string
-	 *
-	 * This is a magic method that is called by PHP when this object is used
-	 * in string context. For example:
-	 *
-	 * <code>
-	 * $img = new Zap_HtmlTag('img');
-	 * $img->alt = 'example image';
-	 * $img->src = 'http://example.com/example.png';
-	 * echo $img;
-	 * </code>
-	 *
-	 * Note: It is more efficient to simply call {@link Zap_HtmlTag::display()}
-	 * instead of using <code>echo $tag;</code>.
-	 *
-	 * @return string this tag as a string.
-	 *
-	 * @see Zap_HtmlTag::toString()
-	 */
-	public function __toString()
-	{
-		return $this->toString();
-	}
-
-	// }}}
-	// {{{ private function openInternal()
-
-	/**
-	 * Outputs opening tag and all attributes
-	 *
-	 * This is a helper method that does the attribute displaying when opening
-	 * this tag. This method can also display self-closing XHTML tags.
-	 *
-	 * @param boolean $self_closing whether this tag should be displayed as a
-	 *                               self-closing tag.
-	 */
-	private function openInternal($self_closing = false)
-	{
-		echo '<', $this->tag_name;
-
-		foreach ($this->attributes as $attribute => $value) {
-			if ($value !== null) {
-				echo ' ', $attribute, '="',
-					Zap_String::minimizeEntities($value), '"';
-			}
-		}
-
-		if ($self_closing)
-			echo ' />';
-		else
-			echo '>';
-	}
-
-	// }}}
+        if ($self_closing) {
+            echo ' />';
+        } else {
+            echo '>';
+        }
+    }
 }
-
-
