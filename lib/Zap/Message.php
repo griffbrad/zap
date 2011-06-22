@@ -117,6 +117,11 @@ class Zap_Message extends Zap_Object
         $this->_type           = $type;
     }
 
+    public function getType()
+    {
+        return $this->_type;
+    }
+
     public function setPrimaryContent($primaryContent)
     {
         $this->_primaryContent = $primaryContent;

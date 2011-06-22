@@ -118,8 +118,8 @@ class Zap_MessageDisplay extends Zap_Control
 		$this->_displayMessages[] = $message;
 
 		if (self::DISMISS_AUTO == $dismissable) {
-			$dismissable = (in_array($message->type,
-				$this->getDismissableMessageTypes())) ?
+			$dismissable = (in_array($message->getType(),
+				$this->_getDismissableMessageTypes())) ?
 				self::DISMISS_ON : self::DISMISS_OFF;
 		}
 
@@ -148,7 +148,7 @@ class Zap_MessageDisplay extends Zap_Control
 
 		$wrapperDiv = new Zap_HtmlTag('div');
 		$wrapperDiv->id    = $this->id;
-		$wrapperDiv->class = $this->getCSSClassString();
+		$wrapperDiv->class = $this->_getCSSClassString();
 		$wrapperDiv->open();
 
 		$hasDismissLink = false;
@@ -213,7 +213,7 @@ class Zap_MessageDisplay extends Zap_Control
 	 * @param boolean $last optional. Whether or not the message is the last
 	 *                       message in this message display.
 	 */
-	protected function _displayMessage($message_id, SwatMessage $message,
+	protected function _displayMessage($messageId, Zap_Message $message,
 		$first = false, $last = false)
 	{
 		$messageDiv   = new Zap_HtmlTag('div');
@@ -238,7 +238,7 @@ class Zap_MessageDisplay extends Zap_Control
 		$primaryContent = new Zap_HtmlTag('h3');
 		$primaryContent->class = 'swat-message-primary-content';
 		$primaryContent->setContent(
-			$message->getPriamryContent(), 
+			$message->getPrimaryContent(), 
 			$message->getContentType()
 		);
 
@@ -281,7 +281,7 @@ class Zap_MessageDisplay extends Zap_Control
 	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-message-display');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
 
