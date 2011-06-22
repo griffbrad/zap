@@ -5,7 +5,7 @@
 require_once 'Zap/Control.php';
 require_once 'Zap/HtmlTag.php';
 require_once 'Zap/Message.php';
-require_once 'Swat/exceptions/SwatInvalidClassException.php';
+require_once 'Zap/Exception/InvalidClass.php';
 require_once 'Zap/YUI.php';
 
 /**
@@ -17,8 +17,6 @@ require_once 'Zap/YUI.php';
  */
 class Zap_MessageDisplay extends Zap_Control
 {
-	// {{{ class constants
-
 	/**
 	 * Dismiss link for message is on.
 	 */
@@ -37,9 +35,6 @@ class Zap_MessageDisplay extends Zap_Control
 	 */
 	const DISMISS_AUTO = 3;
 
-	// }}}
-	// {{{ protected properties
-
 	/**
 	 * The messages to display
 	 *
@@ -47,7 +42,7 @@ class Zap_MessageDisplay extends Zap_Control
 	 *
 	 * @var array
 	 */
-	protected $display_messages = array();
+	protected $_displayMessages = array();
 
 	/**
 	 * Messages in this display that are dismissable
@@ -57,10 +52,7 @@ class Zap_MessageDisplay extends Zap_Control
 	 *
 	 * @var array
 	 */
-	protected $dismissable_messages = array();
-
-	// }}}
-	// {{{ public function __construct()
+	protected $_dismissableMessages = array();
 
 	/**
 	 * Creates a new message display
@@ -73,23 +65,26 @@ class Zap_MessageDisplay extends Zap_Control
 	{
 		parent::__construct($id);
 
-		$this->requires_id = true;
+		$this->_requiresId = true;
 
-		$yui = new SwatYUI(array('animation'));
-		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
+		$yui = new Zap_YUI(array('animation'));
+		$this->_htmlHeadEntrySet->addEntrySet($yui->getHtmlHeadEntrySet());
 
-		$this->addJavaScript('packages/swat/javascript/swat-message-display.js',
-			Zap::PACKAGE_ID);
+		$this->addJavaScript(
+			'packages/swat/javascript/swat-message-display.js',
+			Zap::PACKAGE_ID
+		);
 
-		$this->addStyleSheet('packages/swat/styles/swat-message.css',
-			Zap::PACKAGE_ID);
+		$this->addStyleSheet(
+			'packages/swat/styles/swat-message.css',
+			Zap::PACKAGE_ID
+		);
 
-		$this->addStyleSheet('packages/swat/styles/swat-message-display.css',
-			Zap::PACKAGE_ID);
+		$this->addStyleSheet(
+			'packages/swat/styles/swat-message-display.css',
+			Zap::PACKAGE_ID
+		);
 	}
-
-	// }}}
-	// {{{ public function add()
 
 	/**
 	 * Adds a message
@@ -113,27 +108,25 @@ class Zap_MessageDisplay extends Zap_Control
 	public function add($message, $dismissable = self::DISMISS_AUTO)
 	{
 		if (is_string($message)) {
-			$message = new SwatMessage($message);
-		} elseif (!($message instanceof SwatMessage)) {
-			throw new SwatInvalidClassException(
+			$message = new Zap_Message($message);
+		} elseif (!($message instanceof Zap_Message)) {
+			throw new Zap_Exception_InvalidClass (
 				'Cannot add message. $message must be either a string or a '.
-				'SwatMessage.', 0, $message);
+				'Zap_Message.', 0, $message);
 		}
 
-		$this->display_messages[] = $message;
+		$this->_displayMessages[] = $message;
 
-		if ($dismissable == self::DISMISS_AUTO) {
+		if (self::DISMISS_AUTO == $dismissable) {
 			$dismissable = (in_array($message->type,
 				$this->getDismissableMessageTypes())) ?
 				self::DISMISS_ON : self::DISMISS_OFF;
 		}
 
-		if ($dismissable == self::DISMISS_ON)
-			$this->dismissable_messages[] = count($this->display_messages) - 1;
+		if (self::DISMISS_ON == $dismissable) {
+			$this->_dismissableMessages[] = count($this->_displayMessages) - 1;
+		}
 	}
-
-	// }}}
-	// {{{ public function display()
 
 	/**
 	 * Displays messages in this message display
@@ -143,45 +136,44 @@ class Zap_MessageDisplay extends Zap_Control
 	 */
 	public function display()
 	{
-		if (!$this->visible)
+		if (! $this->_visible) {
 			return;
+		}
 
-		if ($this->getMessageCount() == 0)
+		if (0 == $this->getMessageCount()) {
 			return;
+		}
 
 		parent::display();
 
-		$wrapper_div = new SwatHtmlTag('div');
-		$wrapper_div->id = $this->id;
-		$wrapper_div->class = $this->getCSSClassString();
-		$wrapper_div->open();
+		$wrapperDiv = new Zap_HtmlTag('div');
+		$wrapperDiv->id    = $this->id;
+		$wrapperDiv->class = $this->getCSSClassString();
+		$wrapperDiv->open();
 
-		$has_dismiss_link = false;
-
-		$message_count = count($this->display_messages);
+		$hasDismissLink = false;
+		$messageCount   = count($this->_displayMessages);
 
 		$count = 1;
-		foreach ($this->display_messages as $key => $message) {
-			if (in_array($key, $this->dismissable_messages)) {
-				$has_dismiss_link = true;
+
+		foreach ($this->_displayMessages as $key => $message) {
+			if (in_array($key, $this->_dismissableMessages)) {
+				$hasDismissLink = true;
 			}
 
 			$first = ($count === 1);
-			$last  = ($count === $message_count);
+			$last  = ($count === $messageCount);
 
-			$this->displayMessage($key, $message, $first, $last);
+			$this->_displayMessage($key, $message, $first, $last);
 
 			$count++;
 		}
 
-		$wrapper_div->close();
+		$wrapperDiv->close();
 
-		if ($has_dismiss_link)
-			Zap::displayInlineJavaScript($this->getInlineJavaScript());
+		if ($hasDismissLink)
+			Zap::displayInlineJavaScript($this->_getInlineJavaScript());
 	}
-
-	// }}}
-	// {{{ public function isVisible()
 
 	/**
 	 * Gets whether or not this message display is visible
@@ -200,9 +192,6 @@ class Zap_MessageDisplay extends Zap_Control
 		return (($this->getMessageCount() > 0) && parent::isVisible());
 	}
 
-	// }}}
-	// {{{ public function getMessageCount()
-
 	/**
 	 * Gets the number of messages in this message display
 	 *
@@ -210,11 +199,8 @@ class Zap_MessageDisplay extends Zap_Control
 	 */
 	public function getMessageCount()
 	{
-		return count($this->display_messages);
+		return count($this->_displayMessages);
 	}
-
-	// }}}
-	// {{{ protected function displayMessage()
 
 	/**
 	 * Display a single message of this message display
@@ -227,57 +213,58 @@ class Zap_MessageDisplay extends Zap_Control
 	 * @param boolean $last optional. Whether or not the message is the last
 	 *                       message in this message display.
 	 */
-	protected function displayMessage($message_id, SwatMessage $message,
+	protected function _displayMessage($message_id, SwatMessage $message,
 		$first = false, $last = false)
 	{
-		$message_div = new SwatHtmlTag('div');
-		$container_div = new SwatHtmlTag('div');
+		$messageDiv   = new Zap_HtmlTag('div');
+		$containerDiv = new Zap_HtmlTag('div');
 
-		$message_div->id = $this->id.'_'.$message_id;
-		$message_div->class = $message->getCSSClassString();
+		$messageDiv->id    = $this->_id . '_' . $messageId;
+		$messageDiv->class = $message->getCSSClassString();
 
 		if ($first) {
-			$message_div->class.= ' swat-message-first';
+			$messageDiv->class .= ' swat-message-first';
 		}
 
 		if ($last) {
-			$message_div->class.= ' swat-message-last';
+			$messageDiv->class .= ' swat-message-last';
 		}
 
-		$message_div->open();
+		$messageDiv->open();
 
-		$container_div->class = 'swat-message-container';
-		$container_div->open();
+		$containerDiv->class = 'swat-message-container';
+		$containerDiv->open();
 
-		$primary_content = new SwatHtmlTag('h3');
-		$primary_content->class = 'swat-message-primary-content';
-		$primary_content->setContent(
-			$message->primary_content, $message->content_type);
+		$primaryContent = new Zap_HtmlTag('h3');
+		$primaryContent->class = 'swat-message-primary-content';
+		$primaryContent->setContent(
+			$message->getPriamryContent(), 
+			$message->getContentType()
+		);
 
-		$primary_content->display();
+		$primaryContent->display();
 
-		if ($message->secondary_content !== null) {
-			$secondary_div = new SwatHtmlTag('div');
-			$secondary_div->class = 'swat-message-secondary-content';
-			$secondary_div->setContent(
-				$message->secondary_content, $message->content_type);
+		if (null !== $message->getSecondaryContent()) {
+			$secondaryDiv = new Zap_HtmlTag('div');
+			$secondaryDiv->class = 'swat-message-secondary-content';
+			$secondaryDiv->setContent(
+				$message->getSecondaryContent(), 
+				$message->getContentType()
+			);
 
-			$secondary_div->display();
+			$secondaryDiv->display();
 		}
 
-		$container_div->close();
-		$message_div->close();
+		$containerDiv->close();
+		$messageDiv->close();
 	}
-
-	// }}}
-	// {{{ protected function getDismissableMessageTypes()
 
 	/**
 	 * Gets an array of message types that are dismissable by default
 	 *
 	 * @return array message types that are dismissable by default.
 	 */
-	protected function getDismissableMessageTypes()
+	protected function _getDismissableMessageTypes()
 	{
 		return array(
 			'notice',
@@ -285,24 +272,18 @@ class Zap_MessageDisplay extends Zap_Control
 		);
 	}
 
-	// }}}
-	// {{{ protected function getCSSClassNames()
-
 	/**
 	 * Gets the array of CSS classes that are applied to this message display
 	 *
 	 * @return array the array of CSS classes that are applied to this message
 	 *                display.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-message-display');
 		$classes = array_merge($classes, parent::getCSSClassNames());
 		return $classes;
 	}
-
-	// }}}
-	// {{{ protected function getInlineJavaScript()
 
 	/**
 	 * Gets the inline JavaScript for hiding messages
@@ -311,25 +292,27 @@ class Zap_MessageDisplay extends Zap_Control
 	{
 		static $shown = false;
 
-		if (!$shown) {
-			$javascript = $this->getInlineJavaScriptTranslations();
+		if (! $shown) {
+			$javascript = $this->_getInlineJavaScriptTranslations();
 			$shown = true;
 		} else {
 			$javascript = '';
 		}
 
-		$dismissable_messages =
-			'['.implode(', ', $this->dismissable_messages).']';
+		$dismissableMessages = '[' 
+							 . implode(', ', $this->_dismissableMssages)
+							 . ']';
 
-		$javascript.= sprintf("var %s_obj = new %s('%s', %s);",
-			$this->id, $this->getJavaScriptClass(), $this->id,
-			$dismissable_messages);
+		$javascript.= sprintf(
+			"var %s_obj = new %s('%s', %s);",
+			$this->_id, 
+			$this->_getJavaScriptClass(), 
+			$this->_id,
+			$dismissableMessages
+		);
 
 		return $javascript;
 	}
-
-	// }}}
-	// {{{ protected function getJavaScriptClass()
 
 	/**
 	 * Gets the name of the JavaScript class to instantiate for this message
@@ -341,13 +324,10 @@ class Zap_MessageDisplay extends Zap_Control
 	 * @return string the name of the JavaScript class to instantiate for this
 	 *                 form . Defaults to 'SwatMessageDisplay'.
 	 */
-	protected function getJavaScriptClass()
+	protected function _getJavaScriptClass()
 	{
 		return 'SwatMessageDisplay';
 	}
-
-	// }}}
-	// {{{ protected function getInlineJavaScriptTranslations()
 
 	/**
 	 * Gets translatable string resources for the JavaScript object for
@@ -355,13 +335,11 @@ class Zap_MessageDisplay extends Zap_Control
 	 *
 	 * @return string translatable JavaScript string resources for this widget.
 	 */
-	protected function getInlineJavaScriptTranslations()
+	protected function _getInlineJavaScriptTranslations()
 	{
-		$close_text  = Zap::_('Dismiss message.');
-		return "SwatMessageDisplayMessage.close_text = '{$close_text}';\n";
+		$closeText  = Zap::_('Dismiss message.');
+		return "SwatMessageDisplayMessage.close_text = '{$closeText}';\n";
 	}
-
-	// }}}
 }
 
 
