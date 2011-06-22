@@ -1,8 +1,8 @@
 The core - What we want functional for the proof of concept
 -----------------------------------------------------------
 Zap/Object.php (Done)
--- Zap/HtmlTag.php
--- Zap/Message.php
+-- Zap/HtmlTag.php (In progress)
+-- Zap/Message.php (In progress)
 -- Zap/UIObject.php
 ---- Zap/Widget.php
 ------ Zap/Container.php (In progress)
