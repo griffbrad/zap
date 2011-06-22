@@ -18,12 +18,12 @@ class Zap_Form extends Zap_DisplayableContainer
 	const METHOD_POST = 'post';
 	const METHOD_GET  = 'get';
 
-	const PROCESS_FIELD = '_swat_form_process';
-	const HIDDEN_FIELD = '_swat_form_hidden_fields';
-	const AUTHENTICATION_TOKEN_FIELD = '_swat_form_authentication_token';
-	const SERIALIZED_PREFIX = '_swat_form_serialized_';
+	const PROCESS_FIELD = '_zap_form_process';
+	const HIDDEN_FIELD = '_zap_form_hidden_fields';
+	const AUTHENTICATION_TOKEN_FIELD = '_zap_form_authentication_token';
+	const SERIALIZED_PREFIX = '_zap_form_serialized_';
 
-	const ENCODING_FIELD        = '_swat_form_character_encoding';
+	const ENCODING_FIELD        = '_zap_form_character_encoding';
 	const ENCODING_ENTITY_VALUE = '&auml;&trade;&reg;';
 	const ENCODING_UTF8_VALUE   = "\xc3\xa4\xe2\x84\xa2\xc2\xae";
 	const ENCODING_8BIT_VALUE   = "\xe4\x99\xae";
@@ -78,7 +78,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * If this is not set then it defaults to the first SwatControl
 	 * in the form.
 	 *
-	 * @var SwatControl
+	 * @var Zap_Control
 	 */
 	protected $_defaultFocusedControl = null;
 
@@ -87,9 +87,9 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * or null if the button is not set.
 	 *
 	 * You usually do not want to explicitly set this in your code because
-	 * other parts of Swat set this property automatically.
+	 * other parts of Zap set this property automatically.
 	 *
-	 * @var SwatButton
+	 * @var Zap_Button
 	 */
 	protected $_button = null;
 
@@ -110,7 +110,7 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * The default value to use for signature salt
 	 *
 	 * If this value is not null, all newly instantiated forms will call the
-	 * {@link SwatForm::setSalt()} method with this value as the <i>$salt</i>
+	 * {@link Zap_Form::setSalt()} method with this value as the <i>$salt</i>
 	 * parameter.
 	 *
 	 * @var string
@@ -126,8 +126,8 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *
 	 * @var array
 	 *
-	 * @see SwatForm::addHiddenField()
-	 * @see SwatForm::getHiddenField()
+	 * @see Zap_Form::addHiddenField()
+	 * @see Zap_Form::getHiddenField()
 	 */
 	protected $_hiddenFields = array();
 
@@ -313,7 +313,7 @@ class Zap_Form extends Zap_DisplayableContainer
 				$yui->getHtmlHeadEntrySet());
 		}
 
-		Zap::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->_getInlineJavaScript());
 	}
 
 	/**
@@ -733,9 +733,6 @@ class Zap_Form extends Zap_DisplayableContainer
 		}
 	}
 
-	// }}}
-	// {{{ protected function notifyOfAdd()
-
 	/**
 	 * Notifies this widget that a widget was added
 	 *
@@ -928,16 +925,16 @@ class Zap_Form extends Zap_DisplayableContainer
 			}
 
 			if ($focusable) {
-				$javascript .= 
+				$javaScript .= 
 					"\n{$this->_id}_obj.setDefaultFocus('{$focusId}');";
 			}
 		}
 
 		if (! $this->_autocomplete) {
-			$javascript .= "\n{$this->_id}_obj.setAutocomplete(false);";
+			$javaScript .= "\n{$this->_id}_obj.setAutocomplete(false);";
 		}
 
-		return $javascript;
+		return $javaScript;
 	}
 
 	/**
