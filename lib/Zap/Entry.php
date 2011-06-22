@@ -116,8 +116,8 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 
 		parent::display();
 
-		$input_tag = $this->getInputTag();
-		$input_tag->display();
+		$inputTag = $this->getInputTag();
+		$inputTag->display();
 
 		if (! $this->_autocomplete) {
 			$nonceTag = new Zap_HtmlTag('input');
@@ -210,7 +210,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	}
 
 	// }}}
-	// {{{ public function getFocusableHtmlId()
 
 	/**
 	 * Gets the id attribute of the XHTML element displayed by this widget
@@ -230,9 +229,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 			return null;
 		}
 	}
-
-	// }}}
-	// {{{ protected function getValidationMessage()
 
 	/**
 	 * Gets a validation message for this entry

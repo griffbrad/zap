@@ -145,7 +145,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	{
 		parent::__construct();
 
-		$this->id = $id;
+		$this->_id = $id;
 
 		$this->addStylesheet(
 			'packages/swat/styles/swat.css',

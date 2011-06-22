@@ -487,7 +487,7 @@ class Zap_FormField extends Zap_DisplayableContainer implements Zap_Titleable
             }
         }
 
-        $labelTag->for = $this->getFocusableHtmlId();
+        $labelTag->for       = $this->getFocusableHtmlId();
         $labelTag->accesskey = $this->_accessKey;
 
         return $labelTag;

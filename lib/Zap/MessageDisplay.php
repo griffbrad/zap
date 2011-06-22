@@ -147,7 +147,7 @@ class Zap_MessageDisplay extends Zap_Control
 		parent::display();
 
 		$wrapperDiv = new Zap_HtmlTag('div');
-		$wrapperDiv->id    = $this->id;
+		$wrapperDiv->id    = $this->_id;
 		$wrapperDiv->class = $this->_getCSSClassString();
 		$wrapperDiv->open();
 
