@@ -147,9 +147,9 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 			return;
 		}
 
-		$this->value = $this->getRawValue();
+		$this->value = $this->_getRawValue();
 
-		if ($this->auto_trim) {
+		if ($this->_autoTrim) {
 			$this->value = trim($this->value);
 			if ($this->value === '')
 				$this->value = null;
@@ -333,18 +333,15 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	}
 
 	// }}}
-	// {{{ protected function getNonce()
 
 	protected function getNonce()
 	{
-		if ($this->nonce === null)
-			$this->nonce = 'n'.md5(rand());
+		if (null === $this->_nonce) {
+			$this->_nonce = 'n' . md5(rand());
+        }
 
-		return $this->nonce;
+		return $this->_nonce;
 	}
-
-	// }}}
-	// {{{ protected function getRawValue()
 
 	/**
 	 * Gets the raw value entered by the user before processing
@@ -352,22 +349,22 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 * @return string the raw value entred by the user before processing or
 	 *                 null if no value was entered by the user.
 	 *
-	 * @see Zap_Entry::hasRawValue()
+	 * @see Zap_Entry::_hasRawValue()
 	 */
-	protected function getRawValue()
+	protected function _getRawValue()
 	{
 		$value = null;
+		$data  = &$this->getForm()->getFormData();
 
-		$data = &$this->getForm()->getFormData();
-
-		if ($this->autocomplete) {
-			$id = $this->id;
-			if (isset($data[$id]) && $data[$id] != '') {
+		if ($this->_autocomplete) {
+			$id = $this->_id;
+			if (isset($data[$id]) && '' != $data[$id]) {
 				$value = $data[$id];
 			}
 		} else {
-			if (isset($data[$this->id.'_nonce'])) {
-				$id = $data[$this->id.'_nonce'];
+			if (isset($data[$this->_id . '_nonce'])) {
+                $id = $data[$this->_id . '_nonce'];
+
 				if (isset($data[$id]) && $data[$id] != '') {
 					$value = $data[$id];
 				}
@@ -376,9 +373,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 
 		return $value;
 	}
-
-	// }}}
-	// {{{ protected function hasRawValue()
 
 	/**
 	 * Gets whether or not a value was submitted by the user for this entry
@@ -393,28 +387,26 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 */
 	protected function hasRawValue()
 	{
-		$has_value = false;
+		$hasValue = false;
 
 		$data = &$this->getForm()->getFormData();
 
-		if ($this->autocomplete) {
-			$id = $this->id;
+		if ($this->_autocomplete) {
+			$id = $this->_id;
 			if (isset($data[$id])) {
-				$has_value = true;
+				$hasValue = true;
 			}
 		} else {
-			if (isset($data[$this->id.'_nonce'])) {
-				$id = $data[$this->id.'_nonce'];
+			if (isset($data[$this->_id . '_nonce'])) {
+				$id = $data[$this->_id . '_nonce'];
 				if (isset($data[$id])) {
-					$has_value = true;
+					$hasValue = true;
 				}
 			}
 		}
 
-		return $has_value;
+		return $hasValue;
 	}
-
-	// }}}
 }
 
 

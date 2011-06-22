@@ -186,7 +186,7 @@ class Zap_Button extends Zap_InputControl
 
         $data = &$this->getForm()->getFormData();
 
-        if (isset($data[$this->id])) {
+        if (isset($data[$this->_id])) {
             $this->_clicked = true;
             $this->getForm()->setButton($this);
         }

@@ -247,7 +247,14 @@ class Zap_Form extends Zap_DisplayableContainer
 			'packages/swat/javascript/swat-form.js',
 			Zap::PACKAGE_ID
 		);
-	}
+    }
+
+    public function setButton(Zap_Button $button)
+    {
+        $this->_button = $button;
+
+        return $this;
+    }
 
 	/**
 	 * Sets the HTTP method this form uses to send data
@@ -336,7 +343,7 @@ class Zap_Form extends Zap_DisplayableContainer
 			$this->_processEncoding();
 			$this->_processHiddenFields();
 
-			foreach ($this->children as $child) {
+			foreach ($this->_children as $child) {
 				if (null !== $child && ! $child->isProcessed()) {
 					$child->process();
 				}
@@ -668,13 +675,13 @@ class Zap_Form extends Zap_DisplayableContainer
 	 *                                            does not match the signature
 	 *                                            data.
 	 */
-	protected function processHiddenFields()
+	protected function _processHiddenFields()
 	{
 		$rawData = $this->getFormData();
 
 		$serializedFieldName = self::HIDDEN_FIELD;
 
-		if (! isset($raw_data[$serialized_field_name])) {
+		if (! isset($raw_data[$serializedFieldName])) {
 			return;
 		} else {
 			$fields = Zap_String::signedUnserialize(
@@ -706,25 +713,25 @@ class Zap_Form extends Zap_DisplayableContainer
 	 * @throws SwatException if an 8-bit encoding is set and the form data is
 	 *                       neither 8-bit nor UTF-8.
 	 */
-	protected function processEncoding()
+	protected function _processEncoding()
 	{
-		$raw_data = &$this->getFormData();
+		$rawData = &$this->getFormData();
 
-		if ($this->_8bit_encoding !== null &&
-			isset($raw_data[self::ENCODING_FIELD])) {
+		if ($this->_8bitEncoding !== null &&
+			isset($rawData[self::ENCODING_FIELD])) {
 
-			$value = $raw_data[self::ENCODING_FIELD];
+			$value = $rawData[self::ENCODING_FIELD];
 
-			if ($value === self::ENCODING_8BIT_VALUE) {
+			if (self::ENCODING_8BIT_VALUE === $value) {
 				// convert from our 8-bit encoding to utf-8
-				foreach ($raw_data as $key => &$value) {
-					$value = iconv($this->_8bit_encoding, 'utf-8', $value);
+				foreach ($rawData as $key => &$value) {
+					$value = iconv($this->_8bitEncoding, 'utf-8', $value);
 				}
 				foreach ($_FILES as &$file) {
-					$file['name'] = iconv($this->_8bit_encoding, 'utf-8',
+					$file['name'] = iconv($this->_8bitEncoding, 'utf-8',
 						$file['name']);
 				}
-			} elseif ($value !== self::ENCODING_UTF8_VALUE) {
+			} elseif (self::ENCODING_UTF8_VALUE !== $value) {
 				// it's not 8-bit or UTF-8. Time to panic!
 				throw new SwatInvalidCharacterEncodingException(
 					"Unknown form data character encoding. Form data: \n".
