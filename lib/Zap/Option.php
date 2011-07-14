@@ -1,7 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
 require_once 'Zap/Object.php';
 
 /**
@@ -13,14 +11,12 @@ require_once 'Zap/Object.php';
  */
 class Zap_Option extends Zap_Object
 {
-	// {{{ public properties
-
 	/**
 	 * Option title
 	 *
 	 * @var string
 	 */
-	public $title = null;
+	protected $_title = null;
 
 	/**
 	 * Optional content type for title
@@ -29,17 +25,14 @@ class Zap_Option extends Zap_Object
 	 *
 	 * @var string
 	 */
-	public $content_type = 'text/plain';
+	protected $_contentType = 'text/plain';
 
 	/**
 	 * Option value
 	 *
 	 * @var mixed
 	 */
-	public $value = null;
-
-	// }}}
-	// {{{ public function __construct()
+	protected $_value = null;
 
 	/**
 	 * Creates an option
@@ -50,14 +43,26 @@ class Zap_Option extends Zap_Object
 	 *                              option's title. The content type defaults
 	 *                              to 'text/plain'.
 	 */
-	public function __construct($value, $title, $content_type = 'text/plain')
+	public function __construct($value, $title, $contentType = 'text/plain')
 	{
-		$this->value = $value;
-		$this->title = $title;
-		$this->content_type = $content_type;
+		$this->_value = $value;
+		$this->_title = $title;
+		$this->_contentType = $contentType;
 	}
 
-	// }}}
-}
+	public function getTitle()
+	{
+		return $this->_title;
+	}
 
+	public function getValue()
+	{
+		return $this->_value;
+	}
+
+	public function getContentType()
+	{
+		return $this->_contentType;
+	}
+}
 

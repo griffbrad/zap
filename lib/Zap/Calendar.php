@@ -1,7 +1,5 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
 require_once 'Zap/Control.php';
 require_once 'Zap/YUI.php';
 require_once 'Zap/HtmlTag.php';
@@ -19,24 +17,19 @@ require_once 'Zap/Date.php';
  */
 class Zap_Calendar extends Zap_Control
 {
-	// {{{ public properties
-
 	/**
 	 * Start date of the valid range (inclusive).
 	 *
 	 * @var SwatDate
 	 */
-	public $valid_range_start;
+	protected $_validRangeStart;
 
 	/**
 	 * End date of the valid range (exclusive).
 	 *
 	 * @var SwatDate
 	 */
-	public $valid_range_end;
-
-	// }}}
-	// {{{ public function __construct()
+	protected $_validRangeEnd;
 
 	/**
 	 * Creates a new calendar
@@ -49,62 +42,77 @@ class Zap_Calendar extends Zap_Control
 	{
 		parent::__construct($id);
 
-		$this->requires_id = true;
+		$this->_requiresId = true;
 
-		$yui = new SwatYUI(array('dom', 'container'));
-		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
+		$yui = new Zap_YUI(array('dom', 'container'));
+		$this->_htmlHeadEntrySet->addEntrySet($yui->getHtmlHeadEntrySet());
 
-		$this->addJavaScript('packages/swat/javascript/swat-calendar.js',
-			Zap::PACKAGE_ID);
+		$this->addJavaScript(
+			'packages/swat/javascript/swat-calendar.js',
+			Zap::PACKAGE_ID
+		);
 
-		$this->addJavaScript('packages/swat/javascript/swat-z-index-manager.js',
-			Zap::PACKAGE_ID);
+		$this->addJavaScript(
+			'packages/swat/javascript/swat-z-index-manager.js',
+			Zap::PACKAGE_ID
+		);
 
-		$this->addStyleSheet('packages/swat/styles/swat-calendar.css',
-			Zap::PACKAGE_ID);
+		$this->addStyleSheet(
+			'packages/swat/styles/swat-calendar.css',
+			Zap::PACKAGE_ID
+		);
 	}
 
-	// }}}
-	// {{{ public function display()
+	public function setValidRangeStart(Zap_Date $validRangeStart)
+	{
+		$this->_validRangeStart = $validRangeStart;
+
+		return $this;
+	}
+	
+	public function setValidRangeEnd(Zap_Date $validRangeEnd)
+	{
+		$this->_validRangeEnd = $validRangeEnd;
+
+		return $this;
+	}
 
 	/**
 	 * Displays this calendar widget
 	 */
 	public function display()
 	{
-		if (!$this->visible)
+		if (! $this->_visible) {
 			return;
+		}
 
 		parent::display();
 
-		$container_div_tag = new SwatHtmlTag('div');
-		$container_div_tag->id = $this->id;
-		$container_div_tag->class = $this->getCSSClassString();
-		$container_div_tag->open();
+		$containerDivTag = new Zap_HtmlTag('div');
+		$containerDivTag->id    = $this->_id;
+		$containerDivTag->class = $this->_getCSSClassString();
+		$containerDivTag->open();
 
 		// toggle button content is displayed with JavaScript
 
-		if ($this->valid_range_start === null) {
-			$today = new SwatDate();
+		if ($this->_validRangeStart === null) {
+			$today = new Zap_Date();
 			$value = $today->formatLikeIntl('MM/dd/yyyy');
 		} else {
-			$value = $this->valid_range_start->formatLikeIntl('MM/dd/yyyy');
+			$value = $this->_validRangeStart->formatLikeIntl('MM/dd/yyyy');
 		}
 
-		$input_tag = new SwatHtmlTag('input');
-		$input_tag->type = 'hidden';
-		$input_tag->id = $this->id.'_value';
-		$input_tag->name = $this->id.'_value';
-		$input_tag->value = $value;
-		$input_tag->display();
+		$inputTag = new Zap_HtmlTag('input');
+		$inputTag->type  = 'hidden';
+		$inputTag->id    = $this->_id . '_value';
+		$inputTag->name  = $this->_id . '_value';
+		$inputTag->value = $value;
+		$inputTag->display();
 
-		$container_div_tag->close();
+		$containerDivTag->close();
 
-		Zap::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->_getInlineJavaScript());
 	}
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
 
 	/**
 	 * Gets the array of CSS classes that are applied to this calendar widget
@@ -112,58 +120,54 @@ class Zap_Calendar extends Zap_Control
 	 * @return array the array of CSS classes that are applied to this calendar
 	 *                widget.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-calendar');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
-
-	// }}}
-	// {{{ protected function getInlineJavaScript()
 
 	/**
 	 * Gets inline calendar JavaScript
 	 *
 	 * Inline JavaScript is the majority of the calendar code.
 	 */
-	protected function getInlineJavaScript()
+	protected function _getInlineJavaScript()
 	{
 		static $shown = false;
 
-		if (!$shown) {
-			$javascript = $this->getInlineJavaScriptTranslations();
+		if (! $shown) {
+			$javascript = $this->_getInlineJavaScriptTranslations();
 			$shown = true;
 		} else {
 			$javascript = '';
 		}
 
-		if (isset($this->valid_range_start))
-			$start_date = $this->valid_range_start->formatLikeIntl('MM/dd/yyyy');
-		else
-			$start_date = '';
-
-		if (isset($this->valid_range_end)) {
-			// JavaScript calendar is inclusive, subtract one second from range
-			$tmp = clone $this->valid_range_end;
-			$tmp->subtractSeconds(1);
-			$end_date = $tmp->formatLikeIntl('MM/dd/yyyy');
+		if (isset($this->_validRangeStart)) {
+			$startDate = $this->_validRangeStart->formatLikeIntl('MM/dd/yyyy');
 		} else {
-			$end_date = '';
+			$startDate = '';
 		}
 
-		$javascript.=
-			sprintf("var %s_obj = new SwatCalendar('%s', '%s', '%s');",
-			$this->id,
-			$this->id,
-			$start_date,
-			$end_date);
+		if (isset($this->_validRangeEnd)) {
+			// JavaScript calendar is inclusive, subtract one second from range
+			$tmp = clone $this->_validRangeEnd;
+			$tmp->subtractSeconds(1);
+			$endDate = $tmp->formatLikeIntl('MM/dd/yyyy');
+		} else {
+			$endDate = '';
+		}
+
+		$javascript.= sprintf(
+			"var %s_obj = new SwatCalendar('%s', '%s', '%s');",
+			$this->_id,
+			$this->_id,
+			$startDate,
+			$endDate
+		);
 
 		return $javascript;
 	}
-
-	// }}}
-	// {{{ protected function getInlineJavaScriptTranslations()
 
 	/**
 	 * Gets translatable string resources for the JavaScript object for
@@ -171,55 +175,53 @@ class Zap_Calendar extends Zap_Control
 	 *
 	 * @return string translatable JavaScript string resources for this widget.
 	 */
-	protected function getInlineJavaScriptTranslations()
+	protected function _getInlineJavaScriptTranslations()
 	{
 		/*
 		 * This date is arbitrary and is just used for getting week and
 		 * month names.
 		 */
-		$date = new SwatDate();
+		$date = new Zap_Date();
 		$date->setDay(1);
 		$date->setMonth(1);
 		$date->setYear(1995);
 
 		// Get the names of weeks (locale-specific)
-		$week_names = array();
+		$weekNames = array();
 		for ($i = 1; $i < 8; $i++) {
-			$week_names[] = $date->formatLikeIntl('EEE');
+			$weekNames[] = $date->formatLikeIntl('EEE');
 			$date->setDay($i + 1);
 		}
-		$week_names = "['".implode("', '", $week_names)."']";
+		$weekNames = "['".implode("', '", $weekNames)."']";
 
 		// Get the names of months (locale-specific)
-		$month_names = array();
+		$monthNames = array();
 		for ($i = 1; $i < 13; $i++) {
-			$month_names[] = $date->formatLikeIntl('MMM');
+			$monthNames[] = $date->formatLikeIntl('MMM');
 			$date->setMonth($i + 1);
 		}
-		$month_names = "['".implode("', '", $month_names)."']";
+		$monthNames = "['".implode("', '", $monthNames)."']";
 
-		$prev_alt_text     = Zap::_('Previous Month');
-		$next_alt_text     = Zap::_('Next Month');
-		$close_text        = Zap::_('Close');
-		$nodate_text       = Zap::_('No Date');
-		$today_text        = Zap::_('Today');
+		$prevAltText = Zap::_('Previous Month');
+		$nextAltText = Zap::_('Next Month');
+		$closeText   = Zap::_('Close');
+		$nodateText  = Zap::_('No Date');
+		$todayText   = Zap::_('Today');
 
-		$open_toggle_text  = Zap::_('open calendar');
-		$close_toggle_text = Zap::_('close calendar');
+		$openToggleText  = Zap::_('open calendar');
+		$closeToggleText = Zap::_('close calendar');
 
 		return
-			"SwatCalendar.week_names = {$week_names};\n".
-			"SwatCalendar.month_names = {$month_names};\n".
-			"SwatCalendar.prev_alt_text = '{$prev_alt_text}';\n".
-			"SwatCalendar.next_alt_text = '{$next_alt_text}';\n".
-			"SwatCalendar.close_text = '{$close_text}';\n".
-			"SwatCalendar.nodate_text = '{$nodate_text}';\n".
-			"SwatCalendar.today_text = '{$today_text}';\n".
-			"SwatCalendar.open_toggle_text = '{$open_toggle_text}';\n".
-			"SwatCalendar.close_toggle_text = '{$close_toggle_text}';\n";
+			"SwatCalendar.week_names = {$weekNames};\n".
+			"SwatCalendar.month_names = {$monthNames};\n".
+			"SwatCalendar.prev_alt_text = '{$prevAltText}';\n".
+			"SwatCalendar.next_alt_text = '{$nextAltText}';\n".
+			"SwatCalendar.close_text = '{$closeText}';\n".
+			"SwatCalendar.nodate_text = '{$nodateText}';\n".
+			"SwatCalendar.today_text = '{$todayText}';\n".
+			"SwatCalendar.open_toggle_text = '{$openToggleText}';\n".
+			"SwatCalendar.close_toggle_text = '{$closeToggleText}';\n";
 	}
-
-	// }}}
 }
 
 

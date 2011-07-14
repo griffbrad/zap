@@ -15,22 +15,18 @@ require_once 'Zap/FormField.php';
  */
 class Zap_FooterFormField extends Zap_FormField
 {
-	// {{{ protected function getCSSClassNames()
-
 	/**
 	 * Gets the array of CSS classes that are applied to this footer form field
 	 *
 	 * @return array the array of CSS classes that are applied to this footer
 	 *                form field.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
-		$classes = parent::getCSSClassNames();
+		$classes = parent::_getCSSClassNames();
 		array_unshift($classes, 'swat-footer-form-field');
 		return $classes;
 	}
-
-	// }}}
 }
 
 

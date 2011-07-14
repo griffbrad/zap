@@ -97,26 +97,26 @@ abstract class Zap_InputControl extends Zap_Control
 	{
 		switch ($id) {
 		case 'required':
-			$text = $this->show_field_title_in_messages ?
+			$text = $this->_showFieldTitleInMessages ?
 				Zap::_('The %s field is required.') :
 				Zap::_('This field is required.');
 
 			break;
 		case 'too-long':
-			$text = $this->show_field_title_in_messages ?
+			$text = $this->_showFieldTitleInMessages ?
 				Zap::_('The %%s field can be at most %s characters long.') :
 				Zap::_('This field can be at most %s characters long.');
 
 			break;
 		default:
-			$text = $this->show_field_title_in_messages ?
+			$text = $this->_showFieldTitleInMessages ?
 				Zap::_('There is a problem with the %s field.') :
 				Zap::_('There is a problem with this field.');
 
 			break;
 		}
 
-		$message = new SwatMessage($text, 'error');
+		$message = new Zap_Message($text, 'error');
 		return $message;
 	}
 }

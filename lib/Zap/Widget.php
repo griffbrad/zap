@@ -78,7 +78,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @var array
 	 */
-	private $composite_widgets = array();
+	private $_compositeWidgets = array();
 
 	/**
 	 * Whether or not composite widgets have been created
@@ -88,7 +88,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @var boolean
 	 */
-	private $composite_widgets_created = false;
+	private $_compositeWidgetsCreated = false;
 
 	/**
 	 * Messages affixed to this widget
@@ -191,15 +191,12 @@ abstract class Zap_Widget extends Zap_UIObject
 			$this->addStyleSheet($this->_stylesheet);
 		}
 
-		foreach ($this->getCompositeWidgets() as $widget) {
+		foreach ($this->_getCompositeWidgets() as $widget) {
 			$widget->init();
 		}
 
 		$this->_initialized = true;
 	}
-
-	// }}}
-	// {{{ public function process()
 
 	/**
 	 * Processes this widget
@@ -214,17 +211,16 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function process()
 	{
-		if (!$this->isInitialized())
+		if (! $this->isInitialized()) {
 			$this->init();
+		}
 
-		foreach ($this->getCompositeWidgets() as $widget)
+		foreach ($this->getCompositeWidgets() as $widget) {
 			$widget->process();
+		}
 
-		$this->processed = true;
+		$this->_processed = true;
 	}
-
-	// }}}
-	// {{{ public function display()
 
 	/**
 	 * Displays this widget
@@ -244,9 +240,6 @@ abstract class Zap_Widget extends Zap_UIObject
 		$this->_displayed = true;
 	}
 
-	// }}}
-	// {{{ public function displayHtmlHeadEntries()
-
 	/**
 	 * Displays the HTML head entries for this widget
 	 *
@@ -258,9 +251,6 @@ abstract class Zap_Widget extends Zap_UIObject
 		$set = $this->getHtmlHeadEntrySet();
 		$set->display();
 	}
-
-	// }}}
-	// {{{ public function getHtmlHeadEntrySet()
 
 	/**
 	 * Gets the Zap_HtmlHeadEntry objects needed by this widget
@@ -279,15 +269,12 @@ abstract class Zap_Widget extends Zap_UIObject
 			$set = new Zap_HtmlHeadEntrySet();
 		}
 
-		foreach ($this->getCompositeWidgets() as $widget) {
+		foreach ($this->_getCompositeWidgets() as $widget) {
 			$set->addEntrySet($widget->getHtmlHeadEntrySet());
 		}
 
 		return $set;
 	}
-
-	// }}}
-	// {{{ public function addMessage()
 
 	/**
 	 * Adds a message to this widget
@@ -334,7 +321,7 @@ abstract class Zap_Widget extends Zap_UIObject
 		$hasMessage = (0 < count($this->_messages));
 
 		if (! $hasMessage) {
-			foreach ($this->getCompositeWidgets() as $widget) {
+			foreach ($this->_getCompositeWidgets() as $widget) {
 				if ($widget->hasMessage()) {
 					$hasMessage = true;
 					break;
@@ -384,9 +371,6 @@ abstract class Zap_Widget extends Zap_UIObject
 		return $this->_processed;
 	}
 
-	// }}}
-	// {{{ public function isDisplayed()
-
 	/**
 	 * Whether or not this widget is displayed
 	 *
@@ -394,11 +378,8 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function isDisplayed()
 	{
-		return $this->displayed;
+		return $this->_displayed;
 	}
-
-	// }}}
-	// {{{ public function getFocusableHtmlId()
 
 	/**
 	 * Gets the id attribute of the XHTML element displayed by this widget
@@ -422,9 +403,6 @@ abstract class Zap_Widget extends Zap_UIObject
 		return null;
 	}
 
-	// }}}
-	// {{{ public function replaceWithContainer()
-
 	/**
 	 * Replace this widget with a new container
 	 *
@@ -439,22 +417,21 @@ abstract class Zap_Widget extends Zap_UIObject
 	 */
 	public function replaceWithContainer(Zap_Container $container = null)
 	{
-		if ($this->parent === null)
+		if (null === $this->_parent) {
 			throw new Zap_Exception('Widget does not have a parent, unable '.
 				'to replace this widget with a container.');
+		}
 
-		if ($container === null)
+		if (null === $container) {
 			$container = new Zap_Container();
+		}
 
-		$parent = $this->parent;
+		$parent = $this->_parent;
 		$parent->replace($this, $container);
 		$container->add($this);
 
 		return $container;
 	}
-
-	// }}}
-	// {{{ public function copy()
 
 	/**
 	 * Performs a deep copy of the UI tree starting with this UI object
@@ -467,32 +444,27 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @see Zap_UIObject::copy()
 	 */
-	public function copy($id_suffix = '')
+	public function copy($idSuffix = '')
 	{
-		$copy = parent::copy($id_suffix);
+		$copy = parent::copy($idSuffix);
 
-		if ($id_suffix != '' && $copy->id !== null)
-			$copy->id = $copy->id.$id_suffix;
+		if ('' != $id_suffix && null !== $copy->getId()) {
+			$copy->setId($copy->getId() . $idSuffix);
+		}
 
-		foreach ($this->composite_widgets as $key => $composite_widget) {
-			$composite_copy = $composite_widget->copy($id_suffix);
-			$composite_copy->parent = $copy;
-			$copy->composite_widgets[$key] = $composite_copy;
+		foreach ($this->_compositeWidgets as $key => $compositeWidget) {
+			$compositeCopy = $compositeWidget->copy($idSuffix);
+			$compositeCopy->setParent($copy);
+			$copy->_compositeWidgets[$key] = $compositeCopy;
 		}
 
 		return $copy;
 	}
 
-	// }}}
-	// {{{ abstract public function printWidgetTree()
-
 	/**
 	 * @todo document me
 	 */
 	abstract public function printWidgetTree();
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
 
 	/**
 	 * Gets the array of CSS  classes that are applied  to this widget
@@ -512,21 +484,15 @@ abstract class Zap_Widget extends Zap_UIObject
 		return $classes;
 	}
 
-	// }}}
-	// {{{ protected function createCompositeWidgets()
-
 	/**
 	 * Creates and adds composite widgets of this widget
 	 *
 	 * Created composite widgets should be added in this method using
 	 * {@link Zap_Widget::addCompositeWidget()}.
 	 */
-	protected function createCompositeWidgets()
+	protected function _createCompositeWidgets()
 	{
 	}
-
-	// }}}
-	// {{{ protected final function addCompositeWidget()
 
 	/**
 	 * Adds a composite a widget to this widget
@@ -544,23 +510,22 @@ abstract class Zap_Widget extends Zap_UIObject
 	 * @throws Zap_Exception if the specified widget is already the child of
 	 *                        another object.
 	 */
-	protected final function addCompositeWidget(Zap_Widget $widget, $key)
+	protected final function _addCompositeWidget(Zap_Widget $widget, $key)
 	{
-		if (array_key_exists($key, $this->composite_widgets))
+		if (array_key_exists($key, $this->_compositeWidgets)) {
 			throw new Zap_DuplicateIdException(sprintf(
 				"A composite widget with the key '%s' already exists in this ".
 				"widget.", $key), 0, $key);
+		}
 
-		if ($widget->parent !== null)
+		if (null !== $widget->_parent) {
 			throw new Zap_Exception('Cannot add a composite widget that '.
 				'already has a parent.');
+		}
 
-		$this->composite_widgets[$key] = $widget;
-		$widget->parent = $this;
+		$this->_compositeWidgets[$key] = $widget;
+		$widget->setParent($this);
 	}
-
-	// }}}
-	// {{{ protected final function getCompositeWidget()
 
 	/**
 	 * Gets a composite widget of this widget by the composite widget's key
@@ -576,21 +541,19 @@ abstract class Zap_Widget extends Zap_UIObject
 	 * @throws Zap_WidgetNotFoundException if no composite widget with the
 	 *                                     specified key exists in this widget.
 	 */
-	protected final function getCompositeWidget($key)
+	protected final function _getCompositeWidget($key)
 	{
-		$this->confirmCompositeWidgets();
+		$this->_confirmCompositeWidgets();
 
-		if (!array_key_exists($key, $this->composite_widgets))
-			throw new SwatWidgetNotFoundException(sprintf(
+		if (! array_key_exists($key, $this->_compositeWidgets)) {
+			throw new Zap_WidgetNotFoundException(sprintf(
 				"Composite widget with key of '%s' not found in %s. Make sure ".
 				"the composite widget was created and added to this widget.",
 				$key, get_class($this)), 0, $key);
-
-		return $this->composite_widgets[$key];
+		}
+		
+		return $this->_compositeWidgets[$key];
 	}
-
-	// }}}
-	// {{{ protected final function getCompositeWidgets()
 
 	/**
 	 * Gets all composite widgets added to this widget
@@ -607,25 +570,26 @@ abstract class Zap_Widget extends Zap_UIObject
 	 *
 	 * @see Zap_Widget::addCompositeWidget()
 	 */
-	protected final function getCompositeWidgets($class_name = null)
+	protected final function _getCompositeWidgets($className = null)
 	{
-		$this->confirmCompositeWidgets();
+		$this->_confirmCompositeWidgets();
 
-		if (!($class_name === null ||
-			class_exists($class_name) || interface_exists($class_name)))
+		if (! (null === $className ||
+			class_exists($className) || interface_exists($className))
+		) {
 			return array();
+		}
 
 		$out = array();
 
-		foreach ($this->composite_widgets as $key => $widget)
-			if ($class_name === null || $widget instanceof $class_name)
+		foreach ($this->_compositeWidgets as $key => $widget) {
+			if (null === $className || $widget instanceof $className) {
 				$out[$key] = $widget;
+			}
+		}
 
 		return $out;
 	}
-
-	// }}}
-	// {{{ protected final function confirmCompositeWidgets()
 
 	/**
 	 * Confirms composite widgets have been created
@@ -639,15 +603,13 @@ abstract class Zap_Widget extends Zap_UIObject
 	 * process() and is called any time {@link Zap_Widget::getCompositeWidget()}
 	 * is called so it rarely needs to be called manually.
 	 */
-	protected final function confirmCompositeWidgets()
+	protected final function _confirmCompositeWidgets()
 	{
-		if (!$this->composite_widgets_created) {
-			$this->createCompositeWidgets();
-			$this->composite_widgets_created = true;
+		if (!$this->_compositeWidgetsCreated) {
+			$this->_createCompositeWidgets();
+			$this->_compositeWidgetsCreated = true;
 		}
 	}
-
-	// }}}
 }
 
 

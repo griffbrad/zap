@@ -1,0 +1,20 @@
+.swat-rating-star {
+	float: left;
+}
+
+.swat-rating-star a {
+	display: block;
+	background: url(../images/swat-rating-stars.png) no-repeat 0 0px;
+	_background: url(../images/swat-rating-stars-256.png) no-repeat 0 0px;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.swat-rating-selected a {
+	background-position: 0 -20px;
+}
+
+.swat-rating-hover a {
+	background-position: 0 -40px;
+}

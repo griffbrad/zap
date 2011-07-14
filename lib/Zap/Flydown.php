@@ -18,8 +18,6 @@ require_once 'Zap/String.php';
  */
 class Zap_Flydown extends Zap_OptionControl implements Zap_State
 {
-	// {{{ public properties
-
 	/**
 	 * Flydown value
 	 *
@@ -28,7 +26,7 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	 *
 	 * @var string
 	 */
-	public $value = null;
+	protected $_value = null;
 
 	/**
 	 * Show a blank option
@@ -37,7 +35,7 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	 *
 	 * @var boolean
 	 */
-	public $show_blank = true;
+	protected $_showBlank = true;
 
 	/**
 	 * Blank title
@@ -46,10 +44,12 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	 *
 	 * @var string
 	 */
-	public $blank_title = '';
+	protected $_blankTitle = '';
 
-	// }}}
-	// {{{ public function display()
+	public function getShowBlank()
+	{
+		return $this->_showBlank;
+	}
 
 	/**
 	 * Displays this flydown
@@ -58,93 +58,97 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	 */
 	public function display()
 	{
-		if (!$this->visible)
+		if (! $this->_visible) {
 			return;
+		}
 
 		parent::display();
 
-		$options = $this->getOptions();
+		$options  = $this->getOptions();
 		$selected = false;
 
-		if ($this->show_blank)
-			$options = array_merge(array($this->getBlankOption()), $options);
+		if ($this->_showBlank) {
+			$options = array_merge(array($this->_getBlankOption()), $options);
+		}
 
 		// only show a select if there is more than one option
 		if (count($options) > 1) {
-			$flydown_value = ($this->serialize_values) ?
-				$this->value : (string)$this->value;
+			$flydownValue = ($this->_serializeValues) ?
+				$this->_value : (string) $this->_value;
 
-			if ($this->serialize_values)
+			if ($this->_serializeValues) {
 				$salt = $this->getForm()->getSalt();
+			}
 
-			$select_tag = new SwatHtmlTag('select');
-			$select_tag->name = $this->id;
-			$select_tag->id = $this->id;
-			$select_tag->class = $this->getCSSClassString();
+			$selectTag = new Zap_HtmlTag('select');
+			$selectTag->name  = $this->_id;
+			$selectTag->id    = $this->_id;
+			$selectTag->class = $this->_getCSSClassString();
 
-			if (!$this->isSensitive())
-				$select_tag->disabled = 'disabled';
+			if (!$this->isSensitive()) {
+				$selectTag->disabled = 'disabled';
+			}
 
-			$option_tag = new SwatHtmlTag('option');
+			$optionTag = new Zap_HtmlTag('option');
 
-			$select_tag->open();
+			$selectTag->open();
 
-			foreach ($options as $flydown_option) {
-				if ($this->serialize_values) {
-					$option_tag->value = SwatString::signedSerialize(
-						$flydown_option->value, $salt);
+			foreach ($options as $flydownOption) {
+				if ($this->_serializeValues) {
+					$optionTag->value = Zap_String::signedSerialize(
+						$flydownOption->getValue(), 
+						$salt
+					);
 				} else {
-					$option_tag->value = (string)$flydown_option->value;
+					$optionTag->value = (string) $flydownOption->getValue();
 				}
 
-				if ($flydown_option instanceof SwatFlydownDivider) {
-					$option_tag->disabled = 'disabled';
-					$option_tag->class = 'swat-flydown-option-divider';
-				} elseif ($flydown_option instanceof SwatFlydownBlankOption) {
-					$option_tag->removeAttribute('disabled');
-					$option_tag->class = 'swat-blank-option';
+				if ($flydownOption instanceof Zap_FlydownDivider) {
+					$optionTag->disabled = 'disabled';
+					$optionTag->class    = 'swat-flydown-option-divider';
+				} elseif ($flydownOption instanceof Zap_FlydownBlankOption) {
+					$optionTag->removeAttribute('disabled');
+					$optionTag->class = 'swat-blank-option';
 				} else {
-					$option_tag->removeAttribute('disabled');
-					$option_tag->removeAttribute('class');
+					$optionTag->removeAttribute('disabled');
+					$optionTag->removeAttribute('class');
 
 					// add option-specific CSS classes from option metadata
 					$classes = $this->getOptionMetadata(
-						$flydown_option, 'classes');
+						$flydownOption, 'classes');
 
 					if (is_array($classes)) {
-						$option_tag->class = implode(' ', $classes);
+						$optionTag->class = implode(' ', $classes);
 					} elseif ($classes) {
-						$option_tag->class = strval($classes);
+						$optionTag->class = strval($classes);
 					}
 				}
 
-				$value = ($this->serialize_values) ?
-					$flydown_option->value : (string)$flydown_option->value;
+				$value = ($this->_serializeValues) ?
+					$flydownOption->getValue() : (string) $flydownOption->getValue();
 
-				if ($flydown_value === $value && !$selected &&
-					!($flydown_option instanceof SwatFlydownDivider)) {
+				if ($flydownValue === $value && ! $selected &&
+					! ($flydownOption instanceof Zap_FlydownDivider)
+				) {
 
-					$option_tag->selected = 'selected';
+					$optionTag->selected = 'selected';
 					$selected = true;
 				} else {
-					$option_tag->removeAttribute('selected');
+					$optionTag->removeAttribute('selected');
 				}
 
-				$option_tag->setContent($flydown_option->title);
+				$optionTag->setContent($flydownOption->getTitle());
 
-				$option_tag->display();
+				$optionTag->display();
 			}
 
-			$select_tag->close();
+			$selectTag->close();
 
 		} elseif (count($options) == 1) {
 			// get first and only element
-			$this->displaySingle(current($options));
+			$this->_displaySingle(current($options));
 		}
 	}
-
-	// }}}
-	// {{{ public function process()
 
 	/**
 	 * Figures out what option was selected
@@ -157,23 +161,23 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	{
 		parent::process();
 
-		if (!$this->processValue())
+		if (! $this->_processValue()) {
 			return;
+		}
 
-		if ($this->required && $this->isSensitive()) {
+		if ($this->_required && $this->isSensitive()) {
 			// When values are not serialized, an empty string is treated as
 			// null. As a result, you should not use a null value and an empty
 			// string value in the same flydown except when using serialized
 			// values.
-			if (($this->serialize_values && $this->value === null) ||
-				(!$this->serialize_values && $this->value == '')) {
+			if (($this->_serializeValues && $this->_value === null) ||
+				(!$this->_serializeValues && '' == $this->_value)
+			) {
+
 				$this->addMessage($this->getValidationMessage('required'));
 			}
 		}
 	}
-
-	// }}}
-	// {{{ public function addDivider()
 
 	/**
 	 * Adds a divider to this flydown
@@ -188,9 +192,6 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 		$this->options[] = new SwatFlydownDivider(null, $title);
 	}
 
-	// }}}
-	// {{{ public function reset()
-
 	/**
 	 * Resets this flydown
 	 *
@@ -199,12 +200,9 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	 */
 	public function reset()
 	{
-		reset($this->options);
-		$this->value = null;
+		reset($this->_options);
+		$this->_value = null;
 	}
-
-	// }}}
-	// {{{ public function getState()
 
 	/**
 	 * Gets the current state of this flydown
@@ -215,11 +213,8 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	 */
 	public function getState()
 	{
-		return $this->value;
+		return $this->_value;
 	}
-
-	// }}}
-	// {{{ public function setState()
 
 	/**
 	 * Sets the current state of this flydown
@@ -230,11 +225,8 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	 */
 	public function setState($state)
 	{
-		$this->value = $state;
+		$this->_value = $state;
 	}
-
-	// }}}
-	// {{{ public function getFocusableHtmlId()
 
 	/**
 	 * Gets the id attribute of the XHTML element displayed by this widget
@@ -248,106 +240,97 @@ class Zap_Flydown extends Zap_OptionControl implements Zap_State
 	 */
 	public function getFocusableHtmlId()
 	{
-		$focusable_id = null;
+		$focusableId = null;
 
-		if ($this->visible) {
+		if ($this->_visible) {
 			$count = count($this->getOptions());
-			if ($this->show_blank)
+			if ($this->_showBlank) {
 				$count++;
+			}
 
-			if ($count > 1)
-				$focusable_id = $this->id;
+			if ($count > 1) {
+				$focusableId = $this->_id;
+			}
 		}
 
-		return $focusable_id;
+		return $focusableId;
 	}
-
-	// }}}
-	// {{{ protected function processValue()
 
 	/**
 	 * Processes the value of this flydown from user-submitted form data
 	 *
 	 * @return boolean true if the value was processed from form data
 	 */
-	protected function processValue()
+	protected function _processValue()
 	{
 		$form = $this->getForm();
-
 		$data = &$form->getFormData();
-		if (!isset($data[$this->id]))
-			return false;
 
-		if ($this->serialize_values) {
+		if (! isset($data[$this->_id])) {
+			return false;
+		}
+
+		if ($this->_serializeValues) {
 			$salt = $form->getSalt();
-			$this->value = SwatString::signedUnserialize(
-				$data[$this->id], $salt);
+			$this->_value = Zap_String::signedUnserialize(
+				$data[$this->_id], 
+				$salt
+			);
 		} else {
-			$this->value = (string)$data[$this->id];
+			$this->_value = (string) $data[$this->_id];
 		}
 
 		return true;
 	}
 
-	// }}}
-	// {{{ protected function displaySingle()
-
 	/**
 	 * Displays this flydown if there is only a single option
 	 */
-	protected function displaySingle(SwatOption $flydown_option)
+	protected function _displaySingle(Zap_Option $flydownOption)
 	{
-		$title = $flydown_option->title;
-		$value = $flydown_option->value;
+		$title = $flydownOption->getTitle();
+		$value = $flydownOption->getValue();
 
-		$hidden_tag = new SwatHtmlTag('input');
-		$hidden_tag->type = 'hidden';
-		$hidden_tag->name = $this->id;
+		$hiddenTag = new Zap_HtmlTag('input');
+		$hiddenTag->type = 'hidden';
+		$hiddenTag->name = $this->_id;
 
-		if ($this->serialize_values) {
+		if ($this->_serializeValues) {
 			$salt = $this->getForm()->getSalt();
-			$hidden_tag->value = SwatString::signedSerialize($value, $salt);
+			$hiddenTag->value = Zap_String::signedSerialize($value, $salt);
 		} else {
-			$hidden_tag->value = (string)$value;
+			$hiddenTag->value = (string) $value;
 		}
 
-		$hidden_tag->display();
+		$hiddenTag->display();
 
-		$span_tag = new SwatHtmlTag('span');
-		$span_tag->class = 'swat-flydown-single';
-		$span_tag->setContent($title, $flydown_option->content_type);
-		$span_tag->display();
+		$spanTag = new Zap_HtmlTag('span');
+		$spanTag->class = 'swat-flydown-single';
+		$spanTag->setContent($title, $flydownOption->getContentType());
+		$spanTag->display();
 	}
-
-	// }}}
-	// {{{ protected function getBlankOption()
 
 	/**
 	 * Gets the the blank option for this flydown.
 	 *
 	 * @return SwatFlydownBlankOption the blank value option.
 	 */
-	protected function getBlankOption()
+	protected function _getBlankOption()
 	{
-		return new SwatFlydownBlankOption(null, $this->blank_title);
+		return new Zap_FlydownBlankOption(null, $this->_blankTitle);
 	}
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
 
 	/**
 	 * Gets the array of CSS classes that are applied to this flydown
 	 *
 	 * @return array the array of CSS classes that are applied to this flydown.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-flydown');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
-
-	// }}}
 }
 
 

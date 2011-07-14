@@ -14,8 +14,6 @@ require_once 'Zap/Option.php';
  */
 abstract class Zap_OptionControl extends Zap_InputControl
 {
-	// {{{ public properties
-
 	/**
 	 * Options
 	 *
@@ -23,7 +21,7 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 *
 	 * @var array
 	 */
-	public $options = array();
+	protected $_options = array();
 
 	/**
 	 * Metadata for the options of this control
@@ -55,7 +53,7 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 * @see SwatOptionControl::addOptionMetadata()
 	 * @see SwatOptionControl::getOptionMetadata()
 	 */
-	protected $option_metadata = array();
+	protected $_optionMetadata = array();
 
 	/**
 	 * Whether or not to serialize option values
@@ -71,10 +69,7 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 *
 	 * @var boolean
 	 */
-	public $serialize_values = true;
-
-	// }}}
-	// {{{ public function addOption()
+	protected $_serializeValues = true;
 
 	/**
 	 * Adds an option to this option control
@@ -116,33 +111,33 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 * @see SwatOptionControl::$options
 	 * @see SwatOptionControl::addOptionMetadata()
 	 */
-	public function addOption($value, $title = '', $content_type = 'text/plain')
+	public function addOption($value, $title = '', $contentType = 'text/plain')
 	{
-		if ($value instanceof SwatOption) {
+		if ($value instanceof Zap_Option) {
 			$option = $value;
 		} else {
-			$option = new SwatOption($value, $title, $content_type);
+			$option = new Zap_Option($value, $title, $contentType);
 		}
 
-		$this->options[] = $option;
+		$this->_options[] = $option;
 
 		// initialize metadata
-		$key = $this->getOptionMetadataKey($option);
-		if (!isset($this->option_metadata[$key])) {
+		$key = $this->_getOptionMetadataKey($option);
+
+		if (! isset($this->_optionMetadata[$key])) {
 			// use isset so we don't erase the metadata if an option is added
 			// twice
-			$this->option_metadata[$key] = array();
+			$this->_optionMetadata[$key] = array();
 		}
 
-		if ($value instanceof SwatOption && is_array($title)) {
+		if ($value instanceof Zap_Option && is_array($title)) {
 			$this->addOptionMetadata($option, $title);
 		} else {
 			$this->addOptionMetadata($option, array());
 		}
-	}
 
-	// }}}
-	// {{{ public function addOptionMetadata()
+		return $this;
+	}
 
 	/**
 	 * Sets the metadata for an option
@@ -163,21 +158,18 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 * @see SwatOptionControl::addOption()
 	 * @see SwatOptionControl::getOptionMetadata()
 	 */
-	public function addOptionMetadata(SwatOption $option, $metadata,
+	public function addOptionMetadata(Zap_Option $option, $metadata,
 		$value = null)
 	{
-		$key = $this->getOptionMetadataKey($option);
+		$key = $this->_getOptionMetadataKey($option);
 
 		if (is_array($metadata)) {
-			$this->option_metadata[$key] = array_merge(
-				$this->option_metadata[$key], $metadata);
+			$this->_optionMetadata[$key] = array_merge(
+				$this->_optionMetadata[$key], $metadata);
 		} else {
-			$this->option_metadata[$key][$metadata] = $value;
+			$this->_optionMetadata[$key][$metadata] = $value;
 		}
 	}
-
-	// }}}
-	// {{{ public function getOptionMetadata()
 
 	/**
 	 * Gets the metadata for an option
@@ -200,20 +192,20 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 *
 	 * @see SwatOptionControl::addOptionMetadata()
 	 */
-	public function getOptionMetadata(SwatOption $option, $metadata = null)
+	public function getOptionMetadata(Zap_Option $option, $metadata = null)
 	{
-		$key = $this->getOptionMetadataKey($option);
+		$key = $this->_getOptionMetadataKey($option);
 
-		if ($metadata === null) {
-			if (isset($this->option_metadata[$key])) {
-				$metadata = $this->option_metadata[$key];
+		if (null === $metadata) {
+			if (isset($this->_optionMetadata[$key])) {
+				$metadata = $this->_optionMetadata[$key];
 			} else {
 				$metadata = array();
 			}
 		} else {
-			if (isset($this->option_metadata[$key]) &&
-				isset($this->option_metadata[$key][$metadata])) {
-				$metadata = $this->option_metadata[$key][$metadata];
+			if (isset($this->_optionMetadata[$key]) &&
+				isset($this->_optionMetadata[$key][$metadata])) {
+				$metadata = $this->_optionMetadata[$key][$metadata];
 			} else {
 				$metadata = null;
 			}
@@ -222,9 +214,6 @@ abstract class Zap_OptionControl extends Zap_InputControl
 		return $metadata;
 	}
 
-	// }}}
-	// {{{ public function removeOption()
-
 	/**
 	 * Removes an option from this option control
 	 *
@@ -232,28 +221,25 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 *
 	 * @return SwatOption the removed option or null if no option was removed.
 	 */
-	public function removeOption(SwatOption $option)
+	public function removeOption(Zap_Option $option)
 	{
-		$removed_option = null;
+		$removedOption = null;
 
-		foreach ($this->options as $key => $control_option) {
-			if ($control_option === $option) {
-				$removed_option = $control_option;
+		foreach ($this->_options as $key => $controlOption) {
+			if ($controlOption === $option) {
+				$removedOption = $controlOption;
 
 				// remove from options list
-				unset($this->options[$key]);
+				unset($this->_options[$key]);
 
 				// remove metadata
-				$key = $this->getOptionMetadataKey($control_option);
-				unset($this->option_metadata[$key]);
+				$key = $this->_getOptionMetadataKey($controlOption);
+				unset($this->_optionMetadata[$key]);
 			}
 		}
 
-		return $removed_option;
+		return $removedOption;
 	}
-
-	// }}}
-	// {{{ public function removeOptionsByValue()
 
 	/**
 	 * Removes options from this option control by their value
@@ -265,26 +251,23 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 */
 	public function removeOptionsByValue($value)
 	{
-		$removed_options = array();
+		$removedOptions = array();
 
-		foreach ($this->options as $key => $control_option) {
-			if ($control_option->value === $value) {
-				$removed_options[] = $control_option;
+		foreach ($this->_options as $key => $controlOption) {
+			if ($controlOption->getValue() === $value) {
+				$removedOptions[] = $controlOption;
 
 				// remove from options list
-				unset($this->options[$key]);
+				unset($this->_options[$key]);
 
 				// remove metadata
-				$metadata_key = $this->getOptionMetadataKey($control_option);
-				unset($this->option_metadata[$metadata_key]);
+				$metadataKey = $this->_getOptionMetadataKey($controlOption);
+				unset($this->_optionMetadata[$metadataKey]);
 			}
 		}
 
-		return $removed_options;
+		return $removedOptions;
 	}
-
-	// }}}
-	// {{{ public function addOptionsByArray()
 
 	/**
 	 * Adds options to this option control using an associative array
@@ -296,14 +279,12 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 *                              'text/plain'.
 	 */
 	public function addOptionsByArray(array $options,
-		$content_type = 'text/plain')
+		$contentType = 'text/plain')
 	{
-		foreach ($options as $value => $title)
-			$this->addOption($value, $title, $content_type);
+		foreach ($options as $value => $title) {
+			$this->addOption($value, $title, $contentType);
+		}
 	}
-
-	// }}}
-	// {{{ public function getOptionsByValue()
 
 	/**
 	 * Gets options from this option control by their value
@@ -318,15 +299,14 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	{
 		$options = array();
 
-		foreach ($this->options as $option)
-			if ($option->value === $value)
+		foreach ($this->_options as $option) {
+			if ($option->getValue() === $value) {
 				$options[] = $option;
+			}
+		}
 
 		return $options;
 	}
-
-	// }}}
-	// {{{ protected function getOptions()
 
 	/**
 	 * Gets a reference to the array of options
@@ -335,13 +315,10 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 *
 	 * @return array a reference to the array of options.
 	 */
-	protected function &getOptions()
+	public function &getOptions()
 	{
-		return $this->options;
+		return $this->_options;
 	}
-
-	// }}}
-	// {{{ protected function getOption()
 
 	/**
 	 * Gets an option within this option control
@@ -352,18 +329,16 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 * @return SwatOption a reference to the option, or null if no such option
 	 *                     exists within this option control.
 	 */
-	protected function getOption($index)
+	protected function _getOption($index)
 	{
 		$option = null;
 
-		if (array_key_exists($index, $this->options))
-			$option = $this->options[$index];
+		if (array_key_exists($index, $this->_options)) {
+			$option = $this->_options[$index];
+		}
 
 		return $option;
 	}
-
-	// }}}
-	// {{{ protected function getOptionMetadataKey()
 
 	/**
 	 * Gets the key used to load and store metadata for an option
@@ -373,12 +348,9 @@ abstract class Zap_OptionControl extends Zap_InputControl
 	 * @return string the key used to load and store metadata for the specified
 	 *                option.
 	 */
-	protected function getOptionMetadataKey(SwatOption $option)
+	protected function _getOptionMetadataKey(Zap_Option $option)
 	{
 		return spl_object_hash($option);
 	}
-
-	// }}}
 }
-
 

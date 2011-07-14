@@ -1,8 +1,6 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
-
-require_once 'Swat/exceptions/SwatException.php';
+require_once 'Zap/Exception.php';
 require_once 'Zap/InputControl.php';
 require_once 'Zap/Flydown.php';
 require_once 'Zap/Date.php';
@@ -19,23 +17,18 @@ require_once 'Zap/HtmlTag.php';
  */
 class Zap_DateEntry extends Zap_InputControl implements Zap_State
 {
-	// {{{ class constants
-
 	const YEAR     = 1;
 	const MONTH    = 2;
 	const DAY      = 4;
 	const TIME     = 8;
 	const CALENDAR = 16;
 
-	// }}}
-	// {{{ public properties
-
 	/**
 	 * Date of this date entry widget
 	 *
-	 * @var SwatDate
+	 * @var Zap_Date
 	 */
-	public $value = null;
+	protected $_value = null;
 
 	/**
 	 * Required date parts
@@ -53,7 +46,7 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var integer
 	 */
-	public $required_parts;
+	protected $_requiredParts;
 
 	/**
 	 * Displayed date parts
@@ -71,25 +64,25 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var integer
 	 */
-	public $display_parts;
+	protected $_displayParts;
 
 	/**
 	 * Start date of the valid range (inclusive)
 	 *
 	 * Defaults to 20 years in the past.
 	 *
-	 * @var SwatDate
+	 * @var Zap_Date
 	 */
-	public $valid_range_start;
+	protected $_validRangeStart;
 
 	/**
 	 * End date of the valid range (exclusive)
 	 *
 	 * Defaults to 20 years in the future.
 	 *
-	 * @var SwatDate
+	 * @var Zap_Date
 	 */
-	public $valid_range_end;
+	protected $_validRangeEnd;
 
 	/**
 	 * Whether the numeric month code is displayed in the month flydown
@@ -98,17 +91,14 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 *
 	 * @var boolean
 	 */
-	public $show_month_number = false;
+	protected $_showMonthNumber = false;
 
 	/**
 	 * Whether or not this time entry should auto-complete to the current date
 	 *
 	 * @var boolean
 	 */
-	 public $use_current_date = true;
-
-	// }}}
-	// {{{ public function __construct()
+	protected $_useCurrentDate = true;
 
 	/**
 	 * Creates a new date entry widget
@@ -124,34 +114,31 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	{
 		parent::__construct($id);
 
-		$this->required_parts = self::YEAR | self::MONTH | self::DAY;
-		$this->display_parts  = self::YEAR | self::MONTH |
+		$this->_requiredParts = self::YEAR | self::MONTH | self::DAY;
+		$this->_displayParts  = self::YEAR | self::MONTH |
 		                        self::DAY | self::CALENDAR;
 
 		$this->setValidRange(-20, 20);
 
-		$this->requires_id = true;
+		$this->_requiresId = true;
 
-		$yui = new SwatYUI(array('event'));
-		$this->html_head_entry_set->addEntrySet($yui->getHtmlHeadEntrySet());
-		$this->addJavaScript('packages/swat/javascript/swat-date-entry.js',
-			Zap::PACKAGE_ID);
+		$yui = new Zap_YUI(array('event'));
+		$this->_htmlHeadEntrySet->addEntrySet($yui->getHtmlHeadEntrySet());
+
+		$this->addJavaScript(
+			'packages/swat/javascript/swat-date-entry.js',
+			Zap::PACKAGE_ID
+		);
 	}
-
-	// }}}
-	// {{{ public function __clone()
 
 	/**
 	 * Clones the valid date range of this date entry
 	 */
 	public function __clone()
 	{
-		$this->valid_range_start = clone $this->valid_range_start;
-		$this->valid_range_end = clone $this->valid_range_end;
+		$this->_validRangeStart = clone $this->_validRangeStart;
+		$this->_validRangeEnd   = clone $this->_validRangeEnd;
 	}
-
-	// }}}
-	// {{{ public function setValidRange()
 
 	/**
 	 * Set the valid date range
@@ -164,10 +151,10 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 * @param integer $end_offset offset from the current year in years used
 	 *                             to set the ending year of the valid range.
 	 */
-	public function setValidRange($start_offset, $end_offset)
+	public function setValidRange($startOffset, $endOffset)
 	{
 		// Beginning of this year
-		$date = new SwatDate();
+		$date = new Zap_Date();
 		$date->setMonth(1);
 		$date->setDay(1);
 		$date->setHour(0);
@@ -175,16 +162,13 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 		$date->setSecond(0);
 		$date->setTZById('UTC');
 
-		$this->valid_range_start = clone $date;
-		$this->valid_range_end = clone $date;
+		$this->_validRangeStart = clone $date;
+		$this->_validRangeEnd   = clone $date;
 
 		$year = $date->getYear();
-		$this->valid_range_start->setYear($year + $start_offset);
-		$this->valid_range_end->setYear($year + $end_offset + 1);
+		$this->_validRangeStart->setYear($year + $startOffset);
+		$this->_validRangeEnd->setYear($year + $endOffset + 1);
 	}
-
-	// }}}
-	// {{{ public function display()
 
 	/**
 	 * Displays this date entry
@@ -194,78 +178,84 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 */
 	public function display()
 	{
-		if (!$this->visible)
+		if (! $this->_visible) {
 			return;
+		}
 
 		parent::display();
 
-		$div_tag = new SwatHtmlTag('div');
-		$div_tag->id = $this->id;
-		$div_tag->class = $this->getCSSClassString();
-		$div_tag->open();
+		$divTag = new Zap_HtmlTag('div');
+		$divTag->id    = $this->_id;
+		$divTag->class = $this->_getCSSClassString();
+		$divTag->open();
 
 		echo '<span class="swat-date-entry-span">';
 
 		foreach ($this->getDatePartOrder() as $datepart) {
-			if ($datepart == 'd' && $this->display_parts & self::DAY) {
-				$day_flydown = $this->getCompositeWidget('day_flydown');
+			if ($datepart == 'd' && $this->_displayParts & self::DAY) {
+				$dayFlydown = $this->_getCompositeWidget('day_flydown');
 
-				if ($day_flydown->value === null &&
-					$this->value !== null) {
-					$day_flydown->value = $this->value->getDay();
+				if (null === $dayFlydown->getState() &&
+					null !== $this->_value
+				) {
+					$dayFlydown->setState($this->_value->getDay());
 				}
 
-				$day_flydown->display();
-			} elseif ($datepart == 'm' && $this->display_parts & self::MONTH) {
-				$month_flydown = $this->getCompositeWidget('month_flydown');
+				$dayFlydown->display();
+			} elseif ($datepart == 'm' && $this->_displayParts & self::MONTH) {
+				$monthFlydown = $this->_getCompositeWidget('month_flydown');
 
-				if ($month_flydown->value === null &&
-					$this->value !== null) {
-					$month_flydown->value = $this->value->getMonth();
+				if ($monthFlydown->getState() === null &&
+					$this->_value !== null
+				) {
+					$monthFlydown->setState($this->_value->getMonth());
 				}
 
-				$month_flydown->display();
-			} elseif ($datepart == 'y' && $this->display_parts & self::YEAR) {
-				$year_flydown = $this->getCompositeWidget('year_flydown');
+				$monthFlydown->display();
+			} elseif ($datepart == 'y' && $this->_displayParts & self::YEAR) {
+				$yearFlydown = $this->_getCompositeWidget('year_flydown');
 
-				if ($year_flydown->value === null &&
-					$this->value !== null) {
-					$year_flydown->value = $this->value->getYear();
+				if ($yearFlydown->getState() === null &&
+					$this->_value !== null
+				) {
+					$yearFlydown->setState($this->_value->getYear());
 				}
 
-				$year_flydown->display();
+				$yearFlydown->display();
 			}
 		}
 
 		echo '</span>';
 
-		if ($this->display_parts & self::CALENDAR) {
-			$calendar = $this->getCompositeWidget('calendar');
+		if ($this->_displayParts & self::CALENDAR) {
+			$calendar = $this->_getCompositeWidget('calendar');
 			$calendar->display();
 		}
 
-		if ($this->display_parts & self::TIME) {
-			$time_entry = $this->getCompositeWidget('time_entry');
+		if ($this->_displayParts & self::TIME) {
+			$timeEntry = $this->_getCompositeWidget('time_entry');
 
 			// if we aren't using the current date then we won't use the
 			// current time
-			if (!$this->use_current_date)
-				$time_entry->use_current_time = false;
+			if (! $this->_useCurrentDate) {
+				$timeEntry->_useCurrentTime = false;
+			}
 
 			echo ' ';
-			if ($time_entry->value === null && $this->value !== null)
-				$time_entry->value = $this->value;
 
-			$time_entry->display();
+			if ($timeEntry->getState() === null 
+				&& $this->_value !== null
+			) {
+				$timeEntry->setState($this->_value);
+			}
+
+			$timeEntry->display();
 		}
 
-		Zap::displayInlineJavaScript($this->getInlineJavaScript());
+		Zap::displayInlineJavaScript($this->_getInlineJavaScript());
 
-		$div_tag->close();
+		$divTag->close();
 	}
-
-	// }}}
-	// {{{ public function process()
 
 	/**
 	 * Processes this date entry
@@ -278,116 +268,115 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	{
 		parent::process();
 
-		if (!$this->isVisible())
+		if (! $this->isVisible()) {
 			return;
+		}
 
-		$year = 0;
-		$month = 1;
-		$day = 1;
-		$hour = 0;
+		$year   = 0;
+		$month  = 1;
+		$day    = 1;
+		$hour   = 0;
 		$minute = 0;
 		$second = 0;
 
-		$all_empty = true;
-		$any_empty = false;
+		$allEmpty = true;
+		$anyEmpty = false;
 
-		if ($this->display_parts & self::YEAR) {
-			$year_flydown = $this->getCompositeWidget('year_flydown');
-			$year = $year_flydown->value;
+		if ($this->_displayParts & self::YEAR) {
+			$yearFlydown = $this->_getCompositeWidget('year_flydown');
+			$year = $yearFlydown->getState();
 			if ($year === null) {
-				if ($this->required_parts & self::YEAR) {
-					$any_empty = true;
+				if ($this->_requiredParts & self::YEAR) {
+					$anyEmpty = true;
 				} else {
 					$year = date('Y');
 				}
 			} else {
-				$all_empty = false;
+				$allEmpty = false;
 			}
 		} else {
 			$year = date('Y');
 		}
 
-		if ($this->display_parts & self::MONTH) {
-			$month_flydown = $this->getCompositeWidget('month_flydown');
-			$month = $month_flydown->value;
+		if ($this->_displayParts & self::MONTH) {
+			$monthFlydown = $this->_getCompositeWidget('month_flydown');
+			$month = $monthFlydown->getState();
 			if ($month === null) {
-				if ($this->required_parts & self::MONTH) {
-					$any_empty = true;
+				if ($this->_requiredParts & self::MONTH) {
+					$anyEmpty = true;
 				} else {
 					$month = 1;
 				}
 			} else {
-				$all_empty = false;
+				$allEmpty = false;
 			}
 		}
 
-		if ($this->display_parts & self::DAY) {
-			$day_flydown = $this->getCompositeWidget('day_flydown');
-			$day = $day_flydown->value;
+		if ($this->_displayParts & self::DAY) {
+			$dayFlydown = $this->_getCompositeWidget('day_flydown');
+			$day = $dayFlydown->getState();
 			if ($day === null) {
-				if ($this->required_parts & self::DAY) {
-					$any_empty = true;
+				if ($this->_requiredParts & self::DAY) {
+					$anyEmpty = true;
 				} else {
 					$day = 1;
 				}
 			} else {
-				$all_empty = false;
+				$allEmpty = false;
 			}
 		}
 
-		if ($this->display_parts & self::TIME) {
-			$time_entry = $this->getCompositeWidget('time_entry');
-			if ($time_entry->value === null) {
-				if ($this->required_parts & self::TIME) {
-					$any_empty = true;
+		if ($this->_displayParts & self::TIME) {
+			$timeEntry = $this->_getCompositeWidget('time_entry');
+
+			if ($timeEntry->getState() === null) {
+				if ($this->_requiredParts & self::TIME) {
+					$anyEmpty = true;
 				} else {
-					$hour = 0;
+					$hour   = 0;
 					$minute = 0;
 					$second = 0;
 				}
 			} else {
-				$hour = $time_entry->value->getHour();
-				$minute = $time_entry->value->getMinute();
-				$second = $time_entry->value->getSecond();
-				$all_empty = false;
+				$hour     = $timeEntry->getState()->getHour();
+				$minute   = $timeEntry->getState()->getMinute();
+				$second   = $timeEntry->getState()->getSecond();
+				$allEmpty = false;
 			}
 		}
 
-		if ($all_empty) {
-			if ($this->required && $this->isSensitive()) {
+		if ($allEmpty) {
+			if ($this->_required && $this->isSensitive()) {
 				$message = Zap::_('The %s field is required.');
-				$this->addMessage(new SwatMessage($message, 'error'));
+				$this->addMessage(new Zap_Message($message, 'error'));
 			}
-			$this->value = null;
-		} elseif ($any_empty) {
+			$this->_value = null;
+		} elseif ($anyEmpty) {
 			$message = Zap::_('The %s field is not a valid date.');
 			$this->addMessage(new SwatMessage($message, 'error'));
-			$this->value = null;
+			$this->_value = null;
 		} else {
 			try {
-				$date = new SwatDate();
+				$date = new Zap_Date();
 				if ($date->setDate($year, $month, $day) === false) {
-					throw new SwatException('Invalid date.');
+					throw new Zap_Exception('Invalid date.');
 				}
 
 				if ($date->setTime($hour, $minute, $second) === false) {
-					throw new SwatException('Invalid date.');
+					throw new Zap_Exception('Invalid date.');
 				}
 
 				$date->setTZById('UTC');
 
-				$this->value = $date;
-				$this->validateRanges();
+				$this->_value = $date;
+				$this->_validateRanges();
 			} catch (SwatException $e) {
 				$message = Zap::_('The %s field is not a valid date.');
-				$this->addMessage(new SwatMessage($message, 'error'));
-				$this->value = null;
+				$this->addMessage(new Zap_Message($message, 'error'));
+				$this->_value = null;
 			}
 		}
 	}
-
-	// }}}
-	// {{{ public function getState()
 
 	/**
 	 * Gets the current state of this date entry widget
@@ -398,14 +387,12 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 */
 	public function getState()
 	{
-		if ($this->value === null)
+		if (null === $this->_value) {
 			return null;
-		else
-			return $this->value->getDate();
+		} else {
+			return $this->_value->getDate();
+		}
 	}
-
-	// }}}
-	// {{{ public function setState()
 
 	/**
 	 * Sets the current state of this date entry widget
@@ -416,11 +403,8 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 */
 	public function setState($state)
 	{
-		$this->value = new SwatDate($state);
+		$this->_value = new Zap_Date($state);
 	}
-
-	// }}}
-	// {{{ public function isValid()
 
 	/**
 	 * Checks if the entered date is within the valid range
@@ -433,73 +417,97 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 		return ($this->isStartDateValid() && $this->isEndDateValid());
 	}
 
-	// }}}
-	// {{{ protected function getInlineJavaScript()
-
 	/**
 	 * Gets the inline JavaScript required for this control
 	 *
 	 * @return string the inline JavaScript required for this control.
 	 */
-	protected function getInlineJavaScript()
+	protected function _getInlineJavaScript()
 	{
-		$use_current_date = ($this->use_current_date) ? 'true' : 'false';
+		$useCurrentDate = ($this->_useCurrentDate) ? 'true' : 'false';
 
-		$javascript = sprintf("var %s_obj = new SwatDateEntry('%s', %s);",
-			$this->id, $this->id, $use_current_date);
+		$javascript = sprintf(
+			"var %s_obj = new SwatDateEntry('%s', %s);",
+			$this->_id, 
+			$this->_id, 
+			$useCurrentDate
+		);
 
-		if ($this->display_parts & self::DAY) {
-			$day_flydown = $this->getCompositeWidget('day_flydown');
+		if ($this->_displayParts & self::DAY) {
+			$dayFlydown = $this->_getCompositeWidget('day_flydown');
+			$lookupDays = array();
 
-			$lookup_days = array();
-			foreach ($day_flydown->options as $key => $option)
-				$lookup_days[] = sprintf('%s: %s',
-					$option->value,
-					($day_flydown->show_blank) ? $key + 1 : $key);
+			foreach ($dayFlydown->getOptions() as $key => $option) {
+				$lookupDays[] = sprintf(
+					'%s: %s',
+					$option->getValue(),
+					($dayFlydown->getShowBlank()) ? $key + 1 : $key
+				);
+			}
 
-			$javascript.= sprintf("\n%s_obj.addLookupTable('day', {%s});",
-				$this->id, implode(', ', $lookup_days));
+			$javascript .= sprintf(
+				"\n%s_obj.addLookupTable('day', {%s});",
+				$this->_id, 
+				implode(', ', $lookupDays)
+			);
 		}
 
-		if ($this->display_parts & self::MONTH) {
-			$month_flydown = $this->getCompositeWidget('month_flydown');
+		if ($this->_displayParts & self::MONTH) {
+			$monthFlydown = $this->_getCompositeWidget('month_flydown');
+			$lookupMonths = array();
 
-			$lookup_months = array();
-			foreach ($month_flydown->options as $key => $option)
-				$lookup_months[] = sprintf('%s: %s',
-					$option->value,
-					($month_flydown->show_blank) ? $key + 1 : $key);
+			foreach ($monthFlydown->getOptions() as $key => $option) {
+				$lookupMonths[] = sprintf(
+					'%s: %s',
+					$option->getValue(),
+					($monthFlydown->getShowBlank()) ? $key + 1 : $key
+				);
+			}
 
-			$javascript.= sprintf("\n%s_obj.addLookupTable('month', {%s});",
-				$this->id, implode(', ', $lookup_months));
+			$javascript .= sprintf(
+				"\n%s_obj.addLookupTable('month', {%s});",
+				$this->_id, 
+				implode(', ', $lookupMonths)
+			);
 		}
 
-		if ($this->display_parts & self::YEAR) {
-			$year_flydown = $this->getCompositeWidget('year_flydown');
+		if ($this->_displayParts & self::YEAR) {
+			$yearFlydown = $this->_getCompositeWidget('year_flydown');
+			$lookupYears = array();
 
-			$lookup_years = array();
-			foreach ($year_flydown->options as $key => $option)
-				$lookup_years[] = sprintf('%s: %s',
-					$option->value,
-					($year_flydown->show_blank) ? $key + 1 : $key);
+			foreach ($yearFlydown->getOptions() as $key => $option) {
+				$lookupYears[] = sprintf(
+					'%s: %s',
+					$option->getValue(),
+					($yearFlydown->getShowBlank()) ? $key + 1 : $key
+				);
+			}
 
-			$javascript.= sprintf("\n%s_obj.addLookupTable('year', {%s});",
-				$this->id, implode(', ', $lookup_years));
+			$javascript .= sprintf( 
+				"\n%s_obj.addLookupTable('year', {%s});",
+				$this->_id, 
+				implode(', ', $lookupYears)
+			);
 		}
 
-		if ($this->display_parts & self::TIME)
-			$javascript.= sprintf("\n%s_obj.setTimeEntry(%s_time_entry_obj);",
-				$this->id, $this->id);
+		if ($this->_displayParts & self::TIME) {
+			$javascript .= sprintf(
+				"\n%s_obj.setTimeEntry(%s_time_entry_obj);",
+				$this->_id, 
+				$this->_id
+			);
+		}
 
-		if ($this->display_parts & self::CALENDAR)
-			$javascript.= sprintf("\n%s_obj.setCalendar(%s_calendar_obj);",
-				$this->id, $this->id);
+		if ($this->_displayParts & self::CALENDAR) {
+			$javascript .= sprintf(
+				"\n%s_obj.setCalendar(%s_calendar_obj);",
+				$this->_id, 
+				$this->_id
+			);
+		}
 
 		return $javascript;
 	}
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
 
 	/**
 	 * Gets the array of CSS classes that are applied to this date entry widget
@@ -507,15 +515,12 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 * @return array the array of CSS classes that are applied to this date
 	 *                entry widget.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-date-entry');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
-
-	// }}}
-	// {{{ protected function isStartDateValid()
 
 	/**
 	 * Checks if the entered date is valid with respect to the valid start
@@ -525,15 +530,14 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 *                  date and false if the entered date is before the valid
 	 *                  start date.
 	 */
-	protected function isStartDateValid()
+	protected function _isStartDateValid()
 	{
-		$this->valid_range_start->setTZById('UTC');
-		return (SwatDate::compare(
-			$this->value, $this->valid_range_start, true) >= 0);
+		$this->_validRangeStart->setTZById('UTC');
+		return (Zap_Date::compare(
+			$this->_value, 
+			$this->_validRangeStart, true) >= 0
+		);
 	}
-
-	// }}}
-	// {{{ protected function isEndDateValid()
 
 	/**
 	 * Checks if the entered date is valid with respect to the valid end date
@@ -542,15 +546,14 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 *                  and false if the entered date is on or after the valid
 	 *                  end date.
 	 */
-	protected function isEndDateValid()
+	protected function _isEndDateValid()
 	{
-		$this->valid_range_end->setTZById('UTC');
-		return (SwatDate::compare(
-			$this->value, $this->valid_range_end, true) < 0);
+		$this->_validRangeEnd->setTZById('UTC');
+		return (Zap_Date::compare(
+			$this->_value, 
+			$this->_validRangeEnd, true) < 0
+		);
 	}
-
-	// }}}
-	// {{{ protected function validateRanges()
 
 	/**
 	 * Makes sure the date the user entered is within the valid range
@@ -558,127 +561,138 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 * If the date is not within the valid range, this method attaches an
 	 * error message to this date entry.
 	 */
-	protected function validateRanges()
+	protected function _validateRanges()
 	{
-		if (!$this->isStartDateValid()) {
-			$message = sprintf(Zap::_('The date you have entered is invalid. '.
-				'It must be on or after %s.'),
-				$this->getFormattedDate($this->valid_range_start));
+		if (! $this->_isStartDateValid()) {
+			$message = sprintf(
+				Zap::_('The date you have entered is invalid. '.
+					'It must be on or after %s.'),
+				$this->_getFormattedDate($this->_validRangeStart)
+			);
 
-			$this->addMessage(new SwatMessage($message, 'error'));
+			$this->addMessage(new Zap_Message($message, 'error'));
 
-		} elseif (!$this->isEndDateValid()) {
-			$message = sprintf(Zap::_('The date you have entered is invalid. '.
-				'It must be before %s.'),
-				$this->getFormattedDate($this->valid_range_end));
+		} elseif (! $this->isEndDateValid()) {
+			$message = sprintf(
+				Zap::_('The date you have entered is invalid. '.
+					'It must be before %s.'),
+				$this->_getFormattedDate($this->_validRangeEnd)
+			);
 
-			$this->addMessage(new SwatMessage($message, 'error'));
+			$this->addMessage(new Zap_Message($message, 'error'));
 		}
 	}
-
-	// }}}
-	// {{{ protected function createCompositeWidgets()
 
 	/**
 	 * Creates the composite widgets used by this date entry
 	 *
 	 * @see SwatWidget::createCompositeWidgets()
 	 */
-	protected function createCompositeWidgets()
+	protected function _createCompositeWidgets()
 	{
-		if ($this->display_parts & self::YEAR)
-			$this->addCompositeWidget(
-				$this->createYearFlydown(), 'year_flydown');
+		if ($this->_displayParts & self::YEAR) {
+			$this->_addCompositeWidget(
+				$this->_createYearFlydown(), 
+				'year_flydown'
+			);
+		}
 
-		if ($this->display_parts & self::MONTH)
-			$this->addCompositeWidget(
-				$this->createMonthFlydown(), 'month_flydown');
+		if ($this->_displayParts & self::MONTH) {
+			$this->_addCompositeWidget(
+				$this->_createMonthFlydown(), 
+				'month_flydown'
+			);
+		}
 
-		if ($this->display_parts & self::DAY)
-			$this->addCompositeWidget(
-				$this->createDayFlydown(), 'day_flydown');
+		if ($this->_displayParts & self::DAY) {
+			$this->_addCompositeWidget(
+				$this->_createDayFlydown(), 
+				'day_flydown'
+			);
+		}
 
-		if ($this->display_parts & self::TIME)
-			$this->addCompositeWidget(
-				$this->createTimeEntry(), 'time_entry');
+		if ($this->_displayParts & self::TIME) {
+			$this->_addCompositeWidget(
+				$this->_createTimeEntry(), 
+				'time_entry'
+			);
+		}
 
-		if ($this->display_parts & self::CALENDAR)
-			$this->addCompositeWidget(
-				$this->createCalendar(), 'calendar');
+		if ($this->_displayParts & self::CALENDAR) {
+			$this->_addCompositeWidget(
+				$this->_createCalendar(), 
+				'calendar'
+			);
+		}
 	}
-
-	// }}}
-	// {{{ private function createYearFlydown()
 
 	/**
 	 * Creates the year flydown for this date entry
 	 *
 	 * @return SwatFlydown the year flydown for this date entry.
 	 */
-	private function createYearFlydown()
+	private function _createYearFlydown()
 	{
-		$flydown = new SwatFlydown($this->id.'_year');
-
-		$start_year = $this->valid_range_start->getYear();
+		$flydown   = new Zap_Flydown($this->_id.'_year');
+		$startYear = $this->_validRangeStart->getYear();
 
 		// Subtract a second from the end date. Since end date is exclusive,
 		// this means that if the end date is the first of a year, we'll
 		// prevent showing that year in the flydown.
-		$range_end = clone $this->valid_range_end;
-		$range_end->subtractSeconds(1);
-		$end_year = $range_end->getYear();
+		$rangeEnd = clone $this->_validRangeEnd;
+		$rangeEnd->subtractSeconds(1);
 
-		for ($i = $start_year; $i <= $end_year; $i++)
+		$endYear = $rangeEnd->getYear();
+
+		for ($i = $startYear; $i <= $endYear; $i++) {
 			$flydown->addOption($i, $i);
+		}
 
 		return $flydown;
 	}
-
-	// }}}
-	// {{{ private function createMonthFlydown()
 
 	/**
 	 * Creates the month flydown for this date entry
 	 *
 	 * @return SwatFlydown the month flydown for this date entry.
 	 */
-	private function createMonthFlydown()
+	private function _createMonthFlydown()
 	{
-		$flydown = new SwatFlydown($this->id.'_month');
+		$flydown = new Zap_Flydown($this->_id.'_month');
 
 		// Subtract a second from the end date. This makes comparison correct,
 		// and prevents displaying extra months.
-		$range_end = clone $this->valid_range_end;
-		$range_end->subtractSeconds(1);
+		$rangeEnd = clone $this->_validRangeEnd;
+		$rangeEnd->subtractSeconds(1);
 
-		$start_year  = $this->valid_range_start->getYear();
-		$end_year    = $range_end->getYear();
-		$start_month = $this->valid_range_start->getMonth();
-		$end_month   = $range_end->getMonth();
+		$startYear  = $this->_validRangeStart->getYear();
+		$endYear    = $rangeEnd->getYear();
+		$startMonth = $this->_validRangeStart->getMonth();
+		$endMonth   = $rangeEnd->getMonth();
 
-		if ($end_year == $start_year) {
-			for ($i = $start_month; $i <= $end_month; $i++) {
-				$flydown->addOption($i, $this->getMonthOptionText($i));
+		if ($endYear == $startYear) {
+			for ($i = $startMonth; $i <= $endMonth; $i++) {
+				$flydown->addOption($i, $this->_getMonthOptionText($i));
 			}
-		} elseif (($end_year - $start_year) == 1) {
-			for ($i = $start_month; $i <= 12; $i++)
-				$flydown->addOption($i, $this->getMonthOptionText($i));
+		} elseif (($endYear - $startYear) == 1) {
+			for ($i = $start_month; $i <= 12; $i++) {
+				$flydown->addOption($i, $this->_getMonthOptionText($i));
+			}
 
 			// if end month is december, we've already displayed above
-			if ($end_month < 12) {
-				for ($i = 1; $i <= $end_month; $i++)
-					$flydown->addOption($i, $this->getMonthOptionText($i));
+			if ($endMonth < 12) {
+				for ($i = 1; $i <= $endMonth; $i++) {
+					$flydown->addOption($i, $this->_getMonthOptionText($i)); 
+				}
 			}
 		} else {
-			for ($i = 1; $i <= 12; $i++)
-				$flydown->addOption($i, $this->getMonthOptionText($i));
+			for ($i = 1; $i <= 12; $i++) {
+				$flydown->addOption($i, $this->_getMonthOptionText($i));
+			}
 		}
 
 		return $flydown;
 	}
-
-	// }}}
-	// {{{ private function getMonthOptionText()
 
 	/**
 	 * Gets the title of a month flydown option
@@ -687,73 +701,71 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 *
 	 * @return string the option text of the month.
 	 */
-	private function getMonthOptionText($month)
+	private function _getMonthOptionText($month)
 	{
 		$text = '';
 
-		if ($this->show_month_number)
-			$text.= str_pad($month, 2, '0', STR_PAD_LEFT).' - ';
+		if ($this->_showMonthNumber) {
+			$text .= str_pad($month, 2, '0', STR_PAD_LEFT).' - ';
+		}
 
-		$date = new SwatDate('2010-'.$month.'-01');
-
-		$text.= $date->formatLikeIntl('MMMM');
+		$date = new Zap_Date('2010-' . $month . '-01');
+		$text .= $date->formatLikeIntl('MMMM');
 
 		return $text;
 	}
-
-	// }}}
-	// {{{ private function createDayFlydown()
 
 	/**
 	 * Creates the day flydown for this date entry
 	 *
 	 * @return SwatFlydown the day flydown for this date entry.
 	 */
-	private function createDayFlydown()
+	private function _createDayFlydown()
 	{
-		$flydown = new SwatFlydown($this->id.'_day');
+		$flydown = new Zap_Flydown($this->_id . '_day');
 
 		// Subtract a second from the end date. This makes comparison correct,
 		// and prevents displaying extra days.
-		$range_end = clone $this->valid_range_end;
-		$range_end->subtractSeconds(1);
+		$rangeEnd = clone $this->_validRangeEnd;
+		$rangeEnd->subtractSeconds(1);
 
-		$start_year  = $this->valid_range_start->getYear();
-		$end_year    = $range_end->getYear();
-		$start_month = $this->valid_range_start->getMonth();
-		$end_month   = $range_end->getMonth();
-		$start_day   = $this->valid_range_start->getDay();
-		$end_day     = $range_end->getDay();
+		$startYear  = $this->_validRangeStart->getYear();
+		$endYear    = $rangeEnd->getYear();
+		$startMonth = $this->_validRangeStart->getMonth();
+		$endMonth   = $rangeEnd->getMonth();
+		$startDay   = $this->_validRangeStart->getDay();
+		$endDay     = $rangeEnd->getDay();
 
-		$end_check = clone $this->valid_range_start;
-		$end_check->addSeconds(2678400); // add 31 days
+		$endCheck = clone $this->_validRangeStart;
+		$endCheck->addSeconds(2678400); // add 31 days
 
-		if ($start_year == $end_year && $start_month == $end_month) {
+		if ($startYear == $endYear && $startMonth == $endMonth) {
 			// Only days left in the month
-			for ($i = $start_day; $i <= $end_day; $i++)
+			for ($i = $startDay; $i <= $endDay; $i++) {
 				$flydown->addOption($i, $i);
+			}
 
-		} elseif (SwatDate::compare($end_check, $range_end, true) != -1) {
+		} elseif (Zap_Date::compare($endCheck, $rangeEnd, true) != -1) {
 			// extra days at the beginning of the next month allowed
-			$days_in_month = $this->valid_range_start->getDaysInMonth();
+			$daysInMonth = $this->_validRangeStart->getDaysInMonth();
 
-			for ($i = $start_day; $i <= $days_in_month; $i++)
+			for ($i = $startDay; $i <= $daysInMonth; $i++) {
 				$flydown->addOption($i, $i);
+			}
 
-			for ($i = 1; $i <= $end_day; $i++)
+			for ($i = 1; $i <= $endDay; $i++) {
 				$flydown->addOption($i, $i);
+			}
 
 		} else {
 			// all days are valid
-			for ($i = 1; $i <= 31; $i++)
+			for ($i = 1; $i <= 31; $i++) {
 				$flydown->addOption($i, $i);
+			}
 		}
 
 		return $flydown;
 	}
-
-	// }}}
-	// {{{ private function createTimeEntry()
 
 	/**
 	 * Creates the time entry widget for this date entry
@@ -763,29 +775,23 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	private function createTimeEntry()
 	{
 		require_once 'Zap/TimeEntry.php';
-		$time_entry = new SwatTimeEntry($this->id.'_time_entry');
-		return $time_entry;
+		$timeEntry = new Zap_TimeEntry($this->_id.'_time_entry');
+		return $timeEntry;
 	}
-
-	// }}}
-	// {{{ private function createCalendar()
 
 	/**
 	 * Creates the calendar widget for this date entry
 	 *
 	 * @return SwatCalendar the calendar widget for this date entry.
 	 */
-	private function createCalendar()
+	private function _createCalendar()
 	{
 		require_once 'Zap/Calendar.php';
-		$calendar = new SwatCalendar($this->id.'_calendar');
-		$calendar->valid_range_start = $this->valid_range_start;
-		$calendar->valid_range_end   = $this->valid_range_end;
+		$calendar = new Zap_Calendar($this->_id . '_calendar');
+		$calendar->setValidRangeStart($this->_validRangeStart)
+			     ->setValidRangeEnd($this->_validRangeEnd);
 		return $calendar;
 	}
-
-	// }}}
-	// {{{ private function getFormattedDate()
 
 	/**
 	 * Formats a date for this date entry
@@ -799,7 +805,7 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 	 * @return string a date formatted according to the properties of this date
 	 *                 entry.
 	 */
-	private function getFormattedDate(SwatDate $date)
+	private function _getFormattedDate(Zap_Date $date)
 	{
 		// note: the display of the date is not locale specific as this
 		// is quite difficult without a good i18n/l10n library
@@ -807,28 +813,25 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 		$format = '';
 
 		if ($this->display_parts & self::MONTH) {
-			$format.= ' MMMM';
+			$format .= ' MMMM';
 		}
 
 		if ($this->display_parts & self::DAY) {
-			$format.= ' d,';
+			$format .= ' d,';
 		}
 
 		if ($this->display_parts & self::YEAR) {
-			$format.= ' yyyy';
+			$format .= ' yyyy';
 		}
 
 		if ($this->display_parts & self::TIME) {
-			$format.= ' h:mm a';
+			$format .= ' h:mm a';
 		}
 
 		$format = trim($format, ', ');
 
 		return $date->formatLikeIntl($format);
 	}
-
-	// }}}
-	// {{{ private function getDatePartOrder()
 
 	/**
 	 * Gets the order of date parts for the current locale
@@ -878,8 +881,6 @@ class Zap_DateEntry extends Zap_InputControl implements Zap_State
 
 		return $order;
 	}
-
-	// }}}
 }
 
 

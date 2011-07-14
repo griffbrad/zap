@@ -15,24 +15,19 @@ require_once 'Zap/String.php';
  */
 class Zap_RadioList extends Zap_Flydown
 {
-	// {{{ private properties
-
 	/**
 	 * Used for displaying radio buttons
 	 *
 	 * @var SwatHtmlTag
 	 */
-	private $input_tag;
+	private $_inputTag;
 
 	/**
 	 * Used for displaying radio button labels
 	 *
 	 * @var SwatHtmlTag
 	 */
-	private $label_tag;
-
-	// }}}
-	// {{{ public function __construct()
+	private $_labelTag;
 
 	/**
 	 * Creates a new radiolist
@@ -45,15 +40,14 @@ class Zap_RadioList extends Zap_Flydown
 	{
 		parent::__construct($id);
 
-		$this->show_blank  = false;
-		$this->requires_id = true;
+		$this->_showBlank  = false;
+		$this->_requiresId = true;
 
-		$this->addStyleSheet('packages/swat/styles/swat-radio-list.css',
-			Zap::PACKAGE_ID);
+		$this->addStyleSheet(
+			'packages/swat/styles/swat-radio-list.css',
+			Zap::PACKAGE_ID
+		);
 	}
-
-	// }}}
-	// {{{ public function display()
 
 	/**
 	 * Displays this radio list
@@ -62,27 +56,28 @@ class Zap_RadioList extends Zap_Flydown
 	{
 		$options = $this->getOptions();
 
-		if (!$this->visible || $options === null)
-			return;
-
-		SwatWidget::display();
-
-		// add a hidden field so we can check if this list was submitted on
-		// the process step
-		$this->getForm()->addHiddenField($this->id.'_submitted', 1);
-
-		if (count($options) == 1) {
-			// get first and only element
-			$this->displaySingle(current($options));
+		if (! $this->_visible || null === $options) {
 			return;
 		}
 
-		$ul_tag = new SwatHtmlTag('ul');
-		$ul_tag->id = $this->id;
-		$ul_tag->class = $this->getCSSClassString();
-		$ul_tag->open();
+		Zap_Widget::display();
 
-		$li_tag = new SwatHtmlTag('li');
+		// add a hidden field so we can check if this list was submitted on
+		// the process step
+		$this->getForm()->addHiddenField($this->_id . '_submitted', 1);
+
+		if (1 === count($options)) {
+			// get first and only element
+			$this->_displaySingle(current($options));
+			return;
+		}
+
+		$ulTag = new Zap_HtmlTag('ul');
+		$ulTag->id    = $this->_id;
+		$ulTag->class = $this->_getCSSClassString();
+		$ulTag->open();
+
+		$liTag = new Zap_HtmlTag('li');
 		$count = 0;
 
 		foreach ($options as $option) {
@@ -90,146 +85,138 @@ class Zap_RadioList extends Zap_Flydown
 			// add option-specific CSS classes from option metadata
 			$classes = $this->getOptionMetadata($option, 'classes');
 			if (is_array($classes)) {
-				$li_tag->class = implode(' ', $classes);
+				$liTag->class = implode(' ', $classes);
 			} elseif ($classes) {
-				$li_tag->class = strval($classes);
+				$liTag->class = strval($classes);
 			} else {
-				$li_tag->removeAttribute('class');
+				$liTag->removeAttribute('class');
 			}
 
-			$li_tag->id = $this->id.'_li_'.(string) $count;
-			$li_tag->open();
+			$liTag->id = $this->_id . '_li_' . (string) $count;
+			$liTag->open();
 			$count++;
 
-			if ($option instanceof SwatFlydownDivider) {
+			if ($option instanceof Zap_FlydownDivider) {
 				$this->displayDivider($option);
 			} else {
-				$this->displayOption($option);
-				$this->displayOptionLabel($option);
+				$this->_displayOption($option);
+				$this->_displayOptionLabel($option);
 			}
 
-			$li_tag->close();
+			$liTag->close();
 		}
 
-		$ul_tag->close();
+		$ulTag->close();
 	}
-
-	// }}}
-	// {{{ protected function processValue()
 
 	/**
 	 * Processes the value of this radio list from user-submitted form data
 	 *
 	 * @return boolean true if the value was processed from form data
 	 */
-	protected function processValue()
+	protected function _processValue()
 	{
 		$form = $this->getForm();
 
-		if ($form->getHiddenField($this->id.'_submitted') === null)
+		if (null === $form->getHiddenField($this->_id . '_submitted')) {
 			return false;
+		}
 
 		$data = &$form->getFormData();
 		$salt = $form->getSalt();
 
-		if (isset($data[$this->id]))
-			if ($this->serialize_values) {
-				$this->value =
-					SwatString::signedUnserialize($data[$this->id], $salt);
+		if (isset($data[$this->_id])) {
+			if ($this->_serializeValues) {
+				$this->_value =
+					Zap_String::signedUnserialize($data[$this->_id], $salt);
 			} else {
-				$this->value = $data[$this->id];
+				$this->_value = $data[$this->_id];
 			}
-		else
-			$this->value = null;
+		} else {
+			$this->_value = null;
+		}
 
 		return true;
 	}
 
-	// }}}
-	// {{{ protected function displayDivider()
-
 	/**
 	 * Displays a divider option in this radio list
 	 *
-	 * @param SwatOption $option
+	 * @param Zap_Option $option
 	 */
-	protected function displayDivider(SwatOption $option)
+	protected function _displayDivider(Zap_Option $option)
 	{
-		$span_tag = new SwatHtmlTag('span');
-		$span_tag->class = 'swat-radio-list-divider';
-		if ($option->value !== null)
-			$span_tag->id = $this->id.'_'.(string)$option->value;
+		$spanTag = new Zap_HtmlTag('span');
+		$spanTag->class = 'swat-radio-list-divider';
 
-		$span_tag->setContent($option->title);
-		$span_tag->display();
+		if (null !== $option->getValue()) {
+			$spanTag->id = $this->id . '_' . (string) $option->getValue();
+		}
+
+		$spanTag->setContent($option->getTitle());
+		$spanTag->display();
 	}
-
-	// }}}
-	// {{{ protected function displayOption()
 
 	/**
 	 * Displays an option in the radio list
 	 *
-	 * @param SwatOption $option
+	 * @param Zap_Option $option
 	 */
-	protected function displayOption(SwatOption $option)
+	protected function _displayOption(Zap_Option $option)
 	{
-		if ($this->input_tag === null) {
-			$this->input_tag = new SwatHtmlTag('input');
-			$this->input_tag->type = 'radio';
-			$this->input_tag->name = $this->id;
+		if (null === $this->_inputTag) {
+			$this->_inputTag = new Zap_HtmlTag('input');
+			$this->_inputTag->type = 'radio';
+			$this->_inputTag->name = $this->_id;
 		}
 
-		if (!$this->isSensitive())
-			$this->input_tag->disabled = 'disabled';
+		if (! $this->isSensitive()) {
+			$this->_inputTag->disabled = 'disabled';
+		}
 
-		if ($this->serialize_values) {
+		if ($this->_serializeValues) {
 			$salt = $this->getForm()->getSalt();
-			$this->input_tag->value =
-				SwatString::signedSerialize($option->value, $salt);
+			$this->_inputTag->value =
+				Zap_String::signedSerialize($option->getValue(), $salt);
 		} else {
-			$this->input_tag->value = (string)$option->value;
+			$this->_inputTag->value = (string) $option->getValue();
 		}
 
-		$this->input_tag->removeAttribute('checked');
+		$this->_inputTag->removeAttribute('checked');
 
 		// TODO: come up with a better system to set ids. This may  not be
 		// unique and may also not be valid XHTML
-		$this->input_tag->id = $this->id.'_'.(string)$option->value;
+		$this->_inputTag->id = $this->_id . '_' . (string) $option->getValue();
 
-		if ($this->serialize_values) {
-			if ($option->value === $this->value)
-				$this->input_tag->checked = 'checked';
+		if ($this->_serializeValues) {
+			if ($option->getValue() === $this->_value) {
+				$this->_inputTag->checked = 'checked';
+			}
 		} else {
-			if ((string)$option->value === (string)$this->value)
-				$this->input_tag->checked = 'checked';
+			if ((string) $option->getValue() === (string) $this->_value) {
+				$this->_inputTag->checked = 'checked';
+			}
 		}
 
-		$this->input_tag->display();
+		$this->_inputTag->display();
 	}
-
-	// }}}
-	// {{{ protected function displayOptionLabel()
 
 	/**
 	 * Displays an option in the radio list
 	 *
 	 * @param SwatOption $option
 	 */
-	protected function displayOptionLabel(SwatOption $option)
+	protected function _displayOptionLabel(Zap_Option $option)
 	{
-		if ($this->label_tag === null) {
-			$this->label_tag = new SwatHtmlTag('label');
-			$this->label_tag->class = 'swat-control';
+		if (null === $this->_labelTag) {
+			$this->_labelTag = new Zap_HtmlTag('label');
+			$this->_labelTag->class = 'swat-control';
 		}
 
-		$this->label_tag->for = $this->id.'_'.(string)$option->value;
-		$this->label_tag->setContent($option->title, $option->content_type);
-		$this->label_tag->display();
+		$this->_labelTag->for = $this->_id . '_' . (string) $option->getValue();
+		$this->_labelTag->setContent($option->getTitle(), $option->getContentType());
+		$this->_labelTag->display();
 	}
-
-	// }}}
-	// {{{ protected function getCSSClassNames()
 
 	/**
 	 * Gets the array of CSS classes that are applied to this radio list
@@ -237,14 +224,12 @@ class Zap_RadioList extends Zap_Flydown
 	 * @return array the array of CSS classes that are applied to this radio
 	 *                list.
 	 */
-	protected function getCSSClassNames()
+	protected function _getCSSClassNames()
 	{
 		$classes = array('swat-radio-list');
-		$classes = array_merge($classes, parent::getCSSClassNames());
+		$classes = array_merge($classes, parent::_getCSSClassNames());
 		return $classes;
 	}
-
-	// }}}
 }
 
 
