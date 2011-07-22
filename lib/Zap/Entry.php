@@ -103,6 +103,30 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 */
 	protected $_autoTrim = true;
 
+    /**
+     * Adjust the autocomplete option.
+     *
+     * @param string $autocomplete
+     */
+    public function setAutocomplete($autocomplete)
+    {
+        $this->_autocomplete = $autocomplete;
+
+        return $this;
+    }
+    
+    /**
+     * Adjust the read-only option.
+     *
+     * @param string $readOnly
+     */
+    public function setReadOnly($readOnly)
+    {
+        $this->_readOnly = $readOnly;
+
+        return $this;
+    }
+
 	/**
 	 * Displays this entry widget
 	 *
@@ -128,9 +152,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 		}
 	}
 
-	// }}}
-	// {{{ public function process()
-
 	/**
 	 * Processes this entry widget
 	 *
@@ -142,45 +163,46 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 		parent::process();
 
 		// if nothing was submitted by the user, shortcut return
-		if (!$this->hasRawValue()) {
-			$this->value = null;
+		if (! $this->hasRawValue()) {
+			$this->_value = null;
 			return;
 		}
 
-		$this->value = $this->_getRawValue();
+		$this->_value = $this->_getRawValue();
 
 		if ($this->_autoTrim) {
-			$this->value = trim($this->value);
-			if ($this->value === '')
-				$this->value = null;
+			$this->_value = trim($this->_value);
+            
+            if ('' === $this->_value) {
+                $this->_value = null;
+            }
 		}
 
-		$len = ($this->value === null) ? 0 : strlen($this->value);
+		$len = (null === $this->_value) ? 0 : strlen($this->_value);
 
-		if (! $this->_required && null === $this->value) {
+		if (! $this->_required && null === $this->_value) {
 			return;
 
-		} elseif ($this->value === null) {
-			$this->addMessage($this->getValidationMessage('required'));
+		} elseif ($this->_value === null) {
+			$this->addMessage($this->_getValidationMessage('required'));
 
-		} elseif ($this->maxlength !== null && $len > $this->maxlength) {
-			$message = $this->getValidationMessage('too-long');
-			$message->primary_content =
-				sprintf($message->primary_content, $this->maxlength);
+		} elseif (null !== $this->_maxlength && $len > $this->_maxlength) {
+			$message = $this->_getValidationMessage('too-long');
+			$message->setPrimaryContent(
+                sprintf($message->getPrimaryContent(), $this->_maxlength)
+            );
 
 			$this->addMessage($message);
 
-		} elseif ($this->minlength !== null && $len < $this->minlength) {
+		} elseif (null !== $this->_minlength && $len < $this->_minlength) {
 			$message = $this->getValidationMessage('too-short');
-			$message->primary_content =
-				sprintf($message->primary_content, $this->minlength);
+			$message->setPrimaryContent(
+                sprintf($message->getPrimaryContent(), $this->_minlength)
+            );
 
 			$this->addMessage($message);
 		}
 	}
-
-	// }}}
-	// {{{ public function getState()
 
 	/**
 	 * Gets the current state of this entry widget
@@ -194,9 +216,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 		return $this->value;
 	}
 
-	// }}}
-	// {{{ public function setState()
-
 	/**
 	 * Sets the current state of this entry widget
 	 *
@@ -208,8 +227,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	{
 		$this->value = $state;
 	}
-
-	// }}}
 
 	/**
 	 * Gets the id attribute of the XHTML element displayed by this widget
@@ -255,8 +272,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 		$message = new Zap_Message($text, 'error');
 		return $message;
 	}
-
-	// }}}
 
 	/**
 	 * Get the input tag to display
@@ -332,8 +347,6 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 		return $classes;
 	}
 
-	// }}}
-
 	protected function getNonce()
 	{
 		if (null === $this->_nonce) {
@@ -385,7 +398,7 @@ class Zap_Entry extends Zap_InputControl implements Zap_State
 	 *
 	 * @see Zap_Entry::getRawValue()
 	 */
-	protected function hasRawValue()
+	protected function _hasRawValue()
 	{
 		$hasValue = false;
 

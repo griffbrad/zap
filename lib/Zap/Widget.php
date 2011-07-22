@@ -215,7 +215,7 @@ abstract class Zap_Widget extends Zap_UIObject
 			$this->init();
 		}
 
-		foreach ($this->getCompositeWidgets() as $widget) {
+		foreach ($this->_getCompositeWidgets() as $widget) {
 			$widget->process();
 		}
 
@@ -303,7 +303,7 @@ abstract class Zap_Widget extends Zap_UIObject
 	{
 		$messages = $this->_messages;
 
-		foreach ($this->getCompositeWidgets() as $widget) {
+		foreach ($this->_getCompositeWidgets() as $widget) {
 			$messages = array_merge($messages, $widget->getMessages());
 		}
 

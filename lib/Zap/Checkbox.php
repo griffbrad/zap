@@ -59,7 +59,7 @@ class Zap_Checkbox extends Zap_InputControl implements Zap_State
 
 		parent::display();
 
-		$this->getForm()->addHiddenField($this->id.'_submitted', 1);
+		$this->getForm()->addHiddenField($this->_id . '_submitted', 1);
 
 		$inputTag = new Zap_HtmlTag('input');
 		$inputTag->type      = 'checkbox';
